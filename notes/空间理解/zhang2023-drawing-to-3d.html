@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="精读 Zhang et al. 2023（Computers & Graphics）：从 2D 正交工程图自动重建 3D CAD 模型，模式匹配 + 环路检测 + 面聚类，公开数据集 F-score 99.59%。">
+<title>Automatic 3D CAD models reconstruction from 2D orthographic drawings · Zhang et al. 2023</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C1220; --sub:#5C6880; --line:#E3E8F0; --line-2:#EEF2F8;
+  --bg:#FBFCFE; --card:#FFFFFF;
+  --blue:#2563EB; --blue-soft:#EAF1FF;
+  --cyan:#06B6D4; --amber:#F59E0B; --amber-soft:#FFF6E5;
+  --green:#10B981; --green-soft:#E6F9F2;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --display:'Space Grotesk','Noto Serif SC',sans-serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --wrap:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.75;font-size:15.5px;
+  background-image:radial-gradient(circle at 12% 8%,rgba(37,99,235,.055),transparent 42%),
+  linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);
+  background-size:auto,64px 64px,64px 64px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 30px}
+.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,#0A1020 0%,#131E3A 46%,#1E2A52 100%);padding:64px 0 52px}
+.hero .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#8FB3FF;margin-bottom:14px}
+.hero h1{font-family:var(--display);font-size:clamp(26px,4vw,40px);line-height:1.25;font-weight:700}
+.hero .meta{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px}
+.hero .meta span{font-family:var(--mono);font-size:12px;padding:5px 12px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.06)}
+main{padding:44px 0 60px}
+section{margin-bottom:38px}
+h2{font-family:var(--display);font-size:22px;display:flex;align-items:center;gap:12px;margin-bottom:16px}
+h2 .no{font-family:var(--mono);font-size:13px;color:var(--blue);background:var(--blue-soft);border-radius:8px;padding:3px 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(12,18,32,.04)}
+p{margin-bottom:10px}
+ul{padding-left:22px;margin-bottom:10px}
+li{margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0}
+th{background:#F4F7FC;text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:600}
+td{padding:9px 12px;border:1px solid var(--line)}
+.hl{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ok{background:var(--green-soft);border-left:4px solid var(--green);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:16px 0}
+.flow .step{flex:1 1 160px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;position:relative}
+.flow .step b{display:block;font-family:var(--mono);font-size:11px;color:var(--blue);letter-spacing:.12em;margin-bottom:6px}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.back{display:inline-block;margin:26px 0 0;font-family:var(--mono);font-size:13px}
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);font-size:13px;text-align:center}
+@media(max-width:640px){.wrap{padding:0 18px}.hero{padding:44px 0 38px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Drawing → 3D CAD · Paper Note</div>
+    <h1>Automatic 3D CAD models reconstruction from 2D orthographic drawings</h1>
+    <div class="meta">
+      <span>Chao Zhang et al.</span><span>Computers &amp; Graphics · 2023-08</span>
+      <span>DOI 10.1016/j.cag.2023.05.021</span><span>引用 31+</span>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+<section>
+  <h2><span class="no">01</span>一句话总结</h2>
+  <div class="card"><p>提出两阶段传统几何算法，把 <b>2D 正交工程图（多视图）</b>自动重建为<b>可直接使用的 watertight 3D CAD 模型</b>，在包含数千个 3D 物体的公开数据集上达到 <b>F-score 99.59%</b>。</p></div>
+</section>
+<section>
+  <h2><span class="no">02</span>方法流程</h2>
+  <div class="flow">
+    <div class="step"><b>STEP 1</b>从多视图中提取 2D 边特征</div>
+    <div class="step"><b>STEP 2</b>模式匹配算法跨视图匹配，重建 3D 边线框网络</div>
+    <div class="step"><b>STEP 3</b>环路检测找出可能的表面环路</div>
+    <div class="step"><b>STEP 4</b>聚类算法识别面 → 修剪拼接 → watertight 实体</div>
+  </div>
+  <p>核心思路是<b>纯几何的模式匹配</b>（非学习类方法）：先由 2D 边特征跨视图对应生成 3D 线框与图结构，再从环路中恢复面，最后缝合为封闭实体。</p>
+</section>
+<section>
+  <h2><span class="no">03</span>关键结果</h2>
+  <div class="ok"><p>✅ 公开数据集（数千个 3D 物体）上 <b>99.59% F-score</b> 的正确重建率。</p></div>
+  <ul>
+    <li>输出为<b>水密（watertight）</b>、可直接使用的 3D CAD 模型；</li>
+    <li>不依赖训练数据，属于<b>规则/几何驱动</b>路线的代表工作。</li>
+  </ul>
+</section>
+<section>
+  <h2><span class="no">04</span>与 visCAD 基准的关系</h2>
+  <div class="hl"><p>📌 该论文被 <b>visCAD（arXiv:2609.03811）</b>选为 PubCADBench 中 <b>Orthographic Reconstruction（三视图/图纸重建，200 条任务）</b>切片的数据来源之一（Zhang et al., 2023; 2025）。visCAD-M1 在该切片上取得 Solid IoU 0.4604 的最佳成绩。</p></div>
+</section>
+<section>
+  <h2><span class="no">05</span>资源链接</h2>
+  <div class="card">
+    <ul>
+      <li>DOI：<a href="https://doi.org/10.1016/j.cag.2023.05.021" target="_blank">10.1016/j.cag.2023.05.021</a></li>
+      <li>后续工作（RL 版）：<a href="https://doi.org/10.1016/j.cad.2025.103925" target="_blank">Reinforcement learning-based parametric CAD models reconstruction（CAD 2025）</a></li>
+    </ul>
+  </div>
+  <a class="back" href="../../index.html">← 返回知识库首页</a>
+</section>
+</main>
+<footer>Generated by <a href="https://www.aipyaipy.com" target="_blank">AiPy</a> · 本地数据处理，不上传任何信息</footer>
+</body>
+</html>
