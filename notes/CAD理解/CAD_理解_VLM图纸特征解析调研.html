@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="多模态 CAD 图纸理解调研：用 VLM 从工程图纸中拆分加工特征（孔/槽/台阶/倒角/螺纹）与基本信息（尺寸/GD&T/材料/粗糙度/标题栏），梳理开源数据集、Benchmark 与代表论文。">
+<title>用 VLM 从图纸拆分加工特征与基本信息 · 开源数据 / Benchmark / 论文调研</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C1220; --sub:#5C6880; --line:#E3E8F0; --line-2:#EEF2F8;
+  --bg:#FBFCFE; --card:#FFFFFF;
+  --blue:#2563EB; --blue-soft:#EAF1FF;
+  --cyan:#06B6D4; --cyan-soft:#E4FAFE;
+  --amber:#F59E0B; --amber-soft:#FFF6E5;
+  --green:#10B981; --green-soft:#E6F9F2;
+  --violet:#7C3AED; --violet-soft:#F3EDFF;
+  --rose:#E11D48; --rose-soft:#FFECF1;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --display:'Space Grotesk','Noto Serif SC',sans-serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --wrap:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.78;font-size:15.5px;
+  background-image:radial-gradient(circle at 12% 8%,rgba(37,99,235,.05),transparent 42%),
+  radial-gradient(circle at 88% 4%,rgba(124,58,237,.045),transparent 38%),
+  linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);
+  background-size:auto,auto,64px 64px,64px 64px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 30px}
+.hero{position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,#0A1020 0%,#131E3A 46%,#1E2A52 100%);padding:70px 0 56px}
+.hero .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#8FB3FF;margin-bottom:14px}
+.hero h1{font-family:var(--display);font-size:clamp(25px,3.8vw,40px);line-height:1.28;font-weight:700}
+.hero .sub{margin-top:14px;color:#B7C4E0;font-size:15px;max-width:880px}
+.hero .meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px}
+.hero .meta span{font-family:var(--mono);font-size:12px;padding:5px 12px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.06)}
+main{padding:46px 0 60px}
+section{margin-bottom:44px}
+h2{font-family:var(--display);font-size:23px;display:flex;align-items:center;gap:12px;margin-bottom:18px}
+h2 .no{font-family:var(--mono);font-size:13px;color:var(--blue);background:var(--blue-soft);border-radius:8px;padding:3px 10px}
+h3{font-size:17px;margin:22px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(12,18,32,.04);margin-bottom:14px}
+p{margin-bottom:10px}
+ul{padding-left:22px;margin-bottom:10px}
+li{margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+th{background:#F4F7FC;text-align:left;padding:9px 11px;border:1px solid var(--line);font-weight:600}
+td{padding:9px 11px;border:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#FAFBFD}
+.hl{background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.ok{background:var(--green-soft);border-left:4px solid var(--green);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.warn{background:var(--rose-soft);border-left:4px solid var(--rose);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.info{background:var(--blue-soft);border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0}
+.flow{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.flow .step{flex:1 1 170px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.flow .step b{display:block;font-family:var(--mono);font-size:11px;color:var(--blue);letter-spacing:.12em;margin-bottom:6px}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:13px;background:var(--line-2);border-radius:6px;padding:2px 7px}
+pre{background:#0F1729;color:#D6E2F5;border-radius:12px;padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.7;margin:12px 0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.toc a{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 13px;background:var(--card)}
+.back{display:inline-block;margin:26px 0 0;font-family:var(--mono);font-size:13px}
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);font-size:13px;text-align:center}
+@media(max-width:640px){.wrap{padding:0 18px}.hero{padding:48px 0 40px}table{font-size:12.5px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">VLM-based Drawing Understanding · Survey</div>
+    <h1>用 VLM 从工程图纸中拆分<br>加工特征与基本信息</h1>
+    <p class="sub">聚焦「图纸 → 结构化加工特征 + 工程基本信息」这一多模态理解任务：任务定义与输出 schema、开源数据集与 Benchmark、代表论文与实测性能、以及当前 VLM 的真实能力边界。</p>
+    <div class="meta"><span>调研整理 · 2026-09-29</span><span>分类：CAD理解</span><span>姊妹篇：CAD生成调研</span></div>
+    <nav class="toc">
+      <a href="#s0">00 范围与局限</a><a href="#s1">01 任务定义</a><a href="#s2">02 输出 Schema</a><a href="#s3">03 数据集</a><a href="#s4">04 Benchmark</a><a href="#s5">05 代表论文</a><a href="#s6">06 能力边界</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+<section id="s0">
+  <h2><span class="no">00</span>调研范围与局限性</h2>
+  <div class="card">
+    <div class="info"><p>📌 <b>直接相关</b>：第 3.1 节机械工程图/加工特征数据集、第 4 节评测指标、第 5.1–5.2 节 VLM 图纸信息提取与特征识别论文、第 6 节能力边界。</p>
+    <p>🔄 <b>可迁移参考</b>：第 3.2 节建筑平面图数据集（符号理解方法论可借鉴）、第 3.3 节 CAD 原生几何数据（特征结构理解的上游对照）。</p>
+    <p>⚠️ <b>局限性</b>：① 本领域公开真实数据稀缺，多数论文自建数据集，跨论文数值不可直接横向比较；② 部分 2025–2026 年新工作（MechVQA、BlueprintSymVL、DRAGON 等）仍在快速迭代，规模与结论可能更新；③ 本文所有数值均标注来源，但实验设置差异未逐一展开。</p></div>
+  </div>
+</section>
+<section id="s1">
+  <h2><span class="no">01</span>任务定义：从「看见」到「拆出特征」</h2>
+  <div class="card">
+    <p>本调研关注的任务是：<b>给定一张工程图纸（栅格/矢量/扫描件），用视觉语言模型（VLM）输出结构化的加工特征清单与工程基本信息</b>。它不同于纯 OCR，也不同于符号检测——核心在于<b>把视觉元素绑定到工程语义对象上</b>。</p>
+    <div class="flow">
+      <div class="step"><b>输入</b>机械零件图 / 装配图（PDF、扫描件、CAD 导出光栅图、SVG 矢量图）</div>
+      <div class="step"><b>加工特征</b>孔（通孔/盲孔/沉头/同轴）、槽、台阶、倒角、圆角、锥面、螺纹、型腔</div>
+      <div class="step"><b>基本信息</b>尺寸与公差、GD&amp;T 形位公差、材料与热处理、表面粗糙度、标题栏元数据、技术要求</div>
+      <div class="step"><b>输出</b>结构化 JSON：特征类型 + 几何参数 + 关联标注 + 证据位置</div>
+    </div>
+    <div class="info"><p>📌 <b>与相邻任务的区别</b>：符号检测（FloorPlanCAD 类）只输出「这里有个符号」；本任务要求输出「这是一个 Φ12H7 的配合孔，位于右端面，粗糙度 Ra1.6，基准 A」——即<b>特征 + 参数 + 归属关系</b>三者齐备。</p></div>
+  </div>
+</section>
+<section id="s2">
+  <h2><span class="no">02</span>目标输出 Schema（业界共识形态）</h2>
+  <div class="card">
+    <p>综合多篇论文的产出格式，当前主流的结构化输出形如：</p>
+    <pre>{
+  "title_block": { "drawing_no": "...", "material": "Cast Iron", "scale": "1:1", "designer": "...", "date": "..." },
+  "features": [
+    {
+      "feature_type": "hole",          // hole / slot / step / chamfer / fillet / thread / pocket
+      "subtype": "through_hole",
+      "parameters": { "diameter": 12, "tolerance": "H7", "depth": null },
+      "annotations": [
+        { "kind": "dimension", "value": "Φ12H7", "bbox": [x1,y1,x2,y2] },
+        { "kind": "surface_finish", "value": "Ra1.6", "bbox": [...] },
+        { "kind": "gdt", "symbol": "position", "value": "Ø0.02", "datum": "A|B|C", "bbox": [...] }
+      ],
+      "view": "front"
+    }
+  ],
+  "notes": ["锐边去毛刺 0.1mm", "..."]
+}</pre>
+    <div class="ok"><p>✅ <b>关键设计</b>：每条信息都带 <code>bbox</code>（证据位置）——这是工程可复核性的前提，也是 DRAGON 等新基准的核心要求。</p></div>
+  </div>
+</section>
+<section id="s3">
+  <h2><span class="no">03</span>开源数据集：图纸理解方向</h2>
+  <div class="card">
+    <h3>3.1 机械工程图 / 加工特征方向（本任务核心）</h3>
+    <table>
+      <tr><th>数据集</th><th>规模</th><th>内容与标注</th><th>任务定位</th></tr>
+      <tr><td><b>MFCAD</b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（GPT-4V 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
+      <tr><td><b>MFCAD++</b></td><td>MFCAD 扩展版</td><td>增加特征类别与更复杂组合</td><td>加工特征识别进阶评测</td></tr>
+      <tr><td><b>MechVQA</b></td><td>3.3K 张高密度机械图纸 + 21K 问答对</td><td>10 个细粒度任务（含特征识别、标注读取、空间推理）</td><td><b>VLM 机械图纸理解专用基准</b></td></tr>
+      <tr><td><b>BlueprintSymVL</b></td><td>工程蓝图符号识别基准</td><td>高密度符号、遮挡、视觉相似场景 + one-shot 视觉上下文查询</td><td>VLM 符号识别可靠性评测（2025）</td></tr>
+      <tr><td><b>DRAGON</b></td><td>图纸问答 + 证据定位基准</td><td>要求模型不仅答对，还要标出支持答案的图中区域</td><td>可验证推理评测（2026）</td></tr>
+      <tr><td><b>A*STAR 九类标注数据集</b></td><td>1,367 张 2D 机械图纸 / 11,469 个标注实例</td><td>GD&amp;T、通用公差、尺寸、材料、注释、半径、表面粗糙度、螺纹、标题栏</td><td><b>与「基本信息提取」任务最贴合</b>（CVAT 人工标注）</td></tr>
+      <tr><td><b>ParaCAD</b></td><td>训练 1,000 万+ / 测试 3,000 张真实工业图</td><td>几何层 + 标注层双层完整标注</td><td>2D 参数化基元分析（PPA）</td></tr>
+      <tr><td><b>CAD-VGDrawing</b></td><td>矢量工程图 ↔ 参数化 CAD 成对数据</td><td>SVG 基元 + CAD 操作序列</td><td>图纸理解 × 生成交叉</td></tr>
+      <tr><td><b>SIED</b></td><td>工程符号库（类别不平衡）</td><td>符号图像 + 类别标签</td><td>符号分类长尾基准</td></tr>
+    </table>
+    <h3>3.2 建筑 / 平面图方向（符号理解，可迁移参考）</h3>
+    <table>
+      <tr><th>数据集</th><th>规模</th><th>标注</th></tr>
+      <tr><td><b>FloorPlanCAD</b></td><td>10,094 张真实平面图</td><td>矢量 SVG，30 类符号线粒度标注</td></tr>
+      <tr><td><b>LS-CAD</b></td><td>50 张大图（&gt;1000㎡）</td><td>精细符号标注，用于大规模图纸识别</td></tr>
+      <tr><td><b>CubiCasa5K</b></td><td>5,000 张楼盘平面图</td><td>SVG 多边形，80+ 类别</td></tr>
+      <tr><td><b>SESYD / CVC-FP / ROBIN</b></td><td>1,000 / 122 / 510 张</td><td>合成或扫描平面图符号标注</td></tr>
+    </table>
+    <h3>3.3 CAD 原生几何方向（特征结构理解）</h3>
+    <ul>
+      <li><b>ABC</b>（100 万+ 模型）：面片分解、尖锐特征、微分属性标注；</li>
+      <li><b>Fusion 360 Gallery</b>：特征构建历史（sketch-extrude 序列）；</li>
+      <li><b>SketchGraphs</b>（1,500 万草图）：基元 + 约束的几何约束图。</li>
+    </ul>
+    <div class="warn"><p>⚠️ <b>关键结论：目前没有公开的「2D 图纸 → 加工特征」专用标注数据集。</b></p>
+    <ul>
+      <li>MFCAD / MFCAD++ 是 <b>3D CAD 模型</b>的面级标注，需投影成图像才能用于 2D 任务；</li>
+      <li>A*STAR 的 1,367 张是少见的<b>真实机械图纸</b>标注集，但为团队自建、未公开；</li>
+      <li>真实机械工程图纸因保密原因极少公开（多篇论文共同确认）；</li>
+      <li>因此该方向论文普遍<b>自建数据集</b>，跨论文结果难以直接对比——这是本领域最大的方法论障碍。</li>
+    </ul>
+    <p>📌 <b>替代路径</b>：① 用 MFCAD 投影图做特征识别预训练；② 自建标注（推荐 CVAT 工具，A*STAR 即用此）；③ 拓扑感知合成数据（参考 SynthPID 思路）。</p></div>
+  </div>
+</section>
+<section id="s4">
+  <h2><span class="no">04</span>Benchmark 与评测指标</h2>
+  <div class="card">
+    <table>
+      <tr><th>层级</th><th>指标</th><th>适用</th></tr>
+      <tr><td>检测层</td><td>Precision / Recall / mAP@0.5（旋转框 OBB）</td><td>标注区域定位（YOLOv11-obb 报告 mAP@0.5 达 97.1%）</td></tr>
+      <tr><td>解析层</td><td>字段级 F1、精确率、召回率、<b>幻觉率（hallucination rate）</b></td><td>结构化 JSON 抽取质量</td></tr>
+      <tr><td>特征层</td><td>Mean F1（面级/特征级）</td><td>加工特征识别（Image2Feature 报告 91.3%）</td></tr>
+      <tr><td>问答层</td><td>Accuracy、Token F1、语义相似度</td><td>MechVQA / Enginuity 等 VQA 基准</td></tr>
+      <tr><td>可验证层</td><td>证据定位准确率（bbox 命中）</td><td>DRAGON 等要求标注证据来源</td></tr>
+    </table>
+    <div class="hl"><p>📌 <b>重要提醒</b>：Enginuity 基准发现——模型「找到零件」的 Recall@all 达 0.61–0.87，但「把描述抄准确」的 Token F1 仅 0.03–0.18。<b>找到 ≠ 读对</b>，评测必须分层看。</p></div>
+  </div>
+</section>
+<section id="s5">
+  <h2><span class="no">05</span>代表论文与实测性能</h2>
+  <div class="card">
+    <h3>5.1 VLM 直接做图纸信息提取</h3>
+    <ul>
+      <li><b>From Drawings to Decisions</b>（A*STAR + 南洋理工，arXiv:2505.01530 / 2506.17374）：YOLOv11-obb 旋转框定位 + 微调 Donut 解析，1,367 张图纸 9 类标注。Donut 综合 <b>F1 93.5–94%</b>、精确率 89.2%、召回率 99.2%、幻觉率 10.8%；Florence-2 对比 F1 85.0%、幻觉率 21.6%。GD&amp;T 解析 F1 达 96.5%，标题栏精度仅 52.2%。</li>
+      <li><b>多阶段混合框架</b>（同团队）：YOLOv11-det 版面切分 + YOLOv11-obb 标注定位 + 双 Donut 解析，出现「剪刀差」——<b>数值类 VLM 综合 F1 0.963</b>（测量值 0.923、GD&amp;T 0.965、粗糙度 1.0，幻觉率 0.067），而<b>文本类 VLM 综合 F1 仅 0.672</b>（标题栏 0.533、幻觉率 0.478）。</li>
+      <li><b>Drawing-Recode</b>（韩国忠南大学，arXiv:2607.27558）：交叉注意力 + 标注关联损失（AGL）把标注层显式绑定到几何层，MCD 改善 27.8%，无效输出从 20.31% 降至 0.97%。</li>
+      <li><b>Integration of Deep Learning for Automatic Recognition of 2D Engineering Drawings</b>（Machines 2023）：视图检测 → 标注组检测 → 标注检测 → 字符识别的四阶段管线，覆盖 GD&amp;T 特征控制框、基准、尺寸标注。</li>
+    </ul>
+    <h3>5.2 VLM 做加工特征识别（含 3D 上游对照）</h3>
+    <ul>
+      <li><b>Evaluating VLMs for Engineering Design</b>（Springer, 2025）：用 MFCAD 数据集评测 GPT-4V 的加工特征识别（15 类特征），并发布 1,000+ 查询的基准测试集；</li>
+      <li><b>Image2Feature</b>（IJPEM, 2026）：从 3D CAD 模型投影/剖切图像检测倒角、圆角、孔、锥面，射线投射映射回 B-rep 面 + 几何验证规则，15 个测试模型平均 <b>F1 91.3%</b>，后处理识别沉孔、锥沉孔、同轴孔等复合特征；</li>
+      <li><b>【上游对照】MFR 深度学习线</b>：FeatureNet（CAD 2018）、BRepNet、Hierarchical CADNet（CAD 2022）、AAGNet、SSGCN——均在 <b>3D B-rep/点云</b>上做特征识别，<b>不处理 2D 图纸</b>，仅作为「加工特征」概念与分类体系的参考来源。</li>
+    </ul>
+    <h3>5.3 端到端 VLM 与领域适配</h3>
+    <ul>
+      <li><b>Qianfan-OCR</b>（百度千帆，4B）：端到端文档模型，OmniDocBench v1.5 得分 93.12，居端到端模型首位——验证「端到端优于级联」；</li>
+      <li><b>Qwen3-VL / GLM-4V / 千问3.5-2B 等</b>：工业界已用于 CAD 图纸尺寸标注识别、公差解析、材料属性提取，支持自然语言定向抽取（如「只提取所有形位公差标注」）；</li>
+      <li><b>SynthPID</b>（2026）：针对 P&amp;ID 公开标注仅 12 张的困境，用真实管线拓扑作种子生成 665 张合成图，边关系检测 mAP 达 63.8%（模板式合成仅约 33%）。</li>
+    </ul>
+    <h3>5.4 综述</h3>
+    <ul>
+      <li><b>Moreno-García et al.</b>（Artificial Intelligence Review 2024）：工程图纸数字化深度学习综述，指出数据稀缺与类别不平衡两大痛点；</li>
+      <li><b>Geometric Deep Learning for CAD: A Survey</b>（IEEE Access 2025）：B-Rep/草图理解与生成的基准数据集全景。</li>
+    </ul>
+  </div>
+</section>
+<section id="s6">
+  <h2><span class="no">06</span>VLM 的真实能力边界</h2>
+  <div class="card">
+    <div class="warn"><p>⚠️ <b>结论先行</b>：当前 VLM 在图纸理解上呈现明显的「<b>数值强、文本弱、符号弱</b>」梯度，尚未达到工业级可靠性，需配合人工复核。</p></div>
+    <table>
+      <tr><th>能力维度</th><th>实测水平</th><th>来源</th></tr>
+      <tr><td>数值类标注（尺寸/GD&amp;T/粗糙度）</td><td>F1 0.92–1.0，幻觉率 0.067</td><td>A*STAR 多阶段框架</td></tr>
+      <tr><td>文本类字段（标题栏/注释）</td><td>F1 0.53–0.81，幻觉率 0.32–0.48</td><td>同上</td></tr>
+      <tr><td>符号级理解（数门窗/识别符号）</td><td>准确率仅 0.40–0.55</td><td>AECV-Bench</td></tr>
+      <tr><td>OCR 类文本问答</td><td>准确率可达 0.95</td><td>AECV-Bench</td></tr>
+      <tr><td>零件「找到」vs「读对」</td><td>Recall 0.61–0.87 vs Token F1 0.03–0.18</td><td>Enginuity 基准</td></tr>
+      <tr><td>通用文档模型迁移到图纸</td><td>mAP50 仅 0.675（领域内训练可达 0.949）</td><td>EC3 2026 基准</td></tr>
+    </table>
+    <div class="info"><p>💡 <b>为什么纯 VLM 不够</b>（多篇论文共识）：尺寸线/引出线的对应关系需像素级精度；公差符号细微差异需专门几何特征提取；视图投影关系（长对正、高平齐、宽相等）需规则校验；材料牌号/热处理规范需领域知识库匹配。<b>主流方案 = VLM 理解上下文 + 传统视觉/规则模块保证定位与格式约束</b>。</p></div>
+    <h3>VLM 典型失败模式</h3>
+    <ul>
+      <li><b>尺寸线交叉/引出线归属错误</b>：一条尺寸线指向多个几何对象时，模型易张冠李戴；</li>
+      <li><b>公差符号混淆</b>：圆柱度、同轴度、圆跳动等符号视觉相似，细微差异易误判；</li>
+      <li><b>视图投影关系错误</b>：主视图与俯视图的「长对正、高平齐」关系需规则校验，纯 VLM 常出错；</li>
+      <li><b>标题栏幻觉</b>：文本类字段幻觉率高达 0.478（A*STAR 实测），易编造不存在的图号/日期；</li>
+      <li><b>特征归属缺失</b>：能识别出「Φ12H7」和「孔」，但无法正确绑定「哪个孔配哪个公差」。</li>
+    </ul>
+    <h3>核心难点：尺寸-特征关联</h3>
+    <p>这是本任务最关键的挑战——<b>让每个数值知道自己描述的是哪段几何</b>。Drawing-Recode 提出的标注关联损失（AGL）是当前少见的显式解法：用交叉注意力把标注层特征绑定到几何层特征，使无效输出从 20.31% 降至 0.97%。</p>
+    <h3>落地建议</h3>
+    <ul>
+      <li><b>架构</b>：旋转框检测（YOLOv11-obb 类）先切标注贴片 → 微调 VLM 解析为 JSON → 规则引擎后处理降幻觉；</li>
+      <li><b>模型选择</b>：Donut 类严格解码模型在结构化输出上显著优于自由生成模型（幻觉率差近一倍）；</li>
+      <li><b>评测</b>：必须分层报告「检测 mAP + 字段 F1 + 幻觉率 + 证据定位」，单一指标会严重高估能力；</li>
+      <li><b>数据</b>：公开真实机械图纸稀缺，建议自建标注（CVAT）+ 合成数据（拓扑感知生成）双轨并行。</li>
+    </ul>
+  </div>
+  <a class="back" href="../../index.html">← 返回知识库首页</a>
+</section>
+</main>
+<footer>Generated by <a href="https://www.aipyaipy.com" target="_blank">AiPy</a> · 本地数据处理，不上传任何信息</footer>
+</body>
+</html>
