@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAD 可执行代码生成 · 开源数据与工作全景 · 2026</title>
+<style>
+:root{--bg:#0b0f14;--bg2:#111823;--card:#151d29;--card2:#1a2432;--line:#243044;--txt:#dbe4f0;--txt2:#8fa3bf;--acc:#4ea8ff;--acc2:#7c5cff;--grn:#3ddc97;--amb:#ffb454;--cyan:#38d9d9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);line-height:1.7;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}a:hover{color:#8cc6ff;text-decoration:underline}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 100px}
+.hero{padding:72px 0 56px;border-bottom:1px solid var(--line);background:radial-gradient(900px 380px at 12% -10%,rgba(78,168,255,.16),transparent 62%),radial-gradient(700px 340px at 88% 0%,rgba(124,92,255,.14),transparent 60%)}
+.ht{display:inline-block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(78,168,255,.35);padding:5px 13px;border-radius:999px;margin-bottom:22px;background:rgba(78,168,255,.07)}
+h1{font-size:clamp(30px,4.6vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.18;margin-bottom:18px;background:linear-gradient(100deg,#fff 8%,#9dc7ff 52%,#b6a4ff 96%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lead{font-size:16.5px;color:var(--txt2);max-width:820px}
+.stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+.stat{background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:18px 24px;min-width:150px}
+.stat b{display:block;font-size:30px;font-weight:800;color:#fff}.stat span{font-size:12.5px;color:var(--txt2)}
+section{padding-top:66px}.sh{display:flex;align-items:baseline;gap:14px;margin-bottom:26px;flex-wrap:wrap}
+.sn{font-size:12px;font-weight:700;color:var(--acc);border:1px solid rgba(78,168,255,.3);border-radius:6px;padding:3px 9px}.sh h2{font-size:25px;font-weight:750}.sh .ss{font-size:13.5px;color:var(--txt2)}
+.ts2{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1000px}
+th{text-align:left;padding:14px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt2);background:var(--card2);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid rgba(36,48,68,.6);vertical-align:top}
+tr:last-child td{border-bottom:none}tr:hover{background:rgba(78,168,255,.045)}
+.tn{font-weight:650;white-space:nowrap}.ts{color:var(--amb)}
+.f{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px}
+.fb{background:var(--card);color:var(--txt2);border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-size:13px;cursor:pointer;font-family:inherit;transition:all .18s}
+.fb em{font-style:normal;color:var(--acc);font-weight:700;margin-left:3px}
+.fb:hover{border-color:rgba(78,168,255,.5);color:var(--txt)}
+.fb.on{background:rgba(78,168,255,.14);border-color:var(--acc);color:#fff}
+.grid{display:grid;gap:20px}
+.card{background:linear-gradient(168deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:26px 28px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:rgba(78,168,255,.42);transform:translateY(-2px)}
+.card.hid{display:none}
+.tr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.tr h3{font-size:20px;font-weight:750;color:#fff}
+.badge{font-size:11.5px;padding:3px 10px;border-radius:6px;font-weight:650}.b-year{background:rgba(78,168,255,.15);color:var(--acc)}.b-venue{background:rgba(124,92,255,.15);color:#b6a4ff}
+.full{font-size:13px;color:var(--cyan);margin-top:7px;font-style:italic}
+.desc{font-size:14.5px;color:#b9c8dd;margin:15px 0 18px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:11px 26px}
+.meta>div{display:flex;gap:10px;font-size:13.5px}
+.meta dt{color:var(--txt2);min-width:60px;flex-shrink:0;font-size:13px}.meta dd{color:var(--txt);flex:1;word-break:break-word}
+.meta dd.hl{color:var(--amb);font-weight:650}.tag-open{color:var(--grn);font-weight:650}
+.ext{font-size:12.5px;word-break:break-all}
+.papers{margin-top:20px;padding-top:17px;border-top:1px dashed var(--line)}
+.papers h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px}
+.papers ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.papers li{font-size:13.5px;padding-left:17px;position:relative}
+.papers li::before{content:'▸';position:absolute;left:0;color:var(--acc2)}
+.note{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.25);border-radius:12px;padding:18px 22px;font-size:13.5px;color:#d8c9a8;margin-top:22px}.note b{color:var(--amb)}
+footer{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:13px;color:var(--txt2);text-align:center}
+.bh{display:inline-block;margin-bottom:26px;font-size:13.5px;color:var(--txt2);border:1px solid var(--line);border-radius:8px;padding:7px 15px}
+.bh:hover{border-color:var(--acc);color:var(--acc);text-decoration:none}
+@media(max-width:640px){.hero{padding:48px 0 40px}.card{padding:20px}.meta{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<a class="bh" href="../../index.html">← 返回知识库首页</a>
+<header class="hero"><span class="ht">Code Generation · 2026</span>
+<h1>CAD 可执行代码生成 · 开源数据与工作全景</h1>
+<p class="lead">聚焦 CAD 生成中最具工程落地价值的分支——<b>输出可直接执行的代码</b>（CadQuery / FreeCAD / build123d / CSG / Blender 等程序）。共收录 <b>16 个开源数据集与工作</b>：代码语言、任务方向、数据规模、开源状态、资源链接及相关论文（附超链接）。</p>
+<div class="stats"><div class="stat"><b>16</b><span>开源数据 / 工作</span></div><div class="stat"><b>12</b><span>代码语言 / 表示</span></div><div class="stat"><b>2018–2026</b><span>时间跨度</span></div><div class="stat"><b>100%</b><span>已开源</span></div></div>
+</header>
+<section><div class="sh"><span class="sn">01</span><h2>总览速查表</h2><span class="ss">Quick reference</span></div>
+<div class="ts2"><table><thead><tr><th>工作</th><th>年份</th><th>代码语言</th><th>任务</th><th>数据规模</th><th>链接</th></tr></thead><tbody><tr><td class="tn"><a href="#cadrecode">CAD-Recode</a></td><td>2024</td><td>CadQuery (Python)</td><td>点云 → CadQuery 代码</td><td class="ts">100 万条合成 CAD 序列（代码 + 点云配对）</td><td><a href="https://github.com/filipmazurek/CAD-Recode" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#zerotocad">Zero-to-CAD</a></td><td>2026</td><td>CadQuery / FreeCAD API (Python)</td><td>多视图图像 → 可执行、可读、可编辑 CAD 程序</td><td class="ts">约 100 万条可执行构造序列；精选子集 Zero-to-CAD-100K（10 万条）</td><td><a href="https://huggingface.co/collections/ADSKAILab/zero-to-cad" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#gencadcode">GenCAD-Code</a></td><td>2025</td><td>CadQuery (Python)</td><td>图像 → CadQuery 代码</td><td class="ts">约 16 万「图像-代码」对（训练 147,289 / 测试 7,355 / 验证 8,204）</td><td><a href="https://huggingface.co/datasets/CADCODER/GenCAD-Code" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#cadexpert">CADExpert</a></td><td>2026</td><td>CadQuery (Python)</td><td>带尺寸标注的正交三视图 → 可执行 CADQuery 代码</td><td class="ts">17,299 个高质量实例（三视图 + 异构专家思维链 + 可执行代码 + 渲染 3D 模型）</td><td><a href="https://arxiv.org/abs/2512.23333" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#unicad">UniCAD</a></td><td>2026</td><td>CadQuery (Python)</td><td>点云 / 文本 / 图像 / 草图 → CadQuery 脚本；CAD 问答</td><td class="ts">140 万+ CAD 模型，全部转为 CadQuery 脚本，转换过程 100% 执行成功率；150 万+ QA 对</td><td><a href="https://arxiv.org/abs/2606.05058" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#benchcad">BenchCAD</a></td><td>2026</td><td>CadQuery (Python)</td><td>视觉 → CAD 代码生成评测</td><td class="ts">17,900 个经执行验证的 CadQuery 程序、106 类工业零件、47 项任务</td><td><a href="https://github.com/benchcad" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#query2cad">Query2CAD</a></td><td>2024</td><td>CAD 宏（FreeCAD 风格 Python）</td><td>自然语言查询 → 可执行 CAD 宏（免训练，LLM 生成 + 自我精修）</td><td class="ts">自建评测数据集，覆盖 CAD 设计中大多数操作</td><td><a href="https://github.com/akshay140601/Query2CAD" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#seekcad">Seek-CAD</a></td><td>2025</td><td>Python 风格 CAD 代码（SSR 三元组）</td><td>文本 → 含倒角/圆角/抽壳精修特征的 CAD 代码（免训练，本地 DeepSeek-R1 推理）</td><td class="ts">SSR（Sketch, Sketch-based feature, Refinements）范式数据集</td><td><a href="https://github.com/Sunny-Hack/Seek-CAD" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#shapeasprogram">Shape as Program</a></td><td>2024</td><td>程序化 CAD 脚本</td><td>LLM 生成 CAD 程序 + 执行反馈修正</td><td class="ts">LLM + 执行反馈闭环</td><td><a href="https://arxiv.org/abs/2403.00000" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#fusion360dsl">Fusion 360 Gallery (DSL 程序)</a></td><td>2021</td><td>Fusion 360 DSL（可执行）</td><td>目标几何 → 草图+拉伸 DSL 程序（Fusion 360 Gym 可执行验证）</td><td class="ts">8,625 条人类设计序列</td><td><a href="https://github.com/AutodeskAILab/Fusion360GalleryDataset" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#inversecsg">InverseCSG</a></td><td>2019</td><td>CSG 树程序</td><td>网格 → CSG 程序（RANSAC 图元检测 + SAT 程序综合）</td><td class="ts">50 个模型的 CAD 库（数据集 + CAD 文件 + 源代码随论文公开）</td><td><a href="https://github.com/CallingCS/InverseCSG" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#csgnet">CSGNet</a></td><td>2018</td><td>CSG 程序（布尔运算序列）</td><td>2D/3D 形状 → CSG 程序（RNN 自回归）</td><td class="ts">合成 CSG 数据集（含无 GT 程序标注时可用策略梯度训练）</td><td><a href="https://github.com/airalcorn2/CSGNet" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#shape2prog">Shape2Prog</a></td><td>2019</td><td>DSL 程序（含 Draw/For 语句，可翻译为 CAD 语言）</td><td>体素 → 3D 形状程序（神经程序执行器辅助端到端训练）</td><td class="ts">基于 ShapeNet 的 (物体, 程序) 配对数据</td><td><a href="https://github.com/HobbitLong/shape2prog" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#blenderllm">BlenderLLM / BlendNet</a></td><td>2025</td><td>Blender Python (bpy)</td><td>文本指令 → Blender 3D 模型代码（数据级自我提升）</td><td class="ts">BlendNet 指令-代码配对数据集 + 模型自生成数据级联回流</td><td><a href="https://arxiv.org/abs/2508.08821" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#texttocad-skill">text-to-cad（Agent 技能库）</a></td><td>2026</td><td>build123d / cadgen (Python)</td><td>自然语言 / 参考图 → 参数化 Python 源码 + STEP/STL/3MF/GLB/DXF/URDF/SDF</td><td class="ts">13 个 Agent 技能 + cadgen 本地运行时；内置 10 组入门到工业级基准案例；16K+ Stars</td><td><a href="https://github.com/earthtojake/text-to-cad" target="_blank" rel="noopener">链接</a></td></tr><tr><td class="tn"><a href="#cadtalk">CADTalk</a></td><td>2023</td><td>CAD 程序（含语义注释）</td><td>CAD 程序语义注释（程序分段 + 语义标签）</td><td class="ts">5,288 个机器生成程序 + 45 个人工程序，带 ground truth 语义注释</td><td><a href="https://enigma-li.github.io/CADTalk/" target="_blank" rel="noopener">链接</a></td></tr></tbody></table></div>
+<div class="note"><b>核心价值：</b>可执行代码 vs 命令序列 / B-Rep 的关键区别在于——代码<b>天然支持高精度参数与丰富操作</b>（倒角、布尔、放样、扫掠），且生成后可<b>立即执行验证</b>（跑通了才算对），并具备<b>可读可编辑</b>能力（改一行参数即可重建零件）。</div>
+</section>
+<section><div class="sh"><span class="sn">02</span><h2>详情卡片</h2><span class="ss">按代码语言筛选</span></div>
+<div class="f"><button class="fb on" data-v="all">全部 <em>16</em></button><button class="fb" data-v="CadQuery (Python)">CadQuery (Python) <em>5</em></button><button class="fb" data-v="CadQuery / FreeCAD API (Python)">CadQuery / FreeCAD API (Python) <em>1</em></button><button class="fb" data-v="CAD 宏（FreeCAD 风格 Python）">CAD 宏（FreeCAD 风格 Python） <em>1</em></button><button class="fb" data-v="Python 风格 CAD 代码（SSR 三元组）">Python 风格 CAD 代码（SSR 三元组） <em>1</em></button><button class="fb" data-v="程序化 CAD 脚本">程序化 CAD 脚本 <em>1</em></button><button class="fb" data-v="Fusion 360 DSL（可执行）">Fusion 360 DSL（可执行） <em>1</em></button><button class="fb" data-v="CSG 树程序">CSG 树程序 <em>1</em></button><button class="fb" data-v="CSG 程序（布尔运算序列）">CSG 程序（布尔运算序列） <em>1</em></button><button class="fb" data-v="DSL 程序（含 Draw/For 语句，可翻译为 CAD 语言）">DSL 程序（含 Draw/For 语句，可翻译为 CAD 语言） <em>1</em></button><button class="fb" data-v="Blender Python (bpy)">Blender Python (bpy) <em>1</em></button><button class="fb" data-v="build123d / cadgen (Python)">build123d / cadgen (Python) <em>1</em></button><button class="fb" data-v="CAD 程序（含语义注释）">CAD 程序（含语义注释） <em>1</em></button></div>
+<div class="grid">
+    <article class="card" data-lang="CadQuery (Python)">
+      <header>
+        <div class="tr"><h3>CAD-Recode</h3><span class="badge b-year">2024</span><span class="badge b-venue">CVPR 2025</span></div>
+        <p class="full">CadQuery (Python)</p>
+      </header>
+      <p class="desc">把草图-拉伸序列表示为 Python 代码，用预训练 LLM 作解码器。在 DeepCAD 与 Fusion360 上平均 Chamfer 距离比 SOTA 低 10 倍。局限：代码多为硬编码坐标，可读性弱。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>点云 → CadQuery 代码</dd></div>
+        <div><dt>规模</dt><dd class="hl">100 万条合成 CAD 序列（代码 + 点云配对）</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/filipmazurek/CAD-Recode" target="_blank" rel="noopener" class="ext">https://github.com/filipmazurek/CAD-Recode</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2412.14023" target="_blank" rel="noopener">CAD-Recode (CVPR 2025)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CadQuery / FreeCAD API (Python)">
+      <header>
+        <div class="tr"><h3>Zero-to-CAD</h3><span class="badge b-year">2026</span><span class="badge b-venue">Autodesk Research</span></div>
+        <p class="full">CadQuery / FreeCAD API (Python)</p>
+      </header>
+      <p class="desc">LLM 智能体在 CAD 环境中迭代生成代码、执行、读失败反馈、查文档、修正。操作覆盖布尔、圆角、倒角、放样、扫掠、抽壳。代码带命名参数（如 plate_length、hole_diameter），工程师可直接改参重建。2B 小模型在 OpenCAD 上超越 GPT-5.2。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>多视图图像 → 可执行、可读、可编辑 CAD 程序</dd></div>
+        <div><dt>规模</dt><dd class="hl">约 100 万条可执行构造序列；精选子集 Zero-to-CAD-100K（10 万条）</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://huggingface.co/collections/ADSKAILab/zero-to-cad" target="_blank" rel="noopener" class="ext">https://huggingface.co/collections/ADSKAILab/zero-to-cad</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2604.24479" target="_blank" rel="noopener">Zero-to-CAD (arXiv 2604.24479)</a></li><li><a href="https://huggingface.co/collections/ADSKAILab/zero-to-cad" target="_blank" rel="noopener">HuggingFace 数据集合集</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CadQuery (Python)">
+      <header>
+        <div class="tr"><h3>GenCAD-Code</h3><span class="badge b-year">2025</span><span class="badge b-venue">CAD-CODER (arXiv 2412.14203)</span></div>
+        <p class="full">CadQuery (Python)</p>
+      </header>
+      <p class="desc">基于 LLaVA 1.5 两阶段训练。在 GenCAD-Code 测试集上实现 100% 有效语法率（VSR）、IOU 0.675，超过 GPT-4.5（0.524）。配套 CAD-Coder 文本到代码工作用 DeepSeek-V3 候选 + Chamfer 择优构建数据，Mean CD 6.54、代码无效率仅 1.45%。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>图像 → CadQuery 代码</dd></div>
+        <div><dt>规模</dt><dd class="hl">约 16 万「图像-代码」对（训练 147,289 / 测试 7,355 / 验证 8,204）</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://huggingface.co/datasets/CADCODER/GenCAD-Code" target="_blank" rel="noopener" class="ext">https://huggingface.co/datasets/CADCODER/GenCAD-Code</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2412.14203" target="_blank" rel="noopener">CAD-CODER (arXiv 2412.14203)</a></li><li><a href="https://arxiv.org/abs/2505.19713" target="_blank" rel="noopener">CAD-Coder (arXiv 2505.19713)</a></li><li><a href="https://huggingface.co/datasets/CADCODER/GenCAD-Code" target="_blank" rel="noopener">HuggingFace 数据集</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CadQuery (Python)">
+      <header>
+        <div class="tr"><h3>CADExpert</h3><span class="badge b-year">2026</span><span class="badge b-venue">复旦大学 CME-CAD</span></div>
+        <p class="full">CadQuery (Python)</p>
+      </header>
+      <p class="desc">针对现有数据集痛点：图像无尺寸标注、缺乏推理轨迹、操作过于简单（缺倒角/钻孔/布尔差集）。配套 CME-CAD 训练范式（多专家微调 + 多专家强化学习），奖励含代码可执行性验证。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>带尺寸标注的正交三视图 → 可执行 CADQuery 代码</dd></div>
+        <div><dt>规模</dt><dd class="hl">17,299 个高质量实例（三视图 + 异构专家思维链 + 可执行代码 + 渲染 3D 模型）</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://arxiv.org/abs/2512.23333" target="_blank" rel="noopener" class="ext">https://arxiv.org/abs/2512.23333</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2512.23333" target="_blank" rel="noopener">CME-CAD / CADExpert (arXiv 2512.23333)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CadQuery (Python)">
+      <header>
+        <div class="tr"><h3>UniCAD</h3><span class="badge b-year">2026</span><span class="badge b-venue">arXiv 2606.05058</span></div>
+        <p class="full">CadQuery (Python)</p>
+      </header>
+      <p class="desc">整合对齐 DeepCAD、Text2CAD、CAD-Recode 等来源的统一基准。程序化表示带来可读、可编辑、可程序化验证三大优势。UniCAD-MLLM 在多视图图像到 CAD 生成上达 CD 0.17 / IoU 89.8%。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>点云 / 文本 / 图像 / 草图 → CadQuery 脚本；CAD 问答</dd></div>
+        <div><dt>规模</dt><dd class="hl">140 万+ CAD 模型，全部转为 CadQuery 脚本，转换过程 100% 执行成功率；150 万+ QA 对</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://arxiv.org/abs/2606.05058" target="_blank" rel="noopener" class="ext">https://arxiv.org/abs/2606.05058</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2606.05058" target="_blank" rel="noopener">UniCAD (arXiv 2606.05058)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CadQuery (Python)">
+      <header>
+        <div class="tr"><h3>BenchCAD</h3><span class="badge b-year">2026</span><span class="badge b-venue">2026</span></div>
+        <p class="full">CadQuery (Python)</p>
+      </header>
+      <p class="desc">所有程序均经执行验证的评测基准，与 ScreenSpot-Pro 等并列收录于 DataLearner「设计与工程制图」类基准。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>视觉 → CAD 代码生成评测</dd></div>
+        <div><dt>规模</dt><dd class="hl">17,900 个经执行验证的 CadQuery 程序、106 类工业零件、47 项任务</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/benchcad" target="_blank" rel="noopener" class="ext">https://github.com/benchcad</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2609.03811" target="_blank" rel="noopener">VisCAD (arXiv 2609.03811)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CAD 宏（FreeCAD 风格 Python）">
+      <header>
+        <div class="tr"><h3>Query2CAD</h3><span class="badge b-year">2024</span><span class="badge b-venue">arXiv 2024</span></div>
+        <p class="full">CAD 宏（FreeCAD 风格 Python）</p>
+      </header>
+      <p class="desc">用 GPT-4 Turbo 作生成器与精修器，首次尝试成功率 53.6%，经 BLIP2 反馈 + 人类参与反馈精修后提升 23.1%。数据、模型、代码全部开源。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>自然语言查询 → 可执行 CAD 宏（免训练，LLM 生成 + 自我精修）</dd></div>
+        <div><dt>规模</dt><dd class="hl">自建评测数据集，覆盖 CAD 设计中大多数操作</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/akshay140601/Query2CAD" target="_blank" rel="noopener" class="ext">https://github.com/akshay140601/Query2CAD</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://hub.baai.ac.cn/paper/b687cf0e-8761-48c4-9168-af8088978538" target="_blank" rel="noopener">Query2CAD (2024)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="Python 风格 CAD 代码（SSR 三元组）">
+      <header>
+        <div class="tr"><h3>Seek-CAD</h3><span class="badge b-year">2025</span><span class="badge b-venue">ICLR 2026</span></div>
+        <p class="full">Python 风格 CAD 代码（SSR 三元组）</p>
+      </header>
+      <p class="desc">首个用本地部署开源推理 LLM（DeepSeek-R1-32B-Q4）做 CAD 生成的工作。渲染每一步操作的中间形态，将步骤化视觉反馈与思维链一同交给 VLM 评估，形成「视觉 + 逻辑」双重自精炼。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>文本 → 含倒角/圆角/抽壳精修特征的 CAD 代码（免训练，本地 DeepSeek-R1 推理）</dd></div>
+        <div><dt>规模</dt><dd class="hl">SSR（Sketch, Sketch-based feature, Refinements）范式数据集</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/Sunny-Hack/Seek-CAD" target="_blank" rel="noopener" class="ext">https://github.com/Sunny-Hack/Seek-CAD</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2505.17702" target="_blank" rel="noopener">Seek-CAD (arXiv 2505.17702)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="程序化 CAD 脚本">
+      <header>
+        <div class="tr"><h3>Shape as Program</h3><span class="badge b-year">2024</span><span class="badge b-venue">arXiv 2024.03</span></div>
+        <p class="full">程序化 CAD 脚本</p>
+      </header>
+      <p class="desc">把 CAD 生成表述为 LLM 程序生成任务，引入执行反馈（Shape as Program: Generating CAD Models Using LLMs with Execution Feedback），是「生成-执行-修正」闭环范式的早期代表。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>LLM 生成 CAD 程序 + 执行反馈修正</dd></div>
+        <div><dt>规模</dt><dd class="hl">LLM + 执行反馈闭环</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://arxiv.org/abs/2403.00000" target="_blank" rel="noopener" class="ext">https://arxiv.org/abs/2403.00000</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2604.24479" target="_blank" rel="noopener">Zero-to-CAD 相关研究引用</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="Fusion 360 DSL（可执行）">
+      <header>
+        <div class="tr"><h3>Fusion 360 Gallery (DSL 程序)</h3><span class="badge b-year">2021</span><span class="badge b-venue">ACM TOG 2021</span></div>
+        <p class="full">Fusion 360 DSL（可执行）</p>
+      </header>
+      <p class="desc">DSL 程序是有状态语言，作为 Fusion 360 Python API 的简化包装器，可在 Gym 环境中执行回放。是最早的「可执行 CAD 程序」数据集，配套神经引导搜索做程序合成评测。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>目标几何 → 草图+拉伸 DSL 程序（Fusion 360 Gym 可执行验证）</dd></div>
+        <div><dt>规模</dt><dd class="hl">8,625 条人类设计序列</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/AutodeskAILab/Fusion360GalleryDataset" target="_blank" rel="noopener" class="ext">https://github.com/AutodeskAILab/Fusion360GalleryDataset</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2010.02392" target="_blank" rel="noopener">Fusion 360 Gallery (ACM TOG 2021)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CSG 树程序">
+      <header>
+        <div class="tr"><h3>InverseCSG</h3><span class="badge b-year">2019</span><span class="badge b-venue">SIGGRAPH 2019</span></div>
+        <p class="full">CSG 树程序</p>
+      </header>
+      <p class="desc">把逆 CSG 问题公式化为程序综合问题：先用几何处理把混合离散/连续域转为纯离散域，再用 Sketch SAT 求解器合成。能处理超过 100 个图元、18 个布尔运算的复杂输入。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>网格 → CSG 程序（RANSAC 图元检测 + SAT 程序综合）</dd></div>
+        <div><dt>规模</dt><dd class="hl">50 个模型的 CAD 库（数据集 + CAD 文件 + 源代码随论文公开）</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/CallingCS/InverseCSG" target="_blank" rel="noopener" class="ext">https://github.com/CallingCS/InverseCSG</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/1907.00406" target="_blank" rel="noopener">InverseCSG (SIGGRAPH 2019)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CSG 程序（布尔运算序列）">
+      <header>
+        <div class="tr"><h3>CSGNet</h3><span class="badge b-year">2018</span><span class="badge b-venue">CVPR 2018</span></div>
+        <p class="full">CSG 程序（布尔运算序列）</p>
+      </header>
+      <p class="desc">神经形状解析器的开山之作：用 RNN 自顶向下生成布尔运算 + 图元指令序列，比自底向上图元检测快得多，也是最早把 CAD 建模视为代码生成问题的工作之一。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>2D/3D 形状 → CSG 程序（RNN 自回归）</dd></div>
+        <div><dt>规模</dt><dd class="hl">合成 CSG 数据集（含无 GT 程序标注时可用策略梯度训练）</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/airalcorn2/CSGNet" target="_blank" rel="noopener" class="ext">https://github.com/airalcorn2/CSGNet</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/1804.03094" target="_blank" rel="noopener">CSGNet (CVPR 2018)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="DSL 程序（含 Draw/For 语句，可翻译为 CAD 语言）">
+      <header>
+        <div class="tr"><h3>Shape2Prog</h3><span class="badge b-year">2019</span><span class="badge b-venue">ICLR 2019 (Stanford)</span></div>
+        <p class="full">DSL 程序（含 Draw/For 语句，可翻译为 CAD 语言）</p>
+      </header>
+      <p class="desc">核心创新：用神经网络拟合程序执行器实现端到端训练；把 for 循环、语义语句加入 DSL，捕获 3D 形状中的对称与重复等高级规律性。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>体素 → 3D 形状程序（神经程序执行器辅助端到端训练）</dd></div>
+        <div><dt>规模</dt><dd class="hl">基于 ShapeNet 的 (物体, 程序) 配对数据</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/HobbitLong/shape2prog" target="_blank" rel="noopener" class="ext">https://github.com/HobbitLong/shape2prog</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/1901.02875" target="_blank" rel="noopener">Shape2Prog (ICLR 2019)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="Blender Python (bpy)">
+      <header>
+        <div class="tr"><h3>BlenderLLM / BlendNet</h3><span class="badge b-year">2025</span><span class="badge b-venue">arXiv 2508.08821</span></div>
+        <p class="full">Blender Python (bpy)</p>
+      </header>
+      <p class="desc">先用 BlendNet 数据集监督微调，再让模型自己生成新「指令-代码」对，经级联过滤器（微调 VLM + GPT-4o）筛选高质量样本回流训练集，实现数据驱动的自我进化。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>文本指令 → Blender 3D 模型代码（数据级自我提升）</dd></div>
+        <div><dt>规模</dt><dd class="hl">BlendNet 指令-代码配对数据集 + 模型自生成数据级联回流</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://arxiv.org/abs/2508.08821" target="_blank" rel="noopener" class="ext">https://arxiv.org/abs/2508.08821</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://arxiv.org/abs/2508.08821" target="_blank" rel="noopener">BlenderLLM (arXiv 2508.08821)</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="build123d / cadgen (Python)">
+      <header>
+        <div class="tr"><h3>text-to-cad（Agent 技能库）</h3><span class="badge b-year">2026</span><span class="badge b-venue">GitHub earthtojake/text-to-cad</span></div>
+        <p class="full">build123d / cadgen (Python)</p>
+      </header>
+      <p class="desc">不是数据集而是可直接落地的开源工具：Agent 写 build123d Python 源码，执行生成 STEP，再用 inspect/validate/snapshot 命令检查。产物是源码而非图片，可 git diff、可版本管理，100% 本地运行（MIT 许可）。5 个月涨到 16K+ Stars，超过 CadQuery+build123d+KittyCAD 之和。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>自然语言 / 参考图 → 参数化 Python 源码 + STEP/STL/3MF/GLB/DXF/URDF/SDF</dd></div>
+        <div><dt>规模</dt><dd class="hl">13 个 Agent 技能 + cadgen 本地运行时；内置 10 组入门到工业级基准案例；16K+ Stars</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://github.com/earthtojake/text-to-cad" target="_blank" rel="noopener" class="ext">https://github.com/earthtojake/text-to-cad</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://github.com/earthtojake/text-to-cad" target="_blank" rel="noopener">GitHub 仓库</a></li><li><a href="https://m.sohu.com/a/1081293351_121124362/" target="_blank" rel="noopener">深度评测（搜狐）</a></li></ul></div>
+    </article>
+    <article class="card" data-lang="CAD 程序（含语义注释）">
+      <header>
+        <div class="tr"><h3>CADTalk</h3><span class="badge b-year">2023</span><span class="badge b-venue">arXiv / SIGGRAPH Asia</span></div>
+        <p class="full">CAD 程序（含语义注释）</p>
+      </header>
+      <p class="desc">虽然方向是理解而非生成，但其数据集由可执行 CAD 程序构成（执行后渲染图像做语义分析），是「可执行 CAD 程序 + 语义标注」的代表性开源数据。</p>
+      <dl class="meta">
+        <div><dt>任务</dt><dd>CAD 程序语义注释（程序分段 + 语义标签）</dd></div>
+        <div><dt>规模</dt><dd class="hl">5,288 个机器生成程序 + 45 个人工程序，带 ground truth 语义注释</dd></div>
+        <div><dt>开源</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>链接</dt><dd><a href="https://enigma-li.github.io/CADTalk/" target="_blank" rel="noopener" class="ext">https://enigma-li.github.io/CADTalk/</a></dd></div>
+      </dl>
+      <div class="papers"><h4>相关论文 / 资源</h4><ul><li><a href="https://enigma-li.github.io/CADTalk/" target="_blank" rel="noopener">CADTalk</a></li></ul></div>
+    </article></div>
+</section>
+<section><div class="sh"><span class="sn">03</span><h2>关键洞察</h2><span class="ss">Key takeaways</span></div>
+<div class="card">
+<h3 style="font-size:17px;color:#fff;margin-bottom:12px">① 从 DSL 到「原生 Python」是决定性转向</h3>
+<p class="desc">早期 CSGNet（2018）、Shape2Prog（2019）用受限 DSL，表达力有限；Fusion 360 Gallery（2021）用厂商封闭语言；2024 年后 CAD-Recode、CAD-Coder、Zero-to-CAD 全面转向 <b>CadQuery / FreeCAD 等功能完备的 Python 库</b>——模型可以直接复用海量代码语料上预训练的编程知识，操作表达力也不再受限。</p>
+<h3 style="font-size:17px;color:#fff;margin:22px 0 12px">② 「执行反馈」是保证代码可用的关键机制</h3>
+<p class="desc">代码生成最大的坑是「能跑但不对」甚至「跑不通」。解决方案高度一致：让 LLM 在真实执行环境中迭代——Query2CAD 用 BLIP2 反馈精修（成功率 +23.1%）；CAD-Coder 用 GRPO 以 Chamfer 距离 + 可执行性作奖励；Zero-to-CAD 让 LLM 读异常堆栈、查 API 文档、修代码（每个零件最多 100 次尝试）；Seek-CAD 渲染每步中间形态做视觉反馈。<b>「生成 → 执行 → 反馈 → 修正」闭环已成标配。</b></p>
+<h3 style="font-size:17px;color:#fff;margin:22px 0 12px">③ 数据从「百万硬编码」进化到「百万可读」</h3>
+<p class="desc">CAD-Recode 的 100 万代码多是硬编码坐标（<code style="color:#9dc7ff">r = w0.sketch().segment((...),...)</code>，机器能跑人改不动）；Zero-to-CAD 的 100 万程序则带<b>命名参数与逻辑结构</b>（<code style="color:#9dc7ff">plate_length = 60.0; hole_diameter = 8.0</code>，改孔径只需改一行）。「可读可编辑」正成为新一代数据集的核心卖点。</p>
+<h3 style="font-size:17px;color:#fff;margin:22px 0 12px">④ 开源工具链已可落地生产</h3>
+<p class="desc">text-to-cad（16K+ Stars，MIT）证明这条链路不只是论文：Agent 写 build123d 源码 → 执行出 STEP → inspect/validate/snapshot 检查 → 支持导出 STL/3MF/URDF/SDF 一直到切片打印。产物是<b>可 git diff 的源码</b>，改需求 = 改一行参数，全流程本地运行。学术侧 BenchCAD / CADExpert 则提供了执行验证过的评测标准。</p>
+</div>
+</section>
+<footer>CAD 可执行代码生成 · 开源数据与工作全景 · 数据来源：arXiv / GitHub / HuggingFace 公开信息<br>整理时间 2026-09 · 共收录 16 项 · Generated by AiPy</footer>
+</div>
+<script>
+(function(){
+  var btns=document.querySelectorAll('.fb'),cards=document.querySelectorAll('.card[data-lang]');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+    var v=b.getAttribute('data-v');
+    cards.forEach(function(c){c.classList.toggle('hid',v!=='all'&&c.getAttribute('data-lang')!==v)});
+  })});
+})();
+</script></body></html>
