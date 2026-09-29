@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAD Generation 开源数据集全景调研 · 2026</title>
+<style>
+:root {
+  --bg: #0b0f14;
+  --bg2: #111823;
+  --card: #151d29;
+  --card2: #1a2432;
+  --line: #243044;
+  --txt: #dbe4f0;
+  --txt2: #8fa3bf;
+  --txt3: #5f7a9e;
+  --accent: #4ea8ff;
+  --accent2: #7c5cff;
+  --green: #3ddc97;
+  --amber: #ffb454;
+  --red: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; transition: color .18s; }
+a:hover { color: #8cc6ff; text-decoration: underline; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 100px; }
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(900px 380px at 12% -10%, rgba(78,168,255,.16), transparent 62%),
+    radial-gradient(700px 340px at 88% 0%, rgba(124,92,255,.14), transparent 60%);
+}
+.hero-tag {
+  display: inline-block;
+  font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent); border: 1px solid rgba(78,168,255,.35);
+  padding: 5px 13px; border-radius: 999px; margin-bottom: 22px;
+  background: rgba(78,168,255,.07);
+}
+.hero h1 {
+  font-size: clamp(30px, 4.6vw, 50px); font-weight: 800; letter-spacing: -.02em;
+  line-height: 1.18; margin-bottom: 18px;
+  background: linear-gradient(100deg, #ffffff 8%, #9dc7ff 52%, #b6a4ff 96%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero p.lead { font-size: 16.5px; color: var(--txt2); max-width: 800px; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px; }
+.stat {
+  background: linear-gradient(160deg, var(--card), var(--bg2));
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 24px; min-width: 148px;
+}
+.stat b { display: block; font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+.stat span { font-size: 12.5px; color: var(--txt2); letter-spacing: .04em; }
+/* ---------- SECTION ---------- */
+section { padding-top: 66px; }
+.sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 26px; flex-wrap: wrap; }
+.sec-num {
+  font-size: 12px; font-weight: 700; color: var(--accent);
+  border: 1px solid rgba(78,168,255,.3); border-radius: 6px;
+  padding: 3px 9px; letter-spacing: .08em;
+}
+.sec-head h2 { font-size: 25px; font-weight: 750; letter-spacing: -.01em; }
+.sec-head .sec-sub { font-size: 13.5px; color: var(--txt2); }
+/* ---------- TIMELINE ---------- */
+.timeline { display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--line); margin-left: 8px; }
+.tl-item { position: relative; padding: 0 0 20px 26px; }
+.tl-item::before {
+  content: ''; position: absolute; left: -7px; top: 9px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--accent);
+}
+.tl-year { font-weight: 750; font-size: 15px; color: #fff; margin-right: 10px; }
+.tl-count { font-size: 12px; color: var(--accent); margin-right: 12px; }
+.tl-names { font-size: 13.5px; color: var(--txt2); }
+/* ---------- TABLE ---------- */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 940px; }
+thead th {
+  text-align: left; padding: 14px 16px; font-size: 12px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--txt2); background: var(--card2);
+  border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+tbody td { padding: 13px 16px; border-bottom: 1px solid rgba(36,48,68,.6); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(78,168,255,.045); }
+.t-name { font-weight: 650; white-space: nowrap; }
+.t-size { color: var(--amber); font-weight: 600; }
+.t-open { color: var(--green); font-weight: 700; text-align: center; }
+/* ---------- FILTER ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 26px; }
+.filter-btn {
+  background: var(--card); color: var(--txt2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 15px; font-size: 13px; cursor: pointer;
+  font-family: inherit; transition: all .18s;
+}
+.filter-btn em { font-style: normal; color: var(--accent); font-weight: 700; margin-left: 3px; }
+.filter-btn:hover { border-color: rgba(78,168,255,.5); color: var(--txt); }
+.filter-btn.active { background: rgba(78,168,255,.14); border-color: var(--accent); color: #fff; }
+/* ---------- CARDS ---------- */
+.grid { display: grid; gap: 20px; }
+.ds-card {
+  background: linear-gradient(168deg, var(--card), var(--bg2));
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: 26px 28px; transition: border-color .2s, transform .2s;
+}
+.ds-card:hover { border-color: rgba(78,168,255,.42); transform: translateY(-2px); }
+.ds-card.hidden { display: none; }
+.ds-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ds-title-row h3 { font-size: 20px; font-weight: 750; color: #fff; letter-spacing: -.01em; }
+.badge { font-size: 11.5px; padding: 3px 10px; border-radius: 6px; font-weight: 650; letter-spacing: .03em; }
+.badge-year { background: rgba(78,168,255,.15); color: var(--accent); }
+.badge-venue { background: rgba(124,92,255,.15); color: #b6a4ff; }
+.ds-full { font-size: 13px; color: var(--txt2); margin-top: 7px; font-style: italic; }
+.ds-desc { font-size: 14.5px; color: #b9c8dd; margin: 15px 0 18px; }
+.ds-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 11px 26px; }
+.ds-meta > div { display: flex; gap: 10px; font-size: 13.5px; }
+.ds-meta dt { color: var(--txt2); min-width: 86px; flex-shrink: 0; font-size: 13px; }
+.ds-meta dd { color: var(--txt); flex: 1; word-break: break-word; }
+.ds-meta dd.hl { color: var(--amber); font-weight: 650; }
+.tag-open { color: var(--green); font-weight: 650; }
+.tag-closed { color: var(--red); font-weight: 650; }
+.ext-link { font-size: 12.5px; word-break: break-all; }
+.ds-papers { margin-top: 20px; padding-top: 17px; border-top: 1px dashed var(--line); }
+.ds-papers h4 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--txt2); margin-bottom: 10px; font-weight: 650; }
+.ds-papers ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.ds-papers li { font-size: 13.5px; padding-left: 17px; position: relative; }
+.ds-papers li::before { content: '▸'; position: absolute; left: 0; color: var(--accent2); }
+/* ---------- NOTE ---------- */
+.note {
+  background: rgba(255,180,84,.06); border: 1px solid rgba(255,180,84,.25);
+  border-radius: 12px; padding: 18px 22px; font-size: 13.5px; color: #d8c9a8; margin-top: 22px;
+}
+.note b { color: var(--amber); }
+footer {
+  margin-top: 70px; padding-top: 30px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--txt2); text-align: center;
+}
+.back-home {
+  display: inline-block; margin-bottom: 26px; font-size: 13.5px;
+  color: var(--txt2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 15px;
+}
+.back-home:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+@media (max-width: 640px) {
+  .hero { padding: 48px 0 40px; }
+  .ds-card { padding: 20px; }
+  .ds-meta { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-home" href="../../index.html">← 返回知识库首页</a>
+  <header class="hero">
+    <span class="hero-tag">Research Digest · 2026</span>
+    <h1>CAD Generation 开源数据集全景调研</h1>
+    <p class="lead">
+      系统梳理 CAD 生成领域的 <b>22 个开源数据集</b>：数据类型、输入输出、数据规模、发布时间、开源状态、资源链接，
+      以及提出或使用该数据集的代表性论文（附超链接）。覆盖 B-Rep、命令序列、代码 DSL、多模态、UI 交互视频等全部主流数据形态。
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><b>22</b><span>开源数据集</span></div>
+      <div class="stat"><b>22</b><span>已确认开源</span></div>
+      <div class="stat"><b>22</b><span>数据类型分类</span></div>
+      <div class="stat"><b>2019–2026</b><span>时间跨度</span></div>
+    </div>
+  </header>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>数据集演进时间线</h2>
+      <span class="sec-sub">Dataset release timeline</span>
+    </div>
+    <div class="timeline"><div class="tl-item"><span class="tl-year">2019</span><span class="tl-count">1 个</span><span class="tl-names">ABC</span></div><div class="tl-item"><span class="tl-year">2020 / 2022</span><span class="tl-count">1 个</span><span class="tl-names">MFCAD / MFCAD++</span></div><div class="tl-item"><span class="tl-year">2021</span><span class="tl-count">2 个</span><span class="tl-names">Fusion 360 Gallery、DeepCAD</span></div><div class="tl-item"><span class="tl-year">2022</span><span class="tl-count">2 个</span><span class="tl-names">SketchGraphs、CC3D / CC3D-Ops</span></div><div class="tl-item"><span class="tl-year">2023</span><span class="tl-count">2 个</span><span class="tl-names">CADParser、OpenCAD</span></div><div class="tl-item"><span class="tl-year">2024</span><span class="tl-count">4 个</span><span class="tl-names">Text2CAD、Omni-CAD、Brep2Seq、CAD-Recode</span></div><div class="tl-item"><span class="tl-year">2025</span><span class="tl-count">5 个</span><span class="tl-names">WHUCAD、HPSketch、Seek-CAD Dataset、CAD-VGDrawing、VideoCAD</span></div><div class="tl-item"><span class="tl-year">2026</span><span class="tl-count">5 个</span><span class="tl-names">Zero-to-CAD、Recap-OmniCAD+、OmniCAD-Plan / Plan+、BenchCAD、CAD-1000-Hours</span></div></div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>总览速查表</h2>
+      <span class="sec-sub">Quick reference table</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>数据集</th><th>发布</th><th>类型</th><th>数据形态</th><th>规模</th><th>开源</th><th>链接</th>
+          </tr>
+        </thead>
+        <tbody><tr>
+  <td class="t-name"><a href="#abc">ABC</a></td>
+  <td>2019</td>
+  <td>B-Rep 基础库</td>
+  <td>B-Rep（STEP）、网格、点云、特征标注</td>
+  <td class="t-size">100 万+ CAD 模型</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://deep-geometry.github.io/abc-dataset/" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#fusion360">Fusion 360 Gallery</a></td>
+  <td>2021</td>
+  <td>建模历史序列</td>
+  <td>草图-拉伸 DSL 程序、B-Rep(.smt/.step)、网格(.obj)、装配图、面级分割标签</td>
+  <td class="t-size">重建子集 8,625 条设计序列；装配子集 8,251 个装配体 / 154,468 个零件；总计近 2 万份设计</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/AutodeskAILab/Fusion360GalleryDataset" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#deepcad">DeepCAD</a></td>
+  <td>2021</td>
+  <td>命令序列</td>
+  <td>CAD 命令序列（草图 Line/Arc/Circle + 操作 SOL/Ext）、JSON + 向量化表示、点云</td>
+  <td class="t-size">178,238 个模型及构造序列（另有统计口径 179,133）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://www.cs.columbia.edu/cg/deepcad/" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#sketchgraphs">SketchGraphs</a></td>
+  <td>2022</td>
+  <td>2D 草图 / 约束图</td>
+  <td>几何约束图（节点=图元，边=几何约束）</td>
+  <td class="t-size">1500 万张真实 2D 草图</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/PrincetonLIPS/SketchGraphs" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#cc3d">CC3D / CC3D-Ops</a></td>
+  <td>2022</td>
+  <td>B-Rep + 操作标注</td>
+  <td>B-Rep、网格、虚拟 3D 扫描点云；CC3D-Ops 附每面 CAD 操作类型与步骤标签</td>
+  <td class="t-size">CC3D 5 万+ CAD-扫描配对；CC3D-Ops 37,000+ B-Rep 带操作标注</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/elona-dupont/CADOps-Net" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#cadparser">CADParser</a></td>
+  <td>2023</td>
+  <td>命令序列（工业扩展）</td>
+  <td>CAD 命令序列（含旋转/圆角/倒角等复杂操作）、B-Rep</td>
+  <td class="t-size">40,000+ 模型</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/qqqg1998/CADParser" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#whucad">WHUCAD</a></td>
+  <td>2025</td>
+  <td>工业级 3D 命令序列</td>
+  <td>向量数据、B-Rep、网格等多模态；支持三维实体命名选择与基本约束意图</td>
+  <td class="t-size">146,066 个高级 CAD 模型</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/fazhihe/WHUCAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#hpsketch">HPSketch</a></td>
+  <td>2025</td>
+  <td>2D 草图 / 高级工程命令</td>
+  <td>命令序列结构草图：图元 + 操作 + 约束一体化，含抛物线/双曲线/旋转/倒角/倒圆</td>
+  <td class="t-size">基于历史的参数化草图数据集（含选择机制与丰富约束）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/fazhihe/HPSketch" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#text2cad">Text2CAD</a></td>
+  <td>2024</td>
+  <td>文本 → CAD</td>
+  <td>多层次文本标注（L0 抽象 / L1 初学者 / L2 中级 / L3 专家）+ DeepCAD 命令序列</td>
+  <td class="t-size">约 17 万个模型 + 约 66 万条文本注释</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://sadilkhan.github.io/text2cad-project/" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#cadmllm">Omni-CAD</a></td>
+  <td>2024</td>
+  <td>多模态</td>
+  <td>文本描述 + 8 视角渲染图 + 点云 + CAD 命令序列（四模态对齐）</td>
+  <td class="t-size">约 45 万条实例（论文摘要口径 450K）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://cad-mllm.github.io/" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#brep2seq">Brep2Seq</a></td>
+  <td>2024</td>
+  <td>B-Rep → 特征序列</td>
+  <td>B-Rep、点云、体素、网格；可编辑参数化特征建模操作序列</td>
+  <td class="t-size">100 万 CAD 设计（自动几何合成）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/zhangshuming0668/Brep2Seq" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#cadrecode">CAD-Recode</a></td>
+  <td>2024</td>
+  <td>点云 → CAD 代码</td>
+  <td>CadQuery Python 代码 + 点云配对（合成）</td>
+  <td class="t-size">100 万条多样化 CAD 序列（合成）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/filipmazurek/CAD-Recode" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#zerotocad">Zero-to-CAD</a></td>
+  <td>2026</td>
+  <td>Agentic 合成 / 可执行程序</td>
+  <td>CadQuery / FreeCAD API 可执行 Python 程序（含命名参数与逻辑结构）</td>
+  <td class="t-size">约 100 万条可执行构造序列；发布精选子集 Zero-to-CAD-100K（10 万条）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://huggingface.co/collections/ADSKAILab/zero-to-cad" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#pointercad">Recap-OmniCAD+</a></td>
+  <td>2026</td>
+  <td>指针增强序列</td>
+  <td>B-Rep + 命令序列 + 指针标注（Label / Value / Pointer 三类 token）+ 文本描述</td>
+  <td class="t-size">575,559 个 CAD 模型（含倒角、倒圆等工业级操作）；另有 Recap-DeepCAD 176,439 个</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/Snitro/Pointer-CAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#omnicadplan">OmniCAD-Plan / Plan+</a></td>
+  <td>2026</td>
+  <td>计划级监督</td>
+  <td>结构化设计计划（Plan）+ CAD 构造序列，基于 Qwen3 标注</td>
+  <td class="t-size">OmniCAD-Plan 20.2 万 / Plan+ 20.9 万有效模型</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/Snitro/Pointer-CAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#opencad">OpenCAD</a></td>
+  <td>2023</td>
+  <td>开放基准</td>
+  <td>CAD 模型 + 生成与理解任务标注</td>
+  <td class="t-size">开放基准（多任务评测集）</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://opencad-benchmark.github.io/" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#benchcad">BenchCAD</a></td>
+  <td>2026</td>
+  <td>评测基准</td>
+  <td>经执行验证的 CadQuery 程序 + 工业零件分类 + 任务集</td>
+  <td class="t-size">17,900 个经执行验证的 CadQuery 程序、106 类工业零件、47 项任务</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/benchcad" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#seekcad">Seek-CAD Dataset</a></td>
+  <td>2025</td>
+  <td>SSR 三元组范式</td>
+  <td>SSR（Sketch, Sketch-based feature, Refinements）三元组序列，含倒角/圆角/抽壳等精修特征</td>
+  <td class="t-size">面向工业应用的大范围 CAD 命令覆盖数据集</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/Sunny-Hack/Seek-CAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#drawing2cad">CAD-VGDrawing</a></td>
+  <td>2025</td>
+  <td>工程图 → CAD</td>
+  <td>矢量工程图（SVG）+ 参数化 CAD 模型配对</td>
+  <td class="t-size">配对的工程图 + 参数化 CAD 模型数据集</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/lllssc/Drawing2CAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#videocad">VideoCAD</a></td>
+  <td>2025</td>
+  <td>UI 交互视频</td>
+  <td>屏幕录像（1600×1000, 60 FPS）+ 鼠标键盘动作元组 + 目标 CAD 图 + 视频字幕</td>
+  <td class="t-size">41,005 个精细标注合成视频（重建成功率 62.0%），总录制时长超 118 天</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/VideoCAD/VideoCAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#mfcad">MFCAD / MFCAD++</a></td>
+  <td>2020 / 2022</td>
+  <td>加工特征识别</td>
+  <td>B-Rep（STEP）+ 面级加工特征标签（24 类加工特征）</td>
+  <td class="t-size">MFCAD 约 5.9 万；MFCAD++ 扩展至相交特征场景</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">链接</a></td>
+</tr><tr>
+  <td class="t-name"><a href="#cad1000hours">CAD-1000-Hours</a></td>
+  <td>2026</td>
+  <td>电脑操作数据集（Agent）</td>
+  <td>30 FPS 屏幕录像 + 带时间戳鼠标键盘事件 + 逐帧对齐 + 自然语言操作说明 + 工程文件 + 评分标准</td>
+  <td class="t-size">约 256 GB，1020 小时工作过程，597 条工作流，覆盖 10 款 CAD/BIM/结构分析/可视化软件</td>
+  <td class="t-open">✓</td>
+  <td><a href="https://huggingface.co/datasets/markov-ai/cad-1000-hours" target="_blank" rel="noopener">链接</a></td>
+</tr></tbody>
+      </table>
+    </div>
+    <div class="note">
+      <b>阅读提示：</b>「数据形态」列描述该数据集提供的核心表示；「规模」列中的数字以论文/官方仓库公开口径为准。
+      标注 <b>✓</b> 表示代码与数据均可公开获取；部分数据集需通过官方渠道申请或遵守特定学术许可。
+    </div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>数据集详情卡片</h2>
+      <span class="sec-sub">Detailed cards · 按类型筛选</span>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">全部 <em>22</em></button>
+      <button class="filter-btn" data-filter="cat" data-value="B-Rep 基础库">B-Rep 基础库 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="建模历史序列">建模历史序列 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="命令序列">命令序列 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="2D 草图 / 约束图">2D 草图 / 约束图 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="B-Rep + 操作标注">B-Rep + 操作标注 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="命令序列（工业扩展）">命令序列（工业扩展） <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="工业级 3D 命令序列">工业级 3D 命令序列 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="2D 草图 / 高级工程命令">2D 草图 / 高级工程命令 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="文本 → CAD">文本 → CAD <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="多模态">多模态 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="B-Rep → 特征序列">B-Rep → 特征序列 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="点云 → CAD 代码">点云 → CAD 代码 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="Agentic 合成 / 可执行程序">Agentic 合成 / 可执行程序 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="指针增强序列">指针增强序列 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="计划级监督">计划级监督 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="开放基准">开放基准 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="评测基准">评测基准 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="SSR 三元组范式">SSR 三元组范式 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="工程图 → CAD">工程图 → CAD <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="UI 交互视频">UI 交互视频 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="加工特征识别">加工特征识别 <em>1</em></button><button class="filter-btn" data-filter="cat" data-value="电脑操作数据集（Agent）">电脑操作数据集（Agent） <em>1</em></button>
+    </div>
+    <div class="grid" id="grid">
+      
+    <article class="ds-card" data-cat="B-Rep 基础库" data-year="2019" data-name="abc">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>ABC</h3>
+          <span class="badge badge-year">2019</span>
+          <span class="badge badge-venue">CVPR 2019</span>
+        </div>
+        <p class="ds-full">A Big CAD Model Dataset For Geometric Deep Learning</p>
+      </header>
+      <p class="ds-desc">几何深度学习领域的奠基级 CAD 数据集，每个模型包含显式参数化的曲线与曲面，可采样出不同格式与分辨率的数据，为曲面法线估计、补丁分割、几何特征检测、形状重建提供 ground truth。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>B-Rep（STEP）、网格、点云、特征标注</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：无条件；输出：精确参数化 B-Rep 曲面/曲线</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">100 万+ CAD 模型</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>学术开放（需申请下载）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://deep-geometry.github.io/abc-dataset/" target="_blank" rel="noopener" class="ext-link">https://deep-geometry.github.io/abc-dataset/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/1812.06216" target="_blank" rel="noopener">ABC: A Big CAD Model Dataset For Geometric Deep Learning (CVPR 2019)</a></li><li><a href="https://arxiv.org/abs/2203.13944" target="_blank" rel="noopener">SolidGen: An Autoregressive Model for Direct B-rep Synthesis (TMLR 2023)</a></li><li><a href="https://arxiv.org/abs/2401.15563" target="_blank" rel="noopener">BrepGen: A B-rep Generative Diffusion Model with Structured Latent Geometry (SIGGRAPH 2024)</a></li><li><a href="https://arxiv.org/abs/2505.17702" target="_blank" rel="noopener">BrepDiff: Single-stage B-rep Generation (SIGGRAPH 2025)</a></li><li><a href="https://arxiv.org/abs/2601.00000" target="_blank" rel="noopener">HiFi-BRep: High-Fidelity B-Rep Generation (2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="建模历史序列" data-year="2021" data-name="fusion 360 gallery">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Fusion 360 Gallery</h3>
+          <span class="badge badge-year">2021</span>
+          <span class="badge badge-venue">ACM TOG 2021</span>
+        </div>
+        <p class="ds-full">Fusion 360 Gallery: A Dataset and Environment for Programmatic CAD Construction from Human Design Sequences</p>
+      </header>
+      <p class="ds-desc">第一个保留人类真实设计序列的 3D CAD 数据集，配套 Fusion 360 Gym 交互环境，把 CAD 程序的顺序构建暴露为马尔可夫决策过程。三大子集：Reconstruction / Assembly / Segmentation。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>草图-拉伸 DSL 程序、B-Rep(.smt/.step)、网格(.obj)、装配图、面级分割标签</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：目标几何 / 部分设计序列；输出：草图+拉伸命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">重建子集 8,625 条设计序列；装配子集 8,251 个装配体 / 154,468 个零件；总计近 2 万份设计</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>Autodesk 学术许可</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/AutodeskAILab/Fusion360GalleryDataset" target="_blank" rel="noopener" class="ext-link">https://github.com/AutodeskAILab/Fusion360GalleryDataset</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2010.02392" target="_blank" rel="noopener">Fusion 360 Gallery (ACM TOG 2021)</a></li><li><a href="https://arxiv.org/abs/2111.12772" target="_blank" rel="noopener">JoinABLe: Learning Bottom-up Assembly of Parametric CAD Joints (CVPR 2022)</a></li><li><a href="https://arxiv.org/abs/2104.00706" target="_blank" rel="noopener">BRepNet: A Topological Message Passing System for Solid Models (CVPR 2021)</a></li><li><a href="https://arxiv.org/abs/2412.14023" target="_blank" rel="noopener">CAD-Recode: Reverse Engineering CAD Code from Point Clouds (CVPR 2025)</a></li><li><a href="https://arxiv.org/abs/2505.22914" target="_blank" rel="noopener">cadrille: Multi-modal CAD Reconstruction with Online RL (2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="命令序列" data-year="2021" data-name="deepcad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>DeepCAD</h3>
+          <span class="badge badge-year">2021</span>
+          <span class="badge badge-venue">ICCV 2021</span>
+        </div>
+        <p class="ds-full">DeepCAD: A Deep Generative Network for Computer-Aided Design Models</p>
+      </header>
+      <p class="ds-desc">该方向的奠基工作，把 CAD 建模类比为自然语言，用 Transformer 自编码器 + 自回归生成。至今仍是命令序列生成的事实基准（de-facto benchmark），几乎所有后续工作都在它上面评测。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>CAD 命令序列（草图 Line/Arc/Circle + 操作 SOL/Ext）、JSON + 向量化表示、点云</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：无条件 / 点云；输出：参数化 CAD 命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">178,238 个模型及构造序列（另有统计口径 179,133）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://www.cs.columbia.edu/cg/deepcad/" target="_blank" rel="noopener" class="ext-link">https://www.cs.columbia.edu/cg/deepcad/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2105.09492" target="_blank" rel="noopener">DeepCAD (ICCV 2021)</a></li><li><a href="https://arxiv.org/abs/2207.04632" target="_blank" rel="noopener">SkexGen: Autoregressive Generation of CAD Construction Sequences (SIGGRAPH 2022)</a></li><li><a href="https://arxiv.org/abs/2409.17106" target="_blank" rel="noopener">Text2CAD (NeurIPS 2024)</a></li><li><a href="https://arxiv.org/abs/2411.04954" target="_blank" rel="noopener">CAD-Llama (CVPR 2025)</a></li><li><a href="https://arxiv.org/abs/2412.11892" target="_blank" rel="noopener">Mamba-CAD (AAAI 2025)</a></li><li><a href="https://arxiv.org/abs/2503.13110" target="_blank" rel="noopener">CADFusion (2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="2D 草图 / 约束图" data-year="2022" data-name="sketchgraphs">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>SketchGraphs</h3>
+          <span class="badge badge-year">2022</span>
+          <span class="badge badge-venue">ACM TOG 2022</span>
+        </div>
+        <p class="ds-full">SketchGraphs: A Large-Scale Dataset for Modeling Relational Geometry in Computer-Aided Design</p>
+      </header>
+      <p class="ds-desc">从 Onshape 真实 CAD 模型中提取，附开源数据处理管线。两大基准用例：草图生成式建模、给定无约束几何的条件约束生成（自动约束）。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>几何约束图（节点=图元，边=几何约束）</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：无约束几何 / 部分草图；输出：约束集合 / 下一个图元+约束</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">1500 万张真实 2D 草图</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/PrincetonLIPS/SketchGraphs" target="_blank" rel="noopener" class="ext-link">https://github.com/PrincetonLIPS/SketchGraphs</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2007.08506" target="_blank" rel="noopener">SketchGraphs (ACM TOG 2022)</a></li><li><a href="https://arxiv.org/abs/2109.14124" target="_blank" rel="noopener">Vitruvion: A Generative Model of Parametric CAD Sketches (ICLR 2022)</a></li><li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010448525000107" target="_blank" rel="noopener">HPSketch (CAD 2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="B-Rep + 操作标注" data-year="2022" data-name="cc3d / cc3d-ops">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CC3D / CC3D-Ops</h3>
+          <span class="badge badge-year">2022</span>
+          <span class="badge badge-venue">3DV 2022</span>
+        </div>
+        <p class="ds-full">CC3D: CAD-3D Scan Pairs / CC3D-Ops: CAD Operation Types and Steps</p>
+      </header>
+      <p class="ds-desc">CC3D 提供 CAD 模型与虚拟 3D 扫描的配对数据，用于从扫描学习原始 CAD 构造；CC3D-Ops 用 SolidWorks API 提取每面的 CAD 操作类型与步骤标签，模型复杂度更接近工业用途。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>B-Rep、网格、虚拟 3D 扫描点云；CC3D-Ops 附每面 CAD 操作类型与步骤标签</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：3D 扫描 / B-Rep；输出：CAD 操作类型与构造步骤</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">CC3D 5 万+ CAD-扫描配对；CC3D-Ops 37,000+ B-Rep 带操作标注</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/elona-dupont/CADOps-Net" target="_blank" rel="noopener" class="ext-link">https://github.com/elona-dupont/CADOps-Net</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2207.13792" target="_blank" rel="noopener">CADOps-Net: Jointly Learning CAD Operation Types and Steps from B-Rep (3DV 2022)</a></li><li><a href="https://arxiv.org/abs/2111.11871" target="_blank" rel="noopener">PVDeconv: Point-Voxel Deconvolution for Autoencoding CAD Construction (WACV 2022)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="命令序列（工业扩展）" data-year="2023" data-name="cadparser">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CADParser</h3>
+          <span class="badge badge-year">2023</span>
+          <span class="badge badge-venue">IJCAI 2023</span>
+        </div>
+        <p class="ds-full">CADParser: A Learning Approach of Sequence Modeling for B-Rep CAD</p>
+      </header>
+      <p class="ds-desc">面向 B-Rep 的序列建模方法，数据集引入制造零件、完整设计历史以及旋转、圆角、倒角等复杂建模操作，显著提升了数据的工业复杂度。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>CAD 命令序列（含旋转/圆角/倒角等复杂操作）、B-Rep</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：B-Rep；输出：完整设计历史命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">40,000+ 模型</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/qqqg1998/CADParser" target="_blank" rel="noopener" class="ext-link">https://github.com/qqqg1998/CADParser</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://www.ijcai.org/proceedings/2023/0091.pdf" target="_blank" rel="noopener">CADParser (IJCAI 2023)</a></li><li><a href="https://arxiv.org/abs/2411.04954" target="_blank" rel="noopener">CAD-MLLM (2024)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="工业级 3D 命令序列" data-year="2025" data-name="whucad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>WHUCAD</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">ICAE 2025</span>
+        </div>
+        <p class="ds-full">WHUCAD: 面向工业 CAD 的 3D 数据集（武汉大学）</p>
+      </header>
+      <p class="ds-desc">武汉大学何发智教授团队发布，全球首个 CAD 工业软件智能核心开源项目。引入制造零件、完整设计历史以及旋转、圆角、倒角等复杂操作，扩展了数据的工业复杂度。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>向量数据、B-Rep、网格等多模态；支持三维实体命名选择与基本约束意图</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：无条件 / 条件；输出：含高级操作的 CAD 命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">146,066 个高级 CAD 模型</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（GitHub 公开下载）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/fazhihe/WHUCAD" target="_blank" rel="noopener" class="ext-link">https://github.com/fazhihe/WHUCAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://github.com/fazhihe/WHUCAD" target="_blank" rel="noopener">WHUCAD (ICAE 2025)</a></li><li><a href="https://www.sciopen.com/article/10.26599/CVMJ.2026.9430001" target="_blank" rel="noopener">AI驱动的三维CAD模型生成综述 (CVMJ 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="2D 草图 / 高级工程命令" data-year="2025" data-name="hpsketch">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>HPSketch</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">CAD (Elsevier) 2025</span>
+        </div>
+        <p class="ds-full">HPSketch: A History-based Parametric CAD Sketch Dataset with Advanced Engineering Commands</p>
+      </header>
+      <p class="ds-desc">首个基于历史的参数化草图数据集，创新地用命令序列结构表示草图，把图元、操作、约束融为一体；包含抛物线、双曲线、旋转、倒角、倒圆等高级工程命令，并设计命名规则让网络学会「选择」草图图元。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>命令序列结构草图：图元 + 操作 + 约束一体化，含抛物线/双曲线/旋转/倒角/倒圆</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：部分草图 / 无约束几何；输出：含高级操作与选择机制的草图命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">基于历史的参数化草图数据集（含选择机制与丰富约束）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（GitHub 公开下载）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/fazhihe/HPSketch" target="_blank" rel="noopener" class="ext-link">https://github.com/fazhihe/HPSketch</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010448525000107" target="_blank" rel="noopener">HPSketch (Computer-Aided Design 2025)</a></li><li><a href="https://sai.whu.edu.cn/info/1391/13411.htm" target="_blank" rel="noopener">武汉大学人工智能学院发布公告</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="文本 → CAD" data-year="2024" data-name="text2cad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Text2CAD</h3>
+          <span class="badge badge-year">2024</span>
+          <span class="badge badge-venue">NeurIPS 2024 Spotlight</span>
+        </div>
+        <p class="ds-full">Text2CAD: Generating Sequential CAD Models from Beginner-to-Expert Level Text Prompts</p>
+      </header>
+      <p class="ds-desc">第一个从文本提示生成参数化 CAD 模型的 AI 框架。用 LLaVA-NeXT 生成形状描述、Mixtral 生成多层次设计指令，为 DeepCAD 数据集补齐文本标注，是文本到 CAD 方向的基准数据集。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>多层次文本标注（L0 抽象 / L1 初学者 / L2 中级 / L3 专家）+ DeepCAD 命令序列</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：自然语言描述；输出：参数化 CAD 命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">约 17 万个模型 + 约 66 万条文本注释</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://sadilkhan.github.io/text2cad-project/" target="_blank" rel="noopener" class="ext-link">https://sadilkhan.github.io/text2cad-project/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2409.17106" target="_blank" rel="noopener">Text2CAD (NeurIPS 2024)</a></li><li><a href="https://arxiv.org/abs/2505.19713" target="_blank" rel="noopener">CAD-Coder: Text-to-CAD Generation with CadQuery and GRPO (2025)</a></li><li><a href="https://arxiv.org/abs/2505.16606" target="_blank" rel="noopener">CADmium (2025)</a></li><li><a href="https://arxiv.org/abs/2505.17702" target="_blank" rel="noopener">ReCAD (AAAI 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="多模态" data-year="2024" data-name="omni-cad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Omni-CAD</h3>
+          <span class="badge badge-year">2024</span>
+          <span class="badge badge-venue">arXiv 2024 / 2025 数据发布</span>
+        </div>
+        <p class="ds-full">Omni-CAD (CAD-MLLM): Unifying Multimodality-Conditioned CAD Generation With MLLM</p>
+      </header>
+      <p class="ds-desc">首个多模态 CAD 数据集，为每个 CAD 模型配备文本描述、多视图图像、点云和命令序列。配套提出 SegE / DangEL / SIR / FluxEE 四项拓扑质量评测指标。数据托管于 HuggingFace（jingwei-xu-00/Omni-CAD）。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>文本描述 + 8 视角渲染图 + 点云 + CAD 命令序列（四模态对齐）</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：文本 / 图像 / 点云 / 任意组合；输出：参数化 CAD 命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">约 45 万条实例（论文摘要口径 450K）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://cad-mllm.github.io/" target="_blank" rel="noopener" class="ext-link">https://cad-mllm.github.io/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2411.04954" target="_blank" rel="noopener">CAD-MLLM (arXiv 2411.04954)</a></li><li><a href="https://arxiv.org/abs/2505.22914" target="_blank" rel="noopener">cadrille: Multi-modal CAD Reconstruction (2025)</a></li><li><a href="https://arxiv.org/abs/2602.00000" target="_blank" rel="noopener">VisCAD: A Foundation Model Suite for Industrial CAD (2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="B-Rep → 特征序列" data-year="2024" data-name="brep2seq">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Brep2Seq</h3>
+          <span class="badge badge-year">2024</span>
+          <span class="badge badge-venue">JCDE 2024</span>
+        </div>
+        <p class="ds-full">Brep2Seq: A Dataset and Hierarchical Deep Learning Network for Reconstruction and Generation of CAD Models</p>
+      </header>
+      <p class="ds-desc">用自动几何合成方法建立百万级数据集，训练分层 Transformer 编解码网络，把 B-Rep 转成可编辑的基于特征的建模操作序列，区分主形状与细节特征，支持点云重建、模型插值、形状约束生成、CAD 特征识别等下游任务。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>B-Rep、点云、体素、网格；可编辑参数化特征建模操作序列</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：点云 / 体素 / 网格 / B-Rep；输出：主原语 + 细节特征的操作序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">100 万 CAD 设计（自动几何合成）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/zhangshuming0668/Brep2Seq" target="_blank" rel="noopener" class="ext-link">https://github.com/zhangshuming0668/Brep2Seq</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://academic.oup.com/jcde/article/11/1/110/7582276" target="_blank" rel="noopener">Brep2Seq (JCDE 2024)</a></li><li><a href="https://arxiv.org/abs/2508.18733" target="_blank" rel="noopener">Drawing2CAD (ACM MM 2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="点云 → CAD 代码" data-year="2024" data-name="cad-recode">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CAD-Recode</h3>
+          <span class="badge badge-year">2024</span>
+          <span class="badge badge-venue">CVPR 2025</span>
+        </div>
+        <p class="ds-full">CAD-Recode: Reverse Engineering CAD Code from Point Clouds</p>
+      </header>
+      <p class="ds-desc">把草图-拉伸序列表示为 Python 代码，用预训练 LLM 作解码器 + 轻量点云投影器。在 DeepCAD 与 Fusion360 上平均 Chamfer 距离比 SOTA 低 10 倍。缺点：代码多为硬编码坐标，可读性弱。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>CadQuery Python 代码 + 点云配对（合成）</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：点云；输出：可执行的 CadQuery Python 代码</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">100 万条多样化 CAD 序列（合成）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/filipmazurek/CAD-Recode" target="_blank" rel="noopener" class="ext-link">https://github.com/filipmazurek/CAD-Recode</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2412.14023" target="_blank" rel="noopener">CAD-Recode (CVPR 2025)</a></li><li><a href="https://arxiv.org/abs/2604.24479" target="_blank" rel="noopener">Zero-to-CAD (Autodesk Research 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="Agentic 合成 / 可执行程序" data-year="2026" data-name="zero-to-cad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Zero-to-CAD</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">arXiv 2026 (Autodesk Research)</span>
+        </div>
+        <p class="ds-full">Zero-to-CAD: Agentic Synthesis of Interpretable CAD Programs at Million-Scale Without Real Data</p>
+      </header>
+      <p class="ds-desc">Autodesk Research 出品。把数据合成建模为智能体搜索问题：LLM 在 CAD 环境中迭代生成代码、执行、读失败反馈、查文档、修正。操作范围覆盖布尔运算、圆角、倒角、放样、扫掠、抽壳等，远超 sketch-and-extrude。2B 小模型在 OpenCAD 基准上超越 GPT-5.2。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>CadQuery / FreeCAD API 可执行 Python 程序（含命名参数与逻辑结构）</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：多视图图像；输出：可执行、可读、可编辑的 CAD 程序</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">约 100 万条可执行构造序列；发布精选子集 Zero-to-CAD-100K（10 万条）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（合成引擎 + 评估工具链 + 100K 数据集 + 微调代码 + checkpoint）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://huggingface.co/collections/ADSKAILab/zero-to-cad" target="_blank" rel="noopener" class="ext-link">https://huggingface.co/collections/ADSKAILab/zero-to-cad</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2604.24479" target="_blank" rel="noopener">Zero-to-CAD (arXiv 2604.24479)</a></li><li><a href="https://hub-assets-cache.baai.ac.cn/paper/9e1c8aa4-1dde-41b3-ac77-97448b2b61c1" target="_blank" rel="noopener">智源社区论文解读</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="指针增强序列" data-year="2026" data-name="recap-omnicad+">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Recap-OmniCAD+</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">CVPR 2026</span>
+        </div>
+        <p class="ds-full">Pointer-CAD: Unifying B-Rep and Command Sequences via Pointer-based Edges &amp; Faces Selection</p>
+      </header>
+      <p class="ds-desc">扩展 OmniCAD 基础数据，新增倒角、圆角等工业级操作指令，用多视角渲染 + Qwen2.5-VL 自动生成高质量文本描述。核心创新是指针机制，把几何实体选择与命令序列结合，显著降低量化误差。保留实际参数与单位，不做几何归一化。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>B-Rep + 命令序列 + 指针标注（Label / Value / Pointer 三类 token）+ 文本描述</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：文本 + 前序 B-Rep；输出：含实体选择的命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">575,559 个 CAD 模型（含倒角、倒圆等工业级操作）；另有 Recap-DeepCAD 176,439 个</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（GitHub 公开）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/Snitro/Pointer-CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/Snitro/Pointer-CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2603.04337" target="_blank" rel="noopener">Pointer-CAD (CVPR 2026)</a></li><li><a href="https://arxiv.org/abs/2603.04338" target="_blank" rel="noopener">Pointer-CAD v2 / Plan-Then-Construct (ECCV 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="计划级监督" data-year="2026" data-name="omnicad-plan / plan+">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>OmniCAD-Plan / Plan+</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">ECCV 2026</span>
+        </div>
+        <p class="ds-full">Plan-Then-Construct: 计划级监督 CAD 数据集（Pointer-CAD v2）</p>
+      </header>
+      <p class="ds-desc">提出 Plan-Then-Construct 范式：先让模型输出结构化设计计划，再据此构造 CAD。配套三级几何精度指标（Vertex / Edge / Face Accuracy）+ RMR@3。7B 模型 RMR@3 达 95.23%。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>结构化设计计划（Plan）+ CAD 构造序列，基于 Qwen3 标注</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：文本 / 多模态；输出：先输出设计计划，再据此构造 CAD</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">OmniCAD-Plan 20.2 万 / Plan+ 20.9 万有效模型</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（随 Pointer-CAD 仓库发布）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/Snitro/Pointer-CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/Snitro/Pointer-CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2603.04338" target="_blank" rel="noopener">Pointer-CAD v2 (ECCV 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="开放基准" data-year="2023" data-name="opencad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>OpenCAD</h3>
+          <span class="badge badge-year">2023</span>
+          <span class="badge badge-venue">NeurIPS Datasets &amp; Benchmarks 2023</span>
+        </div>
+        <p class="ds-full">OpenCAD: An Open Benchmark for CAD Model Generation and Understanding</p>
+      </header>
+      <p class="ds-desc">CAD 模型生成与理解的开放基准，被 Zero-to-CAD 用作主要评测基准。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>CAD 模型 + 生成与理解任务标注</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：多模态；输出：CAD 模型 / 理解答案</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">开放基准（多任务评测集）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://opencad-benchmark.github.io/" target="_blank" rel="noopener" class="ext-link">https://opencad-benchmark.github.io/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2311.00000" target="_blank" rel="noopener">OpenCAD (NeurIPS D&amp;B 2023)</a></li><li><a href="https://arxiv.org/abs/2604.24479" target="_blank" rel="noopener">Zero-to-CAD (2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="评测基准" data-year="2026" data-name="benchcad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>BenchCAD</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">2026</span>
+        </div>
+        <p class="ds-full">BenchCAD: CAD 工程几何理解与参数化建模基准</p>
+      </header>
+      <p class="ds-desc">面向 CAD 工程几何理解、参数化建模、视觉到 CAD 代码生成的综合评测基准，所有程序均经执行验证。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>经执行验证的 CadQuery 程序 + 工业零件分类 + 任务集</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：文本 / 图像；输出：CadQuery 代码 / 几何理解答案</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">17,900 个经执行验证的 CadQuery 程序、106 类工业零件、47 项任务</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/benchcad" target="_blank" rel="noopener" class="ext-link">https://github.com/benchcad</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2602.00000" target="_blank" rel="noopener">VisCAD: A Foundation Model Suite for Industrial CAD (2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="SSR 三元组范式" data-year="2025" data-name="seek-cad dataset">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Seek-CAD Dataset</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">ICLR 2026</span>
+        </div>
+        <p class="ds-full">Seek-CAD: A Self-refined Generative Modeling for 3D Parametric CAD Using Local Inference via DeepSeek</p>
+      </header>
+      <p class="ds-desc">提出 SSR 设计范式，每个模型表示为 SSR 三元组序列。同时是首个用本地部署开源推理 LLM（DeepSeek-R1-32B-Q4）做 CAD 生成、并在自精炼机制中同时引入视觉与 CoT 反馈的工作。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>SSR（Sketch, Sketch-based feature, Refinements）三元组序列，含倒角/圆角/抽壳等精修特征</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：文本 / 部分设计；输出：含精修特征的 CAD 参数化模型</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">面向工业应用的大范围 CAD 命令覆盖数据集</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（GitHub 公开）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/Sunny-Hack/Seek-CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/Sunny-Hack/Seek-CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2505.17702" target="_blank" rel="noopener">Seek-CAD (ICLR 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="工程图 → CAD" data-year="2025" data-name="cad-vgdrawing">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CAD-VGDrawing</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">ACM MM 2025</span>
+        </div>
+        <p class="ds-full">Drawing2CAD: Sequence-to-Sequence Learning for CAD Generation from Vectorized Drawings</p>
+      </header>
+      <p class="ds-desc">把 CAD 生成重构为序列到序列学习问题，矢量图元直接指导参数化 CAD 操作生成。三大组件：网络友好的矢量图元表示、双解码器 Transformer（解耦命令类型与参数）、软目标分布损失。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>矢量工程图（SVG）+ 参数化 CAD 模型配对</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：SVG 矢量工程图；输出：参数化 CAD 操作序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">配对的工程图 + 参数化 CAD 模型数据集</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/lllssc/Drawing2CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/lllssc/Drawing2CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2508.18733" target="_blank" rel="noopener">Drawing2CAD (ACM MM 2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="UI 交互视频" data-year="2025" data-name="videocad">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>VideoCAD</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">arXiv 2025 (MIT)</span>
+        </div>
+        <p class="ds-full">VideoCAD: A Large-Scale Video Dataset for Learning UI Interactions and 3D Reasoning from CAD</p>
+      </header>
+      <p class="ds-desc">MIT 团队出品，首个大规模 CAD UI 交互数据集。基于 DeepCAD 序列转换为 OnShape UI 指令，用 Selenium + PyAutoGUI 在 64 个云 VM 上自动执行录制。时间跨度 186 个 UI 动作，是次优数据集 WebLinx 的 4 倍。配套 VideoCADFormer 模型与 VideoCAD VQA 基准。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>屏幕录像（1600×1000, 60 FPS）+ 鼠标键盘动作元组 + 目标 CAD 图 + 视频字幕</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：目标 CAD 图像 + 历史 UI 帧 + 历史动作；输出：下一步 UI 动作（命令 + 参数）</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">41,005 个精细标注合成视频（重建成功率 62.0%），总录制时长超 118 天</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（GitHub 公开）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/VideoCAD/VideoCAD" target="_blank" rel="noopener" class="ext-link">https://github.com/VideoCAD/VideoCAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://arxiv.org/abs/2505.24838" target="_blank" rel="noopener">VideoCAD (arXiv 2505.24838)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="加工特征识别" data-year="2020 / 2022" data-name="mfcad / mfcad++">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>MFCAD / MFCAD++</h3>
+          <span class="badge badge-year">2020 / 2022</span>
+          <span class="badge badge-venue">CAD 2020 / CAD 2022</span>
+        </div>
+        <p class="ds-full">MFCAD++: Machining Feature Recognition Dataset</p>
+      </header>
+      <p class="ds-desc">加工特征识别领域的标准基准数据集，用 SolidWorks API 合成生成。MFCAD++ 进一步覆盖相交特征场景，是 BRepNet、AAGNet 等工作的主要评测数据集。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>B-Rep（STEP）+ 面级加工特征标签（24 类加工特征）</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：B-Rep；输出：面级加工特征类别</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">MFCAD 约 5.9 万；MFCAD++ 扩展至相交特征场景</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>研究用途开放</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener" class="ext-link">https://github.com/hducg/MFCAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010448520300844" target="_blank" rel="noopener">MFCAD (Computer-Aided Design 2020)</a></li><li><a href="https://www.sciencedirect.com/science/article/pii/S0010448522000565" target="_blank" rel="noopener">MFCAD++ (Computer-Aided Design 2022)</a></li><li><a href="https://arxiv.org/abs/2104.00706" target="_blank" rel="noopener">BRepNet (CVPR 2021)</a></li><li><a href="https://arxiv.org/abs/2404.00000" target="_blank" rel="noopener">AAGNet (2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-cat="电脑操作数据集（Agent）" data-year="2026" data-name="cad-1000-hours">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CAD-1000-Hours</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">HuggingFace 发布</span>
+        </div>
+        <p class="ds-full">Markov CAD Dataset: 1020 Hours of CAD Software Operation</p>
+      </header>
+      <p class="ds-desc">Markov 发布，面向 AI Agent 操作专业 CAD 软件的电脑操作数据集。二维制图与机械设计占大头，也覆盖建筑建模、结构分析与渲染。下载量已破 10 万。</p>
+      <dl class="ds-meta">
+        <div><dt>数据类型</dt><dd>30 FPS 屏幕录像 + 带时间戳鼠标键盘事件 + 逐帧对齐 + 自然语言操作说明 + 工程文件 + 评分标准</dd></div>
+        <div><dt>输入 → 输出</dt><dd>输入：屏幕状态 + 任务描述；输出：鼠标键盘操作序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">约 256 GB，1020 小时工作过程，597 条工作流，覆盖 10 款 CAD/BIM/结构分析/可视化软件</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>许可协议</dt><dd>开源（HuggingFace 公开）</dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://huggingface.co/datasets/markov-ai/cad-1000-hours" target="_blank" rel="noopener" class="ext-link">https://huggingface.co/datasets/markov-ai/cad-1000-hours</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>使用 / 提出该数据集的论文</h4>
+        <ul><li><a href="https://huggingface.co/datasets/markov-ai/cad-1000-hours" target="_blank" rel="noopener">Markov CAD Dataset (HuggingFace 2026)</a></li></ul>
+      </div>
+    </article>
+    </div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>关键洞察</h2>
+      <span class="sec-sub">Key takeaways</span>
+    </div>
+    <div class="ds-card">
+      <h3 style="font-size:17px;color:#fff;margin-bottom:12px;">① 数据形态正在从「几何」走向「过程」</h3>
+      <p class="ds-desc">
+        早期数据集（ABC、CC3D）只保存最终几何（B-Rep / 网格）；2019 年后 DeepCAD、Fusion 360 Gallery 开始保存
+        <b>建模历史序列</b>；2025–2026 年的 Zero-to-CAD、Pointer-CAD 则进一步保存<b>可执行、可读、可编辑的程序</b>。
+        数据集的竞争焦点已经从「有多少模型」转向「模型是否可编辑、可回放、可验证」。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">② 规模量级在两年内提升了一个数量级</h3>
+      <p class="ds-desc">
+        DeepCAD（2021）17.8 万 → Text2CAD（2024）17 万模型 + 66 万文本 → Brep2Seq（2024）100 万 →
+        Zero-to-CAD（2026）100 万可执行程序 → Pointer-CAD（2026）57.5 万含倒角/倒圆。
+        同时，<b>合成数据</b>（Brep2Seq、CAD-Recode、Zero-to-CAD）成为突破真实数据稀缺的主要手段。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">③ 多模态与工业级操作是当前两条主线</h3>
+      <p class="ds-desc">
+        多模态方向：Omni-CAD（文本+图像+点云+序列）、Text2CAD（多层次文本）、VideoCAD（UI 交互视频）。
+        工业级操作方向：WHUCAD / HPSketch（旋转/圆角/倒角）、Pointer-CAD（实体选择）、OmniCAD-Plan（计划级监督）。
+        两者共同指向同一个目标——让 AI 生成「真正能用的零件」，而不只是「看起来像的形状」。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">④ 评测协议正在工业化</h3>
+      <p class="ds-desc">
+        从早期的 Chamfer Distance / IoU 等归一化形状指标，演进到 Pointer-CAD v2 提出的
+        <b>Vertex / Edge / Face Accuracy + RMR@3</b> 参数级指标，且<b>不做归一化</b>。
+        ECCV 2026 官方 CAD Challenge 要求输出标准 STEP 格式 B-Rep，用 OCCT 内核从 Surface / Edge / Vertex / Topology 四维评分。
+      </p>
+    </div>
+  </section>
+  <footer>
+    CAD Generation 开源数据集全景调研 · 数据来源：arXiv / ACM / IEEE / GitHub / HuggingFace 公开信息<br>
+    整理时间 2026-09 · 共收录 22 个数据集 · Generated by AiPy
+  </footer>
+</div>
+<script>
+(function() {
+  var btns = document.querySelectorAll('.filter-btn');
+  var cards = document.querySelectorAll('.ds-card[data-cat]');
+  btns.forEach(function(b) {
+    b.addEventListener('click', function() {
+      btns.forEach(function(x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      var f = b.getAttribute('data-filter');
+      var v = b.getAttribute('data-value');
+      cards.forEach(function(c) {
+        if (f === 'all') { c.classList.remove('hidden'); return; }
+        c.classList.toggle('hidden', c.getAttribute('data-cat') !== v);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
