@@ -39,6 +39,12 @@ a:hover{text-decoration:underline}
 .back{display:inline-block;margin-bottom:16px;color:var(--brand);text-decoration:none;font-size:.9rem}
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:32px 0}
 @media(max-width:640px){header h1{font-size:1.5rem}}
+
+.qa{border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.qa .q{background:#eff6ff;color:#1e40af;font-weight:700;padding:14px 18px;font-size:.98rem;border-left:4px solid var(--brand)}
+.qa .a{padding:16px 18px;font-size:.92rem}
+.qa .a p{margin-bottom:10px}
+.qa .a table{margin:10px 0}
 </style>
 </head>
 <body>
@@ -146,6 +152,150 @@ NPROC_PER_NODE=8 megatron sft --tensor_model_parallel_size 2 ...</code></pre>
     <tr><td>MoE 大模型</td><td>Megatron-SWIFT（EP+VPP）</td><td>专家分片 + 虚拟流水线</td></tr>
     <tr><td>快速验证</td><td><code>device_map='auto'</code></td><td>零配置</td></tr>
   </table>
+</div>
+
+<div class="card" id="qa">
+  <h2>❓ 常见问题问答（实战判断）</h2>
+  <div class="qa">
+    <div class="q">Q1　ZeRO-1/2/3 能降低显存需求，但不能加快训练速度，对吗？</div>
+    <div class="a">
+      <p><strong>基本正确，但要精确一点。</strong>ZeRO 的本质是「用通信换显存」：</p>
+      <table>
+        <tr><th>阶段</th><th>显存</th><th>速度</th><th>说明</th></tr>
+        <tr><td>ZeRO-1</td><td>✅ 略降</td><td>➖ 基本不变</td><td>通信量略增（多一次 All-Gather）</td></tr>
+        <tr><td>ZeRO-2</td><td>✅✅ 明显降</td><td>➖ <strong>基本不变</strong></td><td>通信量与 DP 持平（Reduce-Scatter 替代 All-Reduce），最受欢迎</td></tr>
+        <tr><td>ZeRO-3</td><td>✅✅✅ 最省</td><td>🐢 <strong>略慢</strong></td><td>前向/反向都要 All-Gather 借参数，通信量约 +50%</td></tr>
+      </table>
+      <p><strong>重要例外：</strong>若不开 ZeRO 就 OOM 跑不起来，那「能跑起来」本身就是最大加速（从 0 到 1）。此外省下的显存可换更大 batch size，间接提升吞吐。</p>
+    </div>
+  </div>
+  <div class="qa">
+    <div class="q">Q2　offload 是什么时候把权重卸载到 CPU？</div>
+    <div class="a">
+      <p><strong>分两种，时机不同：</strong></p>
+      <table>
+        <tr><th>类型</th><th>卸载对象</th><th>时机</th></tr>
+        <tr><td>ZeRO-Offload（优化器卸载）</td><td>优化器状态 + 梯度</td><td>GPU 算完梯度后搬到 CPU 做优化器更新，更新完再把参数搬回 GPU</td></tr>
+        <tr><td>ZeRO-3 Offload / FSDP CPU Offload</td><td>模型参数</td><td><strong>参数用完立即卸载</strong>：某层前向算完，该层参数马上从 GPU 挪到 CPU；下次要用再搬回来</td></tr>
+      </table>
+      <p><strong>一句话：</strong>offload 是「<strong>用完即卸、要用再取</strong>」的按需搬运，用 PCIe 带宽换显存。代价是 CPU-GPU 传输慢，训练速度可能下降 2-5 倍，属于显存实在不够时的最后手段。</p>
+    </div>
+  </div>
+  <div class="qa">
+    <div class="q">Q3　DP 中模型复制，总 batch size=16、4 张卡，是每卡负责 4 个样本吗？</div>
+    <div class="a">
+      <p><strong>完全正确 ✅</strong></p>
+      <ul style="padding-left:20px;font-size:.92rem">
+        <li>总 batch size = 16，DP = 4 → 每张卡分到 <strong>16 / 4 = 4 个样本</strong></li>
+        <li>每张卡用<strong>完整模型副本</strong>独立计算这 4 个样本的前向 + 反向</li>
+        <li>最后 4 张卡的梯度通过 <strong>All-Reduce</strong> 求和/平均，得到全局梯度，各卡同步更新</li>
+      </ul>
+      <div class="note">⚠️ 若开启<strong>梯度累积</strong>（如 <code>gradient_accumulation_steps=2</code>），每卡每步只处理 2 个样本，累积 2 步才更新一次，等效 batch 仍是 16。</div>
+    </div>
+  </div>
+  <div class="qa">
+    <div class="q">Q4　TP 中是怎么切分权重的？（含示意图）</div>
+    <div class="a">
+      <p><strong>核心：分块矩阵乘法，按行切或按列切。</strong>以 <code>Y = XW</code> 为例：</p>
+      <svg viewBox="0 0 860 470" style="width:100%;max-width:860px;height:auto;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;margin:12px 0">
+        <defs>
+          <marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <path d="M0,0 L10,4 L0,8 z" fill="#64748b"/>
+          </marker>
+        </defs>
+        <text x="430" y="28" text-anchor="middle" font-size="17" font-weight="700" fill="#1f2328">TP 权重切分两种方式：Y = X · W</text>
+        <!-- ============ 左：按列切 ============ -->
+        <text x="215" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="#2563eb">① 按列切分 W（Column Parallel）</text>
+        <!-- X -->
+        <rect x="30" y="90" width="60" height="60" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" rx="4"/>
+        <text x="60" y="126" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="600">X</text>
+        <text x="60" y="168" text-anchor="middle" font-size="11" fill="#64748b">输入(复制)</text>
+        <text x="105" y="126" font-size="16" fill="#64748b">×</text>
+        <!-- W split by column -->
+        <rect x="130" y="90" width="60" height="60" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" rx="4"/>
+        <text x="160" y="126" text-anchor="middle" font-size="14" fill="#92400e" font-weight="600">W₁</text>
+        <rect x="190" y="90" width="60" height="60" fill="#fde68a" stroke="#d97706" stroke-width="1.5" rx="4"/>
+        <text x="220" y="126" text-anchor="middle" font-size="14" fill="#92400e" font-weight="600">W₂</text>
+        <text x="190" y="168" text-anchor="middle" font-size="11" fill="#64748b">W 按列切成两块</text>
+        <text x="270" y="126" font-size="16" fill="#64748b">=</text>
+        <!-- Y -->
+        <rect x="295" y="90" width="60" height="60" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" rx="4"/>
+        <text x="325" y="126" text-anchor="middle" font-size="14" fill="#15803d" font-weight="600">Y₁</text>
+        <rect x="355" y="90" width="60" height="60" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5" rx="4"/>
+        <text x="385" y="126" text-anchor="middle" font-size="14" fill="#15803d" font-weight="600">Y₂</text>
+        <text x="355" y="168" text-anchor="middle" font-size="11" fill="#64748b">输出按列拼接</text>
+        <!-- GPU boxes -->
+        <rect x="30" y="195" width="200" height="58" fill="#eff6ff" stroke="#93c5fd" stroke-width="1" rx="8"/>
+        <text x="130" y="218" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="600">GPU 0</text>
+        <text x="130" y="238" text-anchor="middle" font-size="11" fill="#475569">持有 W₁，算 Y₁ = X·W₁</text>
+        <rect x="245" y="195" width="200" height="58" fill="#eff6ff" stroke="#93c5fd" stroke-width="1" rx="8"/>
+        <text x="345" y="218" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="600">GPU 1</text>
+        <text x="345" y="238" text-anchor="middle" font-size="11" fill="#475569">持有 W₂，算 Y₂ = X·W₂</text>
+        <text x="237" y="230" text-anchor="middle" font-size="11" fill="#64748b">各算各的</text>
+        <text x="215" y="285" text-anchor="middle" font-size="12" fill="#16a34a" font-weight="600">✓ 输出直接拼接，无需通信</text>
+        <!-- 分隔线 -->
+        <line x1="470" y1="55" x2="470" y2="440" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="6,6"/>
+        <!-- ============ 右：按行切 ============ -->
+        <text x="665" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="#7c3aed">② 按行切分 W（Row Parallel）</text>
+        <!-- X split by column -->
+        <rect x="490" y="90" width="60" height="60" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" rx="4"/>
+        <text x="520" y="126" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="600">X₁</text>
+        <rect x="550" y="90" width="60" height="60" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5" rx="4"/>
+        <text x="580" y="126" text-anchor="middle" font-size="14" fill="#1e40af" font-weight="600">X₂</text>
+        <text x="550" y="168" text-anchor="middle" font-size="11" fill="#64748b">输入按列切开</text>
+        <text x="625" y="126" font-size="16" fill="#64748b">×</text>
+        <!-- W split by row -->
+        <rect x="650" y="90" width="60" height="60" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" rx="4"/>
+        <text x="680" y="126" text-anchor="middle" font-size="14" fill="#92400e" font-weight="600">W₁</text>
+        <rect x="650" y="150" width="60" height="60" fill="#fde68a" stroke="#d97706" stroke-width="1.5" rx="4"/>
+        <text x="680" y="186" text-anchor="middle" font-size="14" fill="#92400e" font-weight="600">W₂</text>
+        <text x="680" y="232" text-anchor="middle" font-size="11" fill="#64748b">W 按行切成两块</text>
+        <text x="730" y="126" font-size="16" fill="#64748b">=</text>
+        <!-- Y -->
+        <rect x="755" y="90" width="60" height="60" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" rx="4"/>
+        <text x="785" y="126" text-anchor="middle" font-size="14" fill="#15803d" font-weight="600">Y</text>
+        <text x="785" y="168" text-anchor="middle" font-size="11" fill="#64748b">Y₁+Y₂ 求和</text>
+        <!-- GPU boxes -->
+        <rect x="490" y="255" width="180" height="58" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1" rx="8"/>
+        <text x="580" y="278" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">GPU 0</text>
+        <text x="580" y="298" text-anchor="middle" font-size="11" fill="#475569">持有 W₁，算 Y₁ = X₁·W₁</text>
+        <rect x="685" y="255" width="180" height="58" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1" rx="8"/>
+        <text x="775" y="278" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">GPU 1</text>
+        <text x="775" y="298" text-anchor="middle" font-size="11" fill="#475569">持有 W₂，算 Y₂ = X₂·W₂</text>
+        <!-- All-reduce arrow -->
+        <path d="M580,320 L580,350 L775,350 L775,320" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#ar)"/>
+        <text x="677" y="372" text-anchor="middle" font-size="12" fill="#dc2626" font-weight="600">All-Reduce 求和 → Y = Y₁ + Y₂</text>
+        <text x="665" y="400" text-anchor="middle" font-size="12" fill="#7c3aed" font-weight="600">✓ 输出需一次 All-Reduce 通信</text>
+        <!-- 底部说明 -->
+        <rect x="30" y="415" width="800" height="42" fill="#fffbeb" stroke="#fde68a" stroke-width="1" rx="8"/>
+        <text x="430" y="441" text-anchor="middle" font-size="12.5" fill="#92400e">Megatron 经典组合：第一个线性层<b>按列切</b> → 第二个线性层<b>按行切</b>，中间仅需一次通信，效率最优</text>
+      </svg>
+      <table>
+        <tr><th>切分方式</th><th>输入 X</th><th>输出 Y</th><th>通信</th></tr>
+        <tr><td><strong>按列切 W</strong></td><td>复制到每张卡</td><td>按列拼接</td><td>无（concat）</td></tr>
+        <tr><td><strong>按行切 W</strong></td><td>按列切分</td><td>求和</td><td>一次 All-Reduce</td></tr>
+      </table>
+      <p style="font-size:.9rem;color:var(--muted)">补充：Attention 天然按<strong>多头</strong>切分（每个头独立计算）；Embedding 按词表切分；交叉熵损失也做分块计算（与 Flash Attention 同思想）。</p>
+    </div>
+  </div>
+  <div class="qa">
+    <div class="q">Q5　不深究 infra，哪些并行是为了省显存？哪些会变慢？</div>
+    <div class="a">
+      <table>
+        <tr><th>策略</th><th>省显存</th><th>速度影响</th><th>一句话建议</th></tr>
+        <tr><td><strong>DDP</strong></td><td>❌ 不省</td><td>⚡ 快（线性加速）</td><td>模型装得下就用它</td></tr>
+        <tr><td><strong>ZeRO-1</strong></td><td>✅ 省一点</td><td>➖ 基本不变</td><td>保守选择</td></tr>
+        <tr><td><strong>ZeRO-2</strong></td><td>✅✅ 省很多</td><td>➖ <strong>基本不变</strong></td><td>⭐ <strong>首选</strong>，显存通信双赢</td></tr>
+        <tr><td><strong>ZeRO-3</strong></td><td>✅✅✅ 最省</td><td>🐢 略慢（通信+50%）</td><td>模型太大装不下时用</td></tr>
+        <tr><td><strong>FSDP2</strong></td><td>✅✅✅ 最省</td><td>🐢 略慢（同 ZeRO-3）</td><td>PyTorch 原生替代方案</td></tr>
+        <tr><td><strong>Offload</strong></td><td>✅✅✅✅ 极致省</td><td>🐢🐢 <strong>明显变慢</strong></td><td>最后手段</td></tr>
+        <tr><td><strong>TP</strong></td><td>✅✅ 省</td><td>🐢 慢（通信密集，需 NVLink）</td><td>单卡放不下单层时用</td></tr>
+        <tr><td><strong>PP</strong></td><td>✅✅ 省</td><td>🐢 慢（有气泡）</td><td>跨节点扩展用</td></tr>
+        <tr><td><strong>序列并行</strong></td><td>✅✅ 省</td><td>➖ 基本不变</td><td>长文本必用，几乎无额外开销</td></tr>
+      </table>
+      <div class="note">🎯 <strong>结论一句话：</strong>省显存且不减速 → <strong>ZeRO-2、序列并行</strong>；省显存但会变慢 → ZeRO-3、FSDP2、TP、PP、Offload。</div>
+    </div>
+  </div>
 </div>
 <div class="card">
   <h2>📚 原理讲解帖精选（已核实可达）</h2>
