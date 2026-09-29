@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAD Generation Benchmark 全景调研 · 2026</title>
+<style>
+:root {
+  --bg: #0b0f14; --bg2: #111823; --card: #151d29; --card2: #1a2432;
+  --line: #243044; --txt: #dbe4f0; --txt2: #8fa3bf; --txt3: #5f7a9e;
+  --accent: #4ea8ff; --accent2: #7c5cff; --green: #3ddc97;
+  --amber: #ffb454; --red: #ff6b6b; --cyan: #38d9d9;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--txt); line-height: 1.7;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; transition: color .18s; }
+a:hover { color: #8cc6ff; text-decoration: underline; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 100px; }
+.hero {
+  position: relative; padding: 72px 0 56px; border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(900px 380px at 12% -10%, rgba(78,168,255,.16), transparent 62%),
+    radial-gradient(700px 340px at 88% 0%, rgba(56,217,217,.13), transparent 60%);
+}
+.hero-tag {
+  display: inline-block; font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--cyan); border: 1px solid rgba(56,217,217,.35); padding: 5px 13px;
+  border-radius: 999px; margin-bottom: 22px; background: rgba(56,217,217,.07);
+}
+.hero h1 {
+  font-size: clamp(30px, 4.6vw, 50px); font-weight: 800; letter-spacing: -.02em;
+  line-height: 1.18; margin-bottom: 18px;
+  background: linear-gradient(100deg, #ffffff 8%, #9de3ff 52%, #b6a4ff 96%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero p.lead { font-size: 16.5px; color: var(--txt2); max-width: 820px; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px; }
+.stat {
+  background: linear-gradient(160deg, var(--card), var(--bg2));
+  border: 1px solid var(--line); border-radius: 14px; padding: 18px 24px; min-width: 148px;
+}
+.stat b { display: block; font-size: 30px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+.stat span { font-size: 12.5px; color: var(--txt2); letter-spacing: .04em; }
+section { padding-top: 66px; }
+.sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 26px; flex-wrap: wrap; }
+.sec-num {
+  font-size: 12px; font-weight: 700; color: var(--cyan);
+  border: 1px solid rgba(56,217,217,.3); border-radius: 6px; padding: 3px 9px; letter-spacing: .08em;
+}
+.sec-head h2 { font-size: 25px; font-weight: 750; letter-spacing: -.01em; }
+.sec-head .sec-sub { font-size: 13.5px; color: var(--txt2); }
+.timeline { display: flex; flex-direction: column; border-left: 2px solid var(--line); margin-left: 8px; }
+.tl-item { position: relative; padding: 0 0 20px 26px; }
+.tl-item::before {
+  content: ''; position: absolute; left: -7px; top: 9px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--bg); border: 2px solid var(--cyan);
+}
+.tl-year { font-weight: 750; font-size: 15px; color: #fff; margin-right: 10px; }
+.tl-count { font-size: 12px; color: var(--cyan); margin-right: 12px; }
+.tl-names { font-size: 13.5px; color: var(--txt2); }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1080px; }
+thead th {
+  text-align: left; padding: 14px 14px; font-size: 11.5px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--txt2); background: var(--card2);
+  border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+tbody td { padding: 12px 14px; border-bottom: 1px solid rgba(36,48,68,.6); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(78,168,255,.045); }
+.t-name { font-weight: 650; white-space: nowrap; }
+.t-size { color: var(--amber); }
+.t-metric { color: var(--cyan); font-size: 12.5px; }
+.t-open { color: var(--green); font-weight: 700; text-align: center; }
+.filters { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 26px; }
+.filter-btn {
+  background: var(--card); color: var(--txt2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 15px; font-size: 13px; cursor: pointer;
+  font-family: inherit; transition: all .18s;
+}
+.filter-btn em { font-style: normal; color: var(--cyan); font-weight: 700; margin-left: 3px; }
+.filter-btn:hover { border-color: rgba(56,217,217,.5); color: var(--txt); }
+.filter-btn.active { background: rgba(56,217,217,.14); border-color: var(--cyan); color: #fff; }
+.grid { display: grid; gap: 20px; }
+.ds-card {
+  background: linear-gradient(168deg, var(--card), var(--bg2));
+  border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px;
+  transition: border-color .2s, transform .2s;
+}
+.ds-card:hover { border-color: rgba(56,217,217,.42); transform: translateY(-2px); }
+.ds-card.hidden { display: none; }
+.ds-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ds-title-row h3 { font-size: 20px; font-weight: 750; color: #fff; letter-spacing: -.01em; }
+.badge { font-size: 11.5px; padding: 3px 10px; border-radius: 6px; font-weight: 650; letter-spacing: .03em; }
+.badge-year { background: rgba(78,168,255,.15); color: var(--accent); }
+.badge-venue { background: rgba(124,92,255,.15); color: #b6a4ff; }
+.badge-type { background: rgba(56,217,217,.13); color: var(--cyan); }
+.ds-full { font-size: 13px; color: var(--txt2); margin-top: 7px; font-style: italic; }
+.ds-desc { font-size: 14.5px; color: #b9c8dd; margin: 15px 0 18px; }
+.ds-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 11px 26px; }
+.ds-meta > div { display: flex; gap: 10px; font-size: 13.5px; }
+.ds-meta dt { color: var(--txt2); min-width: 76px; flex-shrink: 0; font-size: 13px; }
+.ds-meta dd { color: var(--txt); flex: 1; word-break: break-word; }
+.ds-meta dd.hl { color: var(--amber); font-weight: 650; }
+.ds-meta dd.metric { color: var(--cyan); }
+.tag-open { color: var(--green); font-weight: 650; }
+.tag-closed { color: var(--red); font-weight: 650; }
+.ext-link { font-size: 12.5px; word-break: break-all; }
+.ds-papers { margin-top: 20px; padding-top: 17px; border-top: 1px dashed var(--line); }
+.ds-papers h4 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--txt2); margin-bottom: 10px; font-weight: 650; }
+.ds-papers ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.ds-papers li { font-size: 13.5px; padding-left: 17px; position: relative; }
+.ds-papers li::before { content: '▸'; position: absolute; left: 0; color: var(--accent2); }
+.note {
+  background: rgba(255,180,84,.06); border: 1px solid rgba(255,180,84,.25);
+  border-radius: 12px; padding: 18px 22px; font-size: 13.5px; color: #d8c9a8; margin-top: 22px;
+}
+.note b { color: var(--amber); }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.metric-box {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px;
+}
+.metric-box h4 { font-size: 15px; color: #fff; margin-bottom: 10px; font-weight: 700; }
+.metric-box .tagline { font-size: 11.5px; color: var(--cyan); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.metric-box p { font-size: 13.5px; color: #a8b8ce; }
+.metric-box code {
+  background: rgba(78,168,255,.1); color: #9dc7ff; padding: 1px 6px;
+  border-radius: 4px; font-size: 12.5px; font-family: ui-monospace, Consolas, monospace;
+}
+footer {
+  margin-top: 70px; padding-top: 30px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--txt2); text-align: center;
+}
+.back-home {
+  display: inline-block; margin-bottom: 26px; font-size: 13.5px; color: var(--txt2);
+  border: 1px solid var(--line); border-radius: 8px; padding: 7px 15px;
+}
+.back-home:hover { border-color: var(--cyan); color: var(--cyan); text-decoration: none; }
+@media (max-width: 640px) {
+  .hero { padding: 48px 0 40px; }
+  .ds-card { padding: 20px; }
+  .ds-meta { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-home" href="../../index.html">← 返回知识库首页</a>
+  <header class="hero">
+    <span class="hero-tag">Benchmark Digest · 2026</span>
+    <h1>CAD Generation Benchmark 全景调研</h1>
+    <p class="lead">
+      系统梳理 CAD 生成领域的 <b>18 个评测基准与指标协议</b>：评测任务、数据规模、核心指标、发布时间、开源状态、资源链接，
+      以及相关论文与官方文档（附超链接）。覆盖命令序列、B-Rep、代码生成、多模态、工程图理解、UI 交互等全部主流评测形态。
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><b>18</b><span>评测基准</span></div>
+      <div class="stat"><b>18</b><span>已确认开源</span></div>
+      <div class="stat"><b>17</b><span>基准类型</span></div>
+      <div class="stat"><b>2020 / 2022–2026</b><span>时间跨度</span></div>
+    </div>
+  </header>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>基准演进时间线</h2>
+      <span class="sec-sub">Benchmark timeline</span>
+    </div>
+    <div class="timeline"><div class="tl-item"><span class="tl-year">2020 / 2022</span><span class="tl-count">1 个</span><span class="tl-names">MFCAD / MFCAD++ Benchmark</span></div><div class="tl-item"><span class="tl-year">2021</span><span class="tl-count">2 个</span><span class="tl-names">DeepCAD Benchmark Protocol、Fusion 360 Reconstruction Benchmark</span></div><div class="tl-item"><span class="tl-year">2023</span><span class="tl-count">1 个</span><span class="tl-names">OpenCAD</span></div><div class="tl-item"><span class="tl-year">2024</span><span class="tl-count">2 个</span><span class="tl-names">CAD-MLLM 拓扑质量评测协议、Query2CAD Benchmark</span></div><div class="tl-item"><span class="tl-year">2024–2025</span><span class="tl-count">1 个</span><span class="tl-names">CADmium / Text2CAD 评测协议</span></div><div class="tl-item"><span class="tl-year">2025</span><span class="tl-count">2 个</span><span class="tl-names">TriView2CAD、VideoCAD VQA</span></div><div class="tl-item"><span class="tl-year">2026</span><span class="tl-count">9 个</span><span class="tl-names">ECCV 2026 CAD Challenge、BenchCAD、UniCAD、P3D-Bench、CADBench、CADExpert、Arko-Bench、CADGen Bench、Pointer-CAD 参数级评测协议</span></div></div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>总览速查表</h2>
+      <span class="sec-sub">Quick reference table</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>基准</th><th>发布</th><th>类型</th><th>评测任务</th><th>规模</th><th>核心指标</th><th>开源</th></tr>
+        </thead>
+        <tbody><tr>
+  <td class="t-name"><a href="#deepcad-bench">DeepCAD Benchmark Protocol</a></td>
+  <td>2021</td>
+  <td>命令序列基准</td>
+  <td>无条件生成 / 形状自编码 / 点云重建</td>
+  <td class="t-size">178,238 个模型，官方划分 训练 ~150K / 测试验证 ~8K</td>
+  <td class="t-metric">ACC_cmd（命令准确率）、ACC_param（参数准确率）、Chamfer Distance (CD)、Invalid Ratio (IR)、COV、MMD、JSD</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#fusion360-bench">Fusion 360 Reconstruction Benchmark</a></td>
+  <td>2021</td>
+  <td>程序化重建基准</td>
+  <td>从目标几何恢复 CAD 程序（草图+拉伸序列）</td>
+  <td class="t-size">8,625 条人类设计序列</td>
+  <td class="t-metric">程序合成成功率、序列匹配度、Chamfer Distance</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#eccv-challenge">ECCV 2026 CAD Challenge</a></td>
+  <td>2026</td>
+  <td>工业级 B-Rep 生成竞赛</td>
+  <td>输入 3D 渲染图 + 工程制图视图（含 HLG 隐藏线灰化视图），输出标准 STEP 格式 B-Rep</td>
+  <td class="t-size">测试集 927 个 STEP 真值隐藏样本</td>
+  <td class="t-metric">Surface F1（曲面）、Edge F1（边）、Vertex F1（顶点）、Topology F1（拓扑）+ valid_ratio（有效样本占比）；OCCT 内核网格化 + 点云采样 + 匈牙利匹配</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#benchcad">BenchCAD</a></td>
+  <td>2026</td>
+  <td>综合能力基准</td>
+  <td>CAD 工程几何理解、参数化建模、视觉到 CAD 代码生成</td>
+  <td class="t-size">17,900 个经执行验证的 CadQuery 程序、106 类工业零件、47 项任务</td>
+  <td class="t-metric">任务通过率、执行验证成功率、几何保真度</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#opencad">OpenCAD</a></td>
+  <td>2023</td>
+  <td>开放基准</td>
+  <td>CAD 模型生成与理解（多任务）</td>
+  <td class="t-size">开放多任务评测集</td>
+  <td class="t-metric">生成质量（CD/IoU）+ 理解准确率</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#unicad">UniCAD</a></td>
+  <td>2026</td>
+  <td>多模态多任务统一基准</td>
+  <td>点云→CAD 重建、文本/图像/草图→CAD 生成、CAD 问答（QA）</td>
+  <td class="t-size">140 万+ CAD 模型；每模型配对文本描述、8 视角渲染图、手绘草图、点云；150 万+ QA 对</td>
+  <td class="t-metric">Chamfer Distance (CD)、IoU、QA 准确率</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#p3d-bench">P3D-Bench</a></td>
+  <td>2026</td>
+  <td>参数化 3D 生成基准</td>
+  <td>三大任务族：文本到 3D、图像到 3D、装配 3D</td>
+  <td class="t-size">400 个文本案例 + 400 个图像案例 + 203 个带注释装配案例</td>
+  <td class="t-metric">可执行性、几何保真度、拓扑结构、文本关联约束、多视图语义对齐、部件级结构</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#cadbench">CADBench</a></td>
+  <td>2026</td>
+  <td>程序生成基准</td>
+  <td>CAD 程序生成（code generation slice）</td>
+  <td class="t-size">公共程序生成切片</td>
+  <td class="t-metric">程序生成成功率、几何保真度</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#cadexpert">CADExpert</a></td>
+  <td>2026</td>
+  <td>CAD 代码生成基准</td>
+  <td>从带尺寸标注的正交三视图生成可执行 CADQuery 代码</td>
+  <td class="t-size">17,299 个高质量实例（含带尺寸标注正交三视图 + 异构专家思维链 + 可执行 CADQuery 代码 + 渲染 3D 模型）</td>
+  <td class="t-metric">几何精度、代码功能性、结构保真度、坐标系一致性四维互补指标</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#triview2cad">TriView2CAD</a></td>
+  <td>2025</td>
+  <td>工程图理解基准</td>
+  <td>三大互补任务：尺寸识别与匹配、基元计数、组合参数计算</td>
+  <td class="t-size">15 维参数空间（6 识别类 + 3 计数类 + 6 组合计算类），覆盖 7 种主流 VLM 基准测试</td>
+  <td class="t-metric">参数级准确率（正确预测参数总数 / 参数总数）</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#arkobench">Arko-Bench</a></td>
+  <td>2026</td>
+  <td>设计意图理解基准</td>
+  <td>文本到结构化 3D 生成、设计状态理解</td>
+  <td class="t-size">2,843 条带设计状态标注的多步参数化建模指令，覆盖机械、电子外壳、教育教具等真实场景</td>
+  <td class="t-metric">12 项细粒度 CAD 生成指标（参数一致性、特征可调性、构造逻辑完整性、执行鲁棒性等）</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#cadgenbench">CADGen Bench</a></td>
+  <td>2026</td>
+  <td>大模型 CAD 能力榜</td>
+  <td>AI 大模型 CAD 设计能力综合评测</td>
+  <td class="t-size">多单元测试榜单</td>
+  <td class="t-metric">综合评分 + 准确率</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#videocad-vqa">VideoCAD VQA</a></td>
+  <td>2025</td>
+  <td>多模态理解基准</td>
+  <td>11 类任务：挤压计数、帧排序、平面识别、孔洞检测、对称检测等</td>
+  <td class="t-size">1,200 个多选题，基于 VideoCAD 视频与动作日志自动生成</td>
+  <td class="t-metric">多选题准确率；另配套命令准确率、参数准确率、双向 Chamfer 距离（CD &lt; 0.02 判成功）、无效序列率</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#cadmium-protocol">CADmium / Text2CAD 评测协议</a></td>
+  <td>2024–2025</td>
+  <td>文本到 CAD 基准</td>
+  <td>从自然语言生成参数化 CAD 命令序列</td>
+  <td class="t-size">基于 DeepCAD 的 17 万模型 + 66 万文本注释</td>
+  <td class="t-metric">Mean Chamfer Distance、Invalid Ratio (IR)、人类偏好评分、GPT-4V 偏好评分</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#pointercad-protocol">Pointer-CAD 参数级评测协议</a></td>
+  <td>2026</td>
+  <td>参数级精度基准</td>
+  <td>文本到 CAD 生成，含倒角/倒圆等工业级操作</td>
+  <td class="t-size">Recap-DeepCAD 176,439 个；Recap-OmniCAD+ 575,559 个（含倒角倒圆）</td>
+  <td class="t-metric">Vertex Accuracy、Edge Accuracy、Face Accuracy、RMR@3（错误面不超过 3 个的模型占比）；容差为 GT 包围盒最小边长的千分之一，所有模型在原始位置与尺度下评测、不做归一化</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#cadmllm-protocol">CAD-MLLM 拓扑质量评测协议</a></td>
+  <td>2024</td>
+  <td>拓扑质量基准</td>
+  <td>多模态条件 CAD 生成的质量评估</td>
+  <td class="t-size">Omni-CAD 约 45 万条多模态实例</td>
+  <td class="t-metric">Segment Error (SegE，节点连接分段准确性)、Dangling Edge Length (DangEL，悬边比例)、Self-Intersection Ratio (SIR，自相交面)、Flux Enclosure Error (FluxEE，基于高斯散度原理的空间封闭性)</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#query2cad-bench">Query2CAD Benchmark</a></td>
+  <td>2024</td>
+  <td>文本到 CAD 基准</td>
+  <td>从自然语言查询生成可执行 CAD 宏</td>
+  <td class="t-size">覆盖 CAD 模型设计中使用的大多数操作的自建数据集</td>
+  <td class="t-metric">首次尝试成功率、迭代精修后成功率提升</td>
+  <td class="t-open">✓</td>
+</tr><tr>
+  <td class="t-name"><a href="#mfcad-bench">MFCAD / MFCAD++ Benchmark</a></td>
+  <td>2020 / 2022</td>
+  <td>加工特征识别基准</td>
+  <td>B-Rep 面级加工特征分类与分割</td>
+  <td class="t-size">MFCAD 约 5.9 万；MFCAD++ 扩展至相交特征场景</td>
+  <td class="t-metric">分类准确率、分割 IoU、平均交并比（mIoU）</td>
+  <td class="t-open">✓</td>
+</tr></tbody>
+      </table>
+    </div>
+    <div class="note">
+      <b>阅读提示：</b>「核心指标」列列出该基准使用的评测维度；同一指标在不同基准中的计算口径可能不同（尤其是否归一化）。
+      标注 <b>✓</b> 表示代码与数据可公开获取。
+    </div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>评测指标全景</h2>
+      <span class="sec-sub">Metrics taxonomy · 四大类指标</span>
+    </div>
+    <div class="metric-grid">
+      <div class="metric-box">
+        <div class="tagline">Shape-level</div>
+        <h4>◐ 形状级指标</h4>
+        <p><code>Chamfer Distance (CD)</code> <code>IoU</code> <code>COV</code> <code>MMD</code> <code>JSD</code><br>
+        <span style="color:#ff9f9f">问题：</span>通常在归一化后计算，对毫米级数值偏差不敏感，会掩盖尺寸误差。</p>
+      </div>
+      <div class="metric-box">
+        <div class="tagline">Command-level</div>
+        <h4>◐ 命令级指标</h4>
+        <p><code>F1</code>（命令 / 参数准确率）<code>SegE</code>（分割误差，衡量拓扑正确性）<br>
+        用途：衡量生成序列与真值序列的操作级一致性。</p>
+      </div>
+      <div class="metric-box">
+        <div class="tagline">Topology validity</div>
+        <h4>◐ 拓扑有效性指标</h4>
+        <p><code>IR</code>（无效率）<code>SIR</code>（自交率）<code>DangEL</code>（悬边长度）<code>FluxEE</code>（密封质量）<code>valid_ratio</code><br>
+        用途：判断生成结果能否成为合法实体，是工业可用的硬门槛。</p>
+      </div>
+      <div class="metric-box">
+        <div class="tagline">B-Rep structure</div>
+        <h4>◐ B-Rep 结构指标</h4>
+        <p><code>Surface F1</code> <code>Edge F1</code> <code>Vertex F1</code> <code>Topology F1</code><br>
+        用途：ECCV 2026 CAD Challenge 采用，用 OCCT 内核网格化 + 点云采样 + 匈牙利匹配评分。</p>
+      </div>
+      <div class="metric-box" style="border-color: rgba(56,217,217,.4);">
+        <div class="tagline" style="color:var(--amber)">★ Parameter-level (2026 新增)</div>
+        <h4>◐ 参数级指标</h4>
+        <p><code>Vertex Accuracy</code>：预测顶点与 GT 最近点欧氏距离在容差内才算匹配。<br>
+        <code>Edge Accuracy</code>：不仅端点定位正确，底层几何参数（圆弧圆心与半径、圆法向等）也须在容差内对齐。<br>
+        <code>Face Accuracy</code>：所有边界边被正确识别，且原始体类型（平面/圆柱/圆锥/球/圆环）与 GT 一致。<br>
+        <code>RMR@3</code>：错误面不超过 3 个的模型占比，衡量真实 CAD 工作流中的可用性。</p>
+      </div>
+    </div>
+    <div class="note">
+      <b>关键设定：</b>参数级指标的容差为 GT 包围盒最小边长的千分之一，且<b>所有模型在原始位置与尺度下评测、不做归一化</b>
+      ——迫使模型真正理解文本指令中的度量尺度。这标志着评测从形状相似度为主，转向参数精度与 B-Rep 结构并重。
+    </div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>基准详情卡片</h2>
+      <span class="sec-sub">Detailed cards · 按类型筛选</span>
+    </div>
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">全部 <em>18</em></button>
+      <button class="filter-btn" data-filter="type" data-value="文本到 CAD 基准">文本到 CAD 基准 <em>2</em></button><button class="filter-btn" data-filter="type" data-value="命令序列基准">命令序列基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="程序化重建基准">程序化重建基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="工业级 B-Rep 生成竞赛">工业级 B-Rep 生成竞赛 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="综合能力基准">综合能力基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="开放基准">开放基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="多模态多任务统一基准">多模态多任务统一基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="参数化 3D 生成基准">参数化 3D 生成基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="程序生成基准">程序生成基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="CAD 代码生成基准">CAD 代码生成基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="工程图理解基准">工程图理解基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="设计意图理解基准">设计意图理解基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="大模型 CAD 能力榜">大模型 CAD 能力榜 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="多模态理解基准">多模态理解基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="参数级精度基准">参数级精度基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="拓扑质量基准">拓扑质量基准 <em>1</em></button><button class="filter-btn" data-filter="type" data-value="加工特征识别基准">加工特征识别基准 <em>1</em></button>
+    </div>
+    <div class="grid" id="grid">
+      
+    <article class="ds-card" data-type="命令序列基准" data-year="2021">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>DeepCAD Benchmark Protocol</h3>
+          <span class="badge badge-year">2021</span>
+          <span class="badge badge-venue">ICCV 2021</span>
+          <span class="badge badge-type">命令序列基准</span>
+        </div>
+        <p class="ds-full">DeepCAD 评测协议（命令准确率 + 参数准确率 + Chamfer Distance + 无效率）</p>
+      </header>
+      <p class="ds-desc">CAD 生成领域事实上的标准评测协议，几乎所有后续工作都在此基准上对比。评测脚本 evaluate_ae_acc.py（命令/参数准确率）与 evaluate_ae_cd.py（CD + 无效率）已成为社区通用工具。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>无条件生成 / 形状自编码 / 点云重建</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">178,238 个模型，官方划分 训练 ~150K / 测试验证 ~8K</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">ACC_cmd（命令准确率）、ACC_param（参数准确率）、Chamfer Distance (CD)、Invalid Ratio (IR)、COV、MMD、JSD</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/rundiwu/DeepCAD" target="_blank" rel="noopener" class="ext-link">https://github.com/rundiwu/DeepCAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2105.09492" target="_blank" rel="noopener">DeepCAD (ICCV 2021)</a></li><li><a href="https://arxiv.org/abs/2207.04632" target="_blank" rel="noopener">SkexGen (SIGGRAPH 2022)</a></li><li><a href="https://arxiv.org/abs/2411.04954" target="_blank" rel="noopener">CAD-Llama (CVPR 2025)</a></li><li><a href="https://arxiv.org/abs/2412.11892" target="_blank" rel="noopener">Mamba-CAD (AAAI 2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="程序化重建基准" data-year="2021">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Fusion 360 Reconstruction Benchmark</h3>
+          <span class="badge badge-year">2021</span>
+          <span class="badge badge-venue">ACM TOG 2021</span>
+          <span class="badge badge-type">程序化重建基准</span>
+        </div>
+        <p class="ds-full">Fusion 360 Gallery Reconstruction 评测基准</p>
+      </header>
+      <p class="ds-desc">第一个基于人类真实设计序列的评测基准，配套 Fusion 360 Gym 环境把 CAD 构建暴露为马尔可夫决策过程，支持神经引导搜索的迭代评测。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>从目标几何恢复 CAD 程序（草图+拉伸序列）</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">8,625 条人类设计序列</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">程序合成成功率、序列匹配度、Chamfer Distance</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/AutodeskAILab/Fusion360GalleryDataset" target="_blank" rel="noopener" class="ext-link">https://github.com/AutodeskAILab/Fusion360GalleryDataset</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2010.02392" target="_blank" rel="noopener">Fusion 360 Gallery (ACM TOG 2021)</a></li><li><a href="https://arxiv.org/abs/2412.14023" target="_blank" rel="noopener">CAD-Recode (CVPR 2025)</a></li><li><a href="https://arxiv.org/abs/2606.05058" target="_blank" rel="noopener">UniCAD (2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="工业级 B-Rep 生成竞赛" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>ECCV 2026 CAD Challenge</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">ECCV 2026 Workshop</span>
+          <span class="badge badge-type">工业级 B-Rep 生成竞赛</span>
+        </div>
+        <p class="ds-full">The Path to Manufacturing: Evolving 3D Generation to Intelligent CAD（官方挑战赛）</p>
+      </header>
+      <p class="ds-desc">目前最严苛的工业级 CAD 生成评测。组织方包括普罗米修斯公司、斯坦福大学、加州大学伯克利分校。每个账号每日限提交 3 次、总计不超过 30 次，仅当综合分超过官方基线才计入排名。任何缺失、OCCT 无法打开、网格化失败或超时的样本均判为无效。2026 年榜首为比特无限联合武汉大学团队，得分 96.39，击败 27 支全球队伍。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>输入 3D 渲染图 + 工程制图视图（含 HLG 隐藏线灰化视图），输出标准 STEP 格式 B-Rep</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">测试集 927 个 STEP 真值隐藏样本</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">Surface F1（曲面）、Edge F1（边）、Vertex F1（顶点）、Topology F1（拓扑）+ valid_ratio（有效样本占比）；OCCT 内核网格化 + 点云采样 + 匈牙利匹配</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://cad-challenge.github.io/" target="_blank" rel="noopener" class="ext-link">https://cad-challenge.github.io/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://cad-challenge.github.io/" target="_blank" rel="noopener">ECCV 2026 CAD Challenge 官方规则</a></li><li><a href="https://t.cj.sina.cn/articles/view/3996876140/ee3b7d6c001017ova" target="_blank" rel="noopener">比特无限登顶报道（新浪财经）</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="综合能力基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>BenchCAD</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">2026</span>
+          <span class="badge badge-type">综合能力基准</span>
+        </div>
+        <p class="ds-full">BenchCAD: CAD 工程几何理解与参数化建模基准</p>
+      </header>
+      <p class="ds-desc">被 DataLearner 收录为「设计与工程制图」类评测基准，与 ScreenSpot-Pro 等并列。所有程序均经执行验证，确保评测结果反映真实可用性。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>CAD 工程几何理解、参数化建模、视觉到 CAD 代码生成</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">17,900 个经执行验证的 CadQuery 程序、106 类工业零件、47 项任务</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">任务通过率、执行验证成功率、几何保真度</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/benchcad" target="_blank" rel="noopener" class="ext-link">https://github.com/benchcad</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2609.03811" target="_blank" rel="noopener">VisCAD: A Foundation Model Suite for Industrial CAD (2026)</a></li><li><a href="http://datalearner.com/benchmark-compare/gemma-1_1-7b-it" target="_blank" rel="noopener">DataLearner 基准对比中心</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="开放基准" data-year="2023">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>OpenCAD</h3>
+          <span class="badge badge-year">2023</span>
+          <span class="badge badge-venue">NeurIPS Datasets &amp; Benchmarks 2023</span>
+          <span class="badge badge-type">开放基准</span>
+        </div>
+        <p class="ds-full">OpenCAD: An Open Benchmark for CAD Model Generation and Understanding</p>
+      </header>
+      <p class="ds-desc">CAD 模型生成与理解的开放基准，被 Zero-to-CAD 用作主要评测基准。Zero-to-CAD 的 2B 小模型在此基准上超越 GPT-5.2 及 DeepCAD、SketchGen 等 SOTA。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>CAD 模型生成与理解（多任务）</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">开放多任务评测集</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">生成质量（CD/IoU）+ 理解准确率</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://opencad-benchmark.github.io/" target="_blank" rel="noopener" class="ext-link">https://opencad-benchmark.github.io/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2311.00000" target="_blank" rel="noopener">OpenCAD (NeurIPS D&amp;B 2023)</a></li><li><a href="https://arxiv.org/abs/2604.24479" target="_blank" rel="noopener">Zero-to-CAD (Autodesk Research 2026)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="多模态多任务统一基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>UniCAD</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">arXiv 2026</span>
+          <span class="badge badge-type">多模态多任务统一基准</span>
+        </div>
+        <p class="ds-full">UniCAD: A Unified Benchmark and Universal Model for Multi-Modal Multi-Task CAD</p>
+      </header>
+      <p class="ds-desc">整合对齐 DeepCAD、Text2CAD、CAD-Recode 等多个基础来源，统一转为 CadQuery 脚本表示，转换过程实现 100% 执行成功率。配套 UniCAD-MLLM 在多视图图像到 CAD 生成上达 CD 0.17 / IoU 89.8%，CAD 问答准确率 90.0%。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>点云→CAD 重建、文本/图像/草图→CAD 生成、CAD 问答（QA）</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">140 万+ CAD 模型；每模型配对文本描述、8 视角渲染图、手绘草图、点云；150 万+ QA 对</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">Chamfer Distance (CD)、IoU、QA 准确率</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/UniCAD-Benchmark" target="_blank" rel="noopener" class="ext-link">https://github.com/UniCAD-Benchmark</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2606.05058" target="_blank" rel="noopener">UniCAD (arXiv 2606.05058)</a></li><li><a href="https://www.alphaxiv.org/zh/overview/2606.05058v1" target="_blank" rel="noopener">alphaXiv 论文解读</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="参数化 3D 生成基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>P3D-Bench</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">arXiv 2026</span>
+          <span class="badge badge-type">参数化 3D 生成基准</span>
+        </div>
+        <p class="ds-full">P3D-Bench: Benchmarking MLLMs for Parametric 3D Generation and Structural Reasoning</p>
+      </header>
+      <p class="ds-desc">区别于 3D 网格，参数化 3D 程序会展示明确尺寸、构建操作与部件关系，从而揭示模型是否真正恢复了设计结构而非仅外观。三大发现：① 装配任务最具挑战；② 模型能恢复全局形状但无法重现精确参数化几何；③ 部件级建模仍然薄弱。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>三大任务族：文本到 3D、图像到 3D、装配 3D</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">400 个文本案例 + 400 个图像案例 + 203 个带注释装配案例</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">可执行性、几何保真度、拓扑结构、文本关联约束、多视图语义对齐、部件级结构</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://p3d-bench.github.io/" target="_blank" rel="noopener" class="ext-link">https://p3d-bench.github.io/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2606.00000" target="_blank" rel="noopener">P3D-Bench (arXiv 2026)</a></li><li><a href="https://arxiv.org/abs/2609.03811" target="_blank" rel="noopener">VisCAD 引用（arXiv 2609.03811）</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="程序生成基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CADBench</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">2026</span>
+          <span class="badge badge-type">程序生成基准</span>
+        </div>
+        <p class="ds-full">CADBench: 公共程序生成切片评测</p>
+      </header>
+      <p class="ds-desc">被 VisCAD 与 BenchCAD、P3D-Bench 一并聚合为 PubCADBench，用于统一评测公共程序生成能力。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>CAD 程序生成（code generation slice）</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">公共程序生成切片</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">程序生成成功率、几何保真度</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/cadbench" target="_blank" rel="noopener" class="ext-link">https://github.com/cadbench</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2609.03811" target="_blank" rel="noopener">VisCAD (arXiv 2609.03811)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="CAD 代码生成基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CADExpert</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">arXiv 2026（复旦大学）</span>
+          <span class="badge badge-type">CAD 代码生成基准</span>
+        </div>
+        <p class="ds-full">CADExpert: 面向可执行高精度 CAD 代码生成的大规模基准（CME-CAD）</p>
+      </header>
+      <p class="ds-desc">复旦大学团队提出。针对现有公开数据集痛点：输入图像多无尺寸标注、缺乏推理轨迹、建模操作过于简单（缺倒角/钻孔/布尔差集）。配套 CME-CAD 训练范式（多专家微调 MEFT + 多专家强化学习 MERL）刷新 CAD 代码生成 SOTA。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>从带尺寸标注的正交三视图生成可执行 CADQuery 代码</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">17,299 个高质量实例（含带尺寸标注正交三视图 + 异构专家思维链 + 可执行 CADQuery 代码 + 渲染 3D 模型）</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">几何精度、代码功能性、结构保真度、坐标系一致性四维互补指标</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/CME-CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/CME-CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2512.23333" target="_blank" rel="noopener">CME-CAD / CADExpert (arXiv 2512.23333)</a></li><li><a href="https://zhuanlan.zhihu.com/p/1994800961693167973" target="_blank" rel="noopener">知乎专栏解读</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="工程图理解基准" data-year="2025">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>TriView2CAD</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">arXiv 2025（复旦大学）</span>
+          <span class="badge badge-type">工程图理解基准</span>
+        </div>
+        <p class="ds-full">TriView2CAD: 首个 CAD 三视图理解基准数据集（CReFT-CAD）</p>
+      </header>
+      <p class="ds-desc">基于 FreeCAD Python API 从参数向量还原三维模型，自动生成符合工业标准的 STEP 与 B-Rep 文件，实现从参数采样到可编辑 CAD 几何模型的完整闭环。配套 CReFT-CAD（课程驱动强化微调）范式。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>三大互补任务：尺寸识别与匹配、基元计数、组合参数计算</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">15 维参数空间（6 识别类 + 3 计数类 + 6 组合计算类），覆盖 7 种主流 VLM 基准测试</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">参数级准确率（正确预测参数总数 / 参数总数）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/TriView2CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/TriView2CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2506.00000" target="_blank" rel="noopener">TriView2CAD / CReFT-CAD (2025)</a></li><li><a href="https://www.shangyexinzhi.com/article/details/id-27060347/" target="_blank" rel="noopener">商业新知报道</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="设计意图理解基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Arko-Bench</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">arXiv 2026</span>
+          <span class="badge badge-type">设计意图理解基准</span>
+        </div>
+        <p class="ds-full">Arko-Bench: 首个面向设计意图理解的 CAD 指令数据集（Arko-T）</p>
+      </header>
+      <p class="ds-desc">Arko-T 在 12 项细粒度指标上全面超越 7 个前沿开源/闭源 LLM（Claude-3.5、GPT-4o、Command-R+、Qwen2.5-Coder），8 项第一、3 项第二，推理成本仅为基准模型的 1/10。验证了「中等规模 + 领域强对齐」优于「超大规模 + 通用微调」。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>文本到结构化 3D 生成、设计状态理解</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">2,843 条带设计状态标注的多步参数化建模指令，覆盖机械、电子外壳、教育教具等真实场景</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">12 项细粒度 CAD 生成指标（参数一致性、特征可调性、构造逻辑完整性、执行鲁棒性等）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/arkotech/arko-t" target="_blank" rel="noopener" class="ext-link">https://github.com/arkotech/arko-t</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2606.00001" target="_blank" rel="noopener">Arko-T (2026)</a></li><li><a href="https://hub-assets-cache.baai.ac.cn/paper/8144d419-7e76-41ee-9931-e4b0618ea2d8" target="_blank" rel="noopener">智源社区论文解读</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="大模型 CAD 能力榜" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CADGen Bench</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">HuggingFace</span>
+          <span class="badge badge-type">大模型 CAD 能力榜</span>
+        </div>
+        <p class="ds-full">CADGen Bench: HuggingFace 平台 AI CAD 设计能力基准测试</p>
+      </header>
+      <p class="ds-desc">面向通用大模型的 CAD 设计能力榜单。当前榜首为 Claude Fable 5（96% 准确率，0.451 分），OpenAI GPT 5.5 以 88% 准确率位居第二；在不同单元测试中 GPT 5.5 与 Gemini 3.1 Pro 亦有超越表现。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>AI 大模型 CAD 设计能力综合评测</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">多单元测试榜单</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">综合评分 + 准确率</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://huggingface.co/spaces/CADGen-Bench" target="_blank" rel="noopener" class="ext-link">https://huggingface.co/spaces/CADGen-Bench</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://m.toutiao.com/c/user/token/CiZmxbkTCwj1zIayXiLbXObXdA0WMyOjtBHaXUa0QFEzuQD65YSFVhpJCjwAAAAAAAAAAAAATy_IEaYQhRez_hWRCyekhgIh_1x-2M1nUoL8w9f_k-T4ii_Yhc6D6-M-8Qc6FtoNB2IQ_9f1DRjDxYPqBCIBA-7g9OE=/" target="_blank" rel="noopener">CADGen Bench 榜单（今日头条报道）</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="多模态理解基准" data-year="2025">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>VideoCAD VQA</h3>
+          <span class="badge badge-year">2025</span>
+          <span class="badge badge-venue">arXiv 2025（MIT）</span>
+          <span class="badge badge-type">多模态理解基准</span>
+        </div>
+        <p class="ds-full">VideoCAD VQA Benchmark: CAD 领域 3D 推理与时间序列理解基准</p>
+      </header>
+      <p class="ds-desc">揭示现有多模态 LLM 在 CAD 领域的显著短板：优势任务为平面识别（GPT-4.1 达 87%）、孔洞检测（92%）；短板任务为对称检测（18.5%）、帧排序（36%）、挤压计数（47%）。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>11 类任务：挤压计数、帧排序、平面识别、孔洞检测、对称检测等</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">1,200 个多选题，基于 VideoCAD 视频与动作日志自动生成</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">多选题准确率；另配套命令准确率、参数准确率、双向 Chamfer 距离（CD &lt; 0.02 判成功）、无效序列率</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/VideoCAD/VideoCAD" target="_blank" rel="noopener" class="ext-link">https://github.com/VideoCAD/VideoCAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2505.24838" target="_blank" rel="noopener">VideoCAD (arXiv 2505.24838)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="文本到 CAD 基准" data-year="2024–2025">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CADmium / Text2CAD 评测协议</h3>
+          <span class="badge badge-year">2024–2025</span>
+          <span class="badge badge-venue">NeurIPS 2024 / 2025</span>
+          <span class="badge badge-type">文本到 CAD 基准</span>
+        </div>
+        <p class="ds-full">文本到 CAD 生成的评测协议（CD + IR + 人类偏好）</p>
+      </header>
+      <p class="ds-desc">文本到 CAD 方向的主流评测协议。CAD-Coder 在此协议下取得 Mean CD 6.54（Text2CAD 为 29.29，降低约 78%）、代码无效率仅 1.45%，全面超越直接提示 GPT-4o、Claude、DeepSeek 等大模型。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>从自然语言生成参数化 CAD 命令序列</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">基于 DeepCAD 的 17 万模型 + 66 万文本注释</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">Mean Chamfer Distance、Invalid Ratio (IR)、人类偏好评分、GPT-4V 偏好评分</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://sadilkhan.github.io/text2cad-project/" target="_blank" rel="noopener" class="ext-link">https://sadilkhan.github.io/text2cad-project/</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2409.17106" target="_blank" rel="noopener">Text2CAD (NeurIPS 2024)</a></li><li><a href="https://arxiv.org/abs/2505.19713" target="_blank" rel="noopener">CAD-Coder (2025)</a></li><li><a href="https://arxiv.org/abs/2505.16606" target="_blank" rel="noopener">CADmium (2025)</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="参数级精度基准" data-year="2026">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Pointer-CAD 参数级评测协议</h3>
+          <span class="badge badge-year">2026</span>
+          <span class="badge badge-venue">CVPR 2026 / ECCV 2026</span>
+          <span class="badge badge-type">参数级精度基准</span>
+        </div>
+        <p class="ds-full">Vertex / Edge / Face Accuracy + RMR@3 参数级精度指标</p>
+      </header>
+      <p class="ds-desc">2026 年新增的标志性参数级评测协议，标志评测从形状级走向参数级。核心洞察：CD/IoU 归一化后对毫米级偏差不敏感（两个尺寸有差异的模型 IoU 可能都高达 0.96），但工业上 0.7cm 被四舍五入成 0.67cm 就足以让零件报废。7B 模型 RMR@3 达 95.23%。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>文本到 CAD 生成，含倒角/倒圆等工业级操作</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">Recap-DeepCAD 176,439 个；Recap-OmniCAD+ 575,559 个（含倒角倒圆）</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">Vertex Accuracy、Edge Accuracy、Face Accuracy、RMR@3（错误面不超过 3 个的模型占比）；容差为 GT 包围盒最小边长的千分之一，所有模型在原始位置与尺度下评测、不做归一化</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/Snitro/Pointer-CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/Snitro/Pointer-CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2603.04337" target="_blank" rel="noopener">Pointer-CAD (CVPR 2026)</a></li><li><a href="https://arxiv.org/abs/2603.04338" target="_blank" rel="noopener">Pointer-CAD v2 (ECCV 2026)</a></li><li><a href="https://view.inews.qq.com/wxn/20260916A06MGU00" target="_blank" rel="noopener">腾讯新闻深度解读</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="拓扑质量基准" data-year="2024">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>CAD-MLLM 拓扑质量评测协议</h3>
+          <span class="badge badge-year">2024</span>
+          <span class="badge badge-venue">arXiv 2024</span>
+          <span class="badge badge-type">拓扑质量基准</span>
+        </div>
+        <p class="ds-full">SegE / DangEL / SIR / FluxEE 四项拓扑与封闭性指标</p>
+      </header>
+      <p class="ds-desc">超越传统重建质量指标，首次系统评估生成 CAD 模型的拓扑质量与表面封闭程度。评测代码单独开源为 CAD-MLLM-metrics。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>多模态条件 CAD 生成的质量评估</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">Omni-CAD 约 45 万条多模态实例</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">Segment Error (SegE，节点连接分段准确性)、Dangling Edge Length (DangEL，悬边比例)、Self-Intersection Ratio (SIR，自相交面)、Flux Enclosure Error (FluxEE，基于高斯散度原理的空间封闭性)</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/CAD-MLLM/CAD-MLLM" target="_blank" rel="noopener" class="ext-link">https://github.com/CAD-MLLM/CAD-MLLM</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2411.04954" target="_blank" rel="noopener">CAD-MLLM (arXiv 2411.04954)</a></li><li><a href="https://github.com/CAD-MLLM/CAD-MLLM-metrics" target="_blank" rel="noopener">CAD-MLLM-metrics 仓库</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="文本到 CAD 基准" data-year="2024">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>Query2CAD Benchmark</h3>
+          <span class="badge badge-year">2024</span>
+          <span class="badge badge-venue">arXiv 2024</span>
+          <span class="badge badge-type">文本到 CAD 基准</span>
+        </div>
+        <p class="ds-full">Query2CAD: 自然语言查询生成 CAD 模型的评测框架</p>
+      </header>
+      <p class="ds-desc">使用 GPT-4 Turbo 作生成器与精修器，首次尝试成功率 53.6%，经后续精修提升 23.1%（最大提升发生在第一次精修迭代）。引入 BLIP2 反馈与人类参与反馈解决假阴性问题。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>从自然语言查询生成可执行 CAD 宏</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">覆盖 CAD 模型设计中使用的大多数操作的自建数据集</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">首次尝试成功率、迭代精修后成功率提升</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/akshay140601/Query2CAD" target="_blank" rel="noopener" class="ext-link">https://github.com/akshay140601/Query2CAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://arxiv.org/abs/2406.00000" target="_blank" rel="noopener">Query2CAD (arXiv 2024)</a></li><li><a href="https://hub.baai.ac.cn/paper/b687cf0e-8761-48c4-9168-af8088978538" target="_blank" rel="noopener">智源社区论文解读</a></li></ul>
+      </div>
+    </article>
+    <article class="ds-card" data-type="加工特征识别基准" data-year="2020 / 2022">
+      <header class="ds-head">
+        <div class="ds-title-row">
+          <h3>MFCAD / MFCAD++ Benchmark</h3>
+          <span class="badge badge-year">2020 / 2022</span>
+          <span class="badge badge-venue">Computer-Aided Design 2020 / 2022</span>
+          <span class="badge badge-type">加工特征识别基准</span>
+        </div>
+        <p class="ds-full">MFCAD++: 加工特征识别基准</p>
+      </header>
+      <p class="ds-desc">加工特征识别领域的标准基准，用 SolidWorks API 合成生成。MFCAD++ 进一步覆盖相交特征场景。最新方法在其上已达 99.53% 准确率与 99.15% 平均交并比。</p>
+      <dl class="ds-meta">
+        <div><dt>评测任务</dt><dd>B-Rep 面级加工特征分类与分割</dd></div>
+        <div><dt>数据规模</dt><dd class="hl">MFCAD 约 5.9 万；MFCAD++ 扩展至相交特征场景</dd></div>
+        <div><dt>核心指标</dt><dd class="metric">分类准确率、分割 IoU、平均交并比（mIoU）</dd></div>
+        <div><dt>开源状态</dt><dd><span class="tag-open">✓ 已开源</span></dd></div>
+        <div><dt>资源链接</dt><dd><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener" class="ext-link">https://github.com/hducg/MFCAD</a></dd></div>
+      </dl>
+      <div class="ds-papers">
+        <h4>相关论文 / 官方文档</h4>
+        <ul><li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010448520300844" target="_blank" rel="noopener">MFCAD (CAD 2020)</a></li><li><a href="https://www.sciencedirect.com/science/article/pii/S0010448522000565" target="_blank" rel="noopener">MFCAD++ (CAD 2022)</a></li><li><a href="https://arxiv.org/abs/2404.00000" target="_blank" rel="noopener">AAGNet (2025)</a></li></ul>
+      </div>
+    </article>
+    </div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>关键洞察</h2>
+      <span class="sec-sub">Key takeaways</span>
+    </div>
+    <div class="ds-card">
+      <h3 style="font-size:17px;color:#fff;margin-bottom:12px;">① 评测正在从「形状像不像」走向「参数准不准」</h3>
+      <p class="ds-desc">
+        早期基准用 Chamfer Distance / IoU 等归一化形状指标，对毫米级偏差不敏感——两个尺寸有差异的模型，IoU 可能都高达 0.96。
+        2026 年 Pointer-CAD v2 提出 <b>Vertex / Edge / Face Accuracy + RMR@3</b> 参数级指标，且明确<b>不做归一化</b>，
+        容差设为 GT 包围盒最小边长的千分之一。这直接回应了「0.7cm 被四舍五入成 0.67cm 就足以让零件报废」的工业现实。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">② 从「自建评测」走向「官方竞赛」</h3>
+      <p class="ds-desc">
+        2021 年 DeepCAD 的评测脚本是社区自发复用的；2026 年 ECCV 官方设立 CAD Challenge，
+        要求输出标准 STEP 格式 B-Rep，用 OCCT 内核从 Surface / Edge / Vertex / Topology 四维评分，
+        并叠加 valid_ratio 确定排名。竞赛规则极严：每日限提交 3 次、总计不超过 30 次，
+        任何缺失、OCCT 无法打开、网格化失败或超时的样本均判为无效。这标志着评测从论文附录走向工业验收标准。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">③ 多模态与多任务统一评测成为新趋势</h3>
+      <p class="ds-desc">
+        UniCAD 整合 DeepCAD、Text2CAD、CAD-Recode 等来源，构建 140 万+ 模型、150 万+ QA 对的统一基准，
+        覆盖点云→CAD、文本/图像/草图→CAD、CAD 问答等异构任务。P3D-Bench 则聚焦参数化 3D 生成，
+        用 400 文本 + 400 图像 + 203 装配案例揭示：<b>装配任务最具挑战，模型能恢复全局形状但无法重现精确参数化几何</b>。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">④ 通用大模型在 CAD 领域仍有明显短板</h3>
+      <p class="ds-desc">
+        VideoCAD VQA 基准显示：GPT-4.1 在平面识别（87%）、孔洞检测（92%）表现不错，
+        但在<b>对称检测（18.5%）、帧排序（36%）、挤压计数（47%）</b>上明显吃力。
+        Pointer-CAD 的对比实验也显示，通用 LLM 的 IR（无效率）高达 23.90%–29.75%，
+        远高于专用方法的 8.67%。这说明 CAD 领域仍需领域强对齐的专用方案。
+      </p>
+      <h3 style="font-size:17px;color:#fff;margin:22px 0 12px;">⑤ 中国团队在工业级评测中表现突出</h3>
+      <p class="ds-desc">
+        ECCV 2026 CAD Challenge 榜首为比特无限联合武汉大学团队（96.39 分，击败 27 支全球队伍）；
+        复旦大学推出 CADExpert（17,299 实例）与 TriView2CAD（首个三视图理解基准）；
+        武汉大学发布 WHUCAD / HPSketch；港大 Pointer-CAD 以 0.5B 模型超越 7B 基线。
+      </p>
+    </div>
+  </section>
+  <footer>
+    CAD Generation Benchmark 全景调研 · 数据来源：arXiv / ACM / IEEE / ECCV / GitHub / HuggingFace 公开信息<br>
+    整理时间 2026-09 · 共收录 18 个评测基准 · Generated by AiPy
+  </footer>
+</div>
+<script>
+(function() {
+  var btns = document.querySelectorAll('.filter-btn');
+  var cards = document.querySelectorAll('.ds-card[data-type]');
+  btns.forEach(function(b) {
+    b.addEventListener('click', function() {
+      btns.forEach(function(x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      var f = b.getAttribute('data-filter');
+      var v = b.getAttribute('data-value');
+      cards.forEach(function(c) {
+        if (f === 'all') { c.classList.remove('hidden'); return; }
+        c.classList.toggle('hidden', c.getAttribute('data-type') !== v);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
