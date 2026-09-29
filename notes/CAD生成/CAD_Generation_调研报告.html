@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAD Generation 论文调研报告 · 设定 · 方法 · Motivation</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0C1220; --ink-2:#1B2438; --sub:#5C6880; --faint:#8B96AC;
+  --line:#E3E8F0; --line-2:#EEF2F8;
+  --bg:#FBFCFE; --card:#FFFFFF;
+  --blue:#2563EB; --blue-soft:#EAF1FF;
+  --cyan:#06B6D4; --cyan-soft:#E4FAFE;
+  --amber:#F59E0B; --amber-soft:#FFF6E5;
+  --rose:#E11D48; --rose-soft:#FFECF1;
+  --violet:#7C3AED; --violet-soft:#F3EDFF;
+  --green:#10B981; --green-soft:#E6F9F2;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --display:'Space Grotesk','Noto Serif SC',sans-serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--sans);
+  line-height:1.75; font-size:15.5px; -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(37,99,235,.055), transparent 42%),
+    radial-gradient(circle at 88% 4%, rgba(124,58,237,.05), transparent 38%),
+    linear-gradient(var(--line-2) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-2) 1px, transparent 1px);
+  background-size:auto,auto,64px 64px,64px 64px;
+  background-attachment:fixed;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 30px}
+.hero{position:relative;overflow:hidden;color:#fff;
+  background:linear-gradient(135deg,#0A1020 0%,#131E3A 46%,#1E2A52 100%);
+  padding:76px 0 62px;}
+.hero::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 30%,transparent 100%);
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 30%,transparent 100%);}
+.hero::after{content:"";position:absolute;width:620px;height:620px;right:-190px;top:-260px;
+  background:radial-gradient(circle,rgba(6,182,212,.30),transparent 66%);filter:blur(24px);}
+.hero .wrap{position:relative;z-index:2}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
+  font-size:11.5px;letter-spacing:.20em;text-transform:uppercase;color:#7DD3FC;
+  border:1px solid rgba(125,211,252,.34);border-radius:100px;padding:7px 16px;
+  margin-bottom:26px;background:rgba(125,211,252,.07);}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#22D3EE;box-shadow:0 0 10px #22D3EE;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.32}}
+.hero h1{font-family:var(--display);font-size:clamp(34px,5.2vw,60px);font-weight:700;
+  line-height:1.1;letter-spacing:-.022em;margin-bottom:20px;}
+.hero h1 em{font-style:normal;background:linear-gradient(96deg,#60A5FA,#22D3EE 52%,#A78BFA);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero p.lede{font-size:17px;color:#B6C2DA;max-width:780px;line-height:1.8}
+.hero-stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:40px}
+.stat{border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:16px 22px;
+  background:rgba(255,255,255,.045);backdrop-filter:blur(8px);min-width:150px;}
+.stat b{display:block;font-family:var(--display);font-size:29px;font-weight:700;color:#fff;line-height:1.15}
+.stat span{font-size:12px;color:#93A2BF;letter-spacing:.03em}
+nav.toc{position:sticky;top:0;z-index:50;background:rgba(251,252,254,.90);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding:11px 30px;scrollbar-width:none}
+nav.toc .wrap::-webkit-scrollbar{display:none}
+nav.toc a{font-family:var(--mono);font-size:12px;color:var(--sub);text-decoration:none;
+  padding:7px 14px;border-radius:8px;white-space:nowrap;transition:.2s;}
+nav.toc a:hover{background:var(--blue-soft);color:var(--blue)}
+section{padding:66px 0 12px}
+.sec-head{display:flex;align-items:flex-start;gap:18px;margin-bottom:34px}
+.sec-num{font-family:var(--display);font-size:44px;font-weight:700;line-height:1;
+  color:transparent;-webkit-text-stroke:1.6px var(--line);flex-shrink:0;padding-top:4px;}
+.sec-head h2{font-family:var(--display);font-size:clamp(23px,3.1vw,31px);font-weight:700;
+  letter-spacing:-.015em;line-height:1.24;color:var(--ink);}
+.sec-head .sub{font-size:13.5px;color:var(--sub);margin-top:7px;font-family:var(--mono);}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:26px 26px 24px;position:relative;transition:.28s cubic-bezier(.2,.7,.3,1);}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 38px -14px rgba(12,18,32,.16);border-color:#D3DCEB}
+.card h3{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:11px;
+  display:flex;align-items:center;gap:10px;}
+.card h3 .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  font-size:15px;flex-shrink:0;font-family:var(--display);font-weight:700;}
+.card p{font-size:14.5px;color:#3D4A61;line-height:1.78}
+.card .mot{margin-top:15px;padding-top:14px;border-top:1px dashed var(--line);
+  font-size:13.5px;color:var(--sub);}
+.card .mot b{color:var(--ink);font-weight:600}
+.tag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;
+  padding:3px 9px;border-radius:6px;margin:0 5px 6px 0;font-weight:600;}
+.t-blue{background:var(--blue-soft);color:var(--blue)}
+.t-cyan{background:var(--cyan-soft);color:#0891B2}
+.t-amber{background:var(--amber-soft);color:#B45309}
+.t-rose{background:var(--rose-soft);color:var(--rose)}
+.t-violet{background:var(--violet-soft);color:var(--violet)}
+.t-green{background:var(--green-soft);color:#047857}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+table{width:100%;border-collapse:collapse;font-size:13.6px;min-width:760px}
+thead th{background:linear-gradient(180deg,#F7F9FD,#EFF3FA);color:var(--ink-2);
+  font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.02em;
+  text-align:left;padding:14px 16px;border-bottom:1.5px solid var(--line);white-space:nowrap;}
+tbody td{padding:13px 16px;border-bottom:1px solid var(--line-2);color:#3D4A61;
+  vertical-align:top;line-height:1.66;}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#FAFCFF}
+tbody td:first-child{font-weight:600;color:var(--ink);font-family:var(--display);font-size:13.2px}
+code{font-family:var(--mono);font-size:12.4px;background:#F3F6FB;color:#1E3A8A;
+  padding:1.5px 6px;border-radius:5px;border:1px solid #E4EAF4;}
+figure{margin:30px 0}
+figure img{width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;display:block}
+figcaption{font-size:12.8px;color:var(--sub);margin-top:12px;text-align:center;
+  font-family:var(--mono);}
+.callout{border-left:3px solid var(--blue);
+  background:linear-gradient(90deg,var(--blue-soft),transparent 78%);
+  border-radius:0 14px 14px 0;padding:20px 24px;margin:26px 0;
+  font-size:14.6px;color:#2A3A55;}
+.callout b{color:var(--ink)}
+.callout.warn{border-left-color:var(--amber);background:linear-gradient(90deg,var(--amber-soft),transparent 78%)}
+.callout.rose{border-left-color:var(--rose);background:linear-gradient(90deg,var(--rose-soft),transparent 78%)}
+.mot-list{display:grid;gap:12px}
+.mot-item{display:flex;gap:16px;align-items:flex-start;background:var(--card);
+  border:1px solid var(--line);border-radius:13px;padding:17px 20px;transition:.24s;}
+.mot-item:hover{border-color:#CFDAEB;background:#FDFEFF;transform:translateX(4px)}
+.mot-item .n{font-family:var(--display);font-weight:700;font-size:14px;color:#fff;
+  width:28px;height:28px;border-radius:9px;display:grid;place-items:center;
+  flex-shrink:0;margin-top:1px;}
+.mot-item .txt{font-size:14.3px;color:#3D4A61;line-height:1.72}
+.mot-item .txt b{color:var(--ink);font-weight:600}
+.flow{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;margin:28px 0}
+.flow-step{flex:1;min-width:172px;background:var(--card);border:1px solid var(--line);
+  padding:20px 18px;position:relative;}
+.flow-step:first-child{border-radius:14px 0 0 14px}
+.flow-step:last-child{border-radius:0 14px 14px 0}
+.flow-step:not(:last-child){border-right:none}
+.flow-step .k{font-family:var(--mono);font-size:10.5px;color:var(--faint);
+  letter-spacing:.14em;text-transform:uppercase}
+.flow-step .v{font-family:var(--display);font-weight:700;font-size:14.5px;
+  color:var(--ink);margin:7px 0 6px}
+.flow-step .d{font-size:12.4px;color:var(--sub);line-height:1.6}
+.flow-step::after{content:"";position:absolute;right:-9px;top:50%;
+  transform:translateY(-50%) rotate(45deg);width:16px;height:16px;background:var(--card);
+  border-top:1px solid var(--line);border-right:1px solid var(--line);z-index:3;}
+.flow-step:last-child::after{display:none}
+footer{margin-top:70px;padding:34px 0;border-top:1px solid var(--line);
+  background:linear-gradient(180deg,transparent,#F5F8FD);}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+footer p{font-size:12.6px;color:var(--faint);font-family:var(--mono)}
+footer a{color:var(--blue);text-decoration:none;font-weight:600}
+footer a:hover{text-decoration:underline}
+.reveal{opacity:0;transform:translateY(22px);
+  transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.on{opacity:1;transform:none}
+@media(max-width:720px){
+  .wrap{padding:0 18px}
+  .hero{padding:52px 0 44px}
+  .sec-num{font-size:32px}
+  .flow-step{border-radius:12px!important;border-right:1px solid var(--line)!important}
+  .flow-step::after{display:none}
+  .flow{gap:10px}
+}
+@media print{nav.toc{display:none}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span>Research Digest · 2026</div>
+    <h1>CAD Generation 论文调研<br><em>设定 · 方法 · Motivation</em></h1>
+    <p class="lede">
+      计算机辅助设计（CAD）的 AI 生成，正在从"生成一个好看的形状"走向"生成一段可编辑、可参数化、可约束、可制造的建模过程"。
+      本报告系统梳理该方向的核心<strong style="color:#fff">设定体系</strong>（数据表示 / 输入条件 / 生成范式 / 训练与评测），
+      并逐篇说明代表性工作的<strong style="color:#fff">方法与动机</strong>。
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><b>30</b><span>代表性论文</span></div>
+      <div class="stat"><b>6</b><span>数据表示范式</span></div>
+      <div class="stat"><b>5</b><span>生成范式</span></div>
+      <div class="stat"><b>10</b><span>核心 Motivation</span></div>
+      <div class="stat"><b>2019–2026</b><span>时间跨度</span></div>
+    </div>
+  </div>
+</header>
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">01 领域定位</a>
+    <a href="#setting">02 核心设定体系</a>
+    <a href="#repr">03 数据表示</a>
+    <a href="#cond">04 输入条件</a>
+    <a href="#paradigm">05 生成范式</a>
+    <a href="#train">06 训练与评测</a>
+    <a href="#papers">07 论文卡片</a>
+    <a href="#motivation">08 Motivation 归纳</a>
+    <a href="#trend">09 趋势与挑战</a>
+  </div>
+</nav>
+<section id="overview">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">01</div>
+      <div>
+        <h2>领域定位：CAD 生成到底在生成什么？</h2>
+        <div class="sub">What is being generated, and why it is hard</div>
+      </div>
+    </div>
+    <p style="font-size:15.6px;color:#33405A;max-width:920px">
+      CAD 的本质不是"一个 3D 形状"，而是<strong>一段带参数、带约束、带历史的建模过程</strong>。
+      工程师先画草图、再拉伸、再切除、再倒角——每一步都携带着参数与设计意图。
+      因此 CAD 生成任务可统一表述为：<strong>把设计意图（文本 / 图像 / 点云 / 工程图）映射为一段可被 CAD 内核执行并验证的程序</strong>。
+    </p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="k">Input</div><div class="v">设计意图</div>
+        <div class="d">自然语言 / 图像 / 点云 / 草图 / 工程图 / 多模态</div>
+      </div>
+      <div class="flow-step">
+        <div class="k">Representation</div><div class="v">CAD 表示</div>
+        <div class="d">命令序列 / 代码 DSL / B-Rep / CSG 树 / 指针序列</div>
+      </div>
+      <div class="flow-step">
+        <div class="k">Model</div><div class="v">生成模型</div>
+        <div class="d">自回归 Transformer / 扩散 / LLM+RL / 状态空间</div>
+      </div>
+      <div class="flow-step">
+        <div class="k">Kernel</div><div class="v">几何内核</div>
+        <div class="d">OpenCASCADE / CadQuery / build123d 执行验证</div>
+      </div>
+      <div class="flow-step">
+        <div class="k">Output</div><div class="v">可制造产物</div>
+        <div class="d">STEP / B-Rep / 可编辑参数化模型</div>
+      </div>
+    </div>
+    <div class="callout warn">
+      <b>核心矛盾：视觉相似 ≠ 工业可用。</b>
+      现有评测常用归一化后的 Chamfer Distance 与 IoU，对毫米级数值偏差并不敏感——两个尺寸存在细微差异的模型，IoU 可能都高达 0.96。
+      但在工业语境下，0.7cm 被"四舍五入"成 0.67cm，就足以让零件报废。这正是"AI + 工业"故事讲不下去的共同原因。
+    </div>
+    <div class="grid g2" style="margin-top:26px">
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">◈</span>两大核心数据表达</h3>
+        <p>
+          <strong>① 建模历史树</strong>（参数树 / CSG 树）：记录"怎么建出来的"，天然可编辑、可改参数，但序列长、长程依赖强。<br>
+          <strong>② B-Rep 边界表示</strong>：用 NURBS 精确描述面 / 边 / 顶点及其拓扑关系，是制造与仿真的标准格式，但拓扑不规则稀疏，生成难度大。
+        </p>
+        <div class="mot"><b>关键洞察：</b>现代特征化 CAD 系统中，参数化建模与 B-Rep 本质是交织的——高级参数操作（如倒角、倒圆）必须显式选择 B-Rep 几何原语，而 B-Rep 本身又由参数操作导出。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">◈</span>五大技术难点</h3>
+        <p>
+          <strong>设计历史与长程依赖</strong> · <strong>几何约束求解</strong> · <strong>拓扑正确性</strong>（无自交 / 水密 / 非流形）·
+          <strong>设计意图保持</strong> · <strong>真实工业数据稀缺</strong>。
+        </p>
+        <div class="mot"><b>为什么难：</b>CAD 编译器不可微，无法直接对生成的序列施加几何有效性梯度；渲染过程又是"多对一"的，多个参数序列可渲染出同一外观。</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="setting">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div>
+        <h2>核心设定体系：四个维度</h2>
+        <div class="sub">Data Representation · Conditioning · Paradigm · Supervision</div>
+      </div>
+    </div>
+    <p style="font-size:15.4px;color:#33405A;max-width:920px;margin-bottom:24px">
+      调研发现，几乎所有 CAD 生成工作都可以用四个维度的"设定"来精确刻画。理解这四维，就理解了整个领域的设计空间。
+    </p>
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">A</span>数据表示设定</h3>
+        <p>CAD 用什么"语言"表达？命令序列、代码 DSL、B-Rep、CSG 树、指针增强序列、潜码本——<strong>表示决定了能力上限</strong>。</p>
+        <div class="mot"><b>取舍：</b>命令序列 token 短但无实体选择能力；代码精度高但 token 长约 4 倍、推理慢 4.7–6.6 秒。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">B</span>输入条件设定</h3>
+        <p>无条件 / 文本 / 图像 / 点云 / 工程图 / 多模态 / UI 操作序列。<strong>条件越丰富，越贴近真实设计场景</strong>。</p>
+        <div class="mot"><b>趋势：</b>从单模态走向多模态统一（CAD-MLLM、VisCAD、cadrille 三模态合一）。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">C</span>生成范式设定</h3>
+        <p>自回归 Transformer / 扩散模型 / 状态空间模型 / LLM 微调 + 强化学习 / 程序综合与 Agent 工具调用。</p>
+        <div class="mot"><b>演进：</b>纯 SFT → SFT + RL（视觉反馈、几何奖励），让模型学会"渲染出来好不好看、能不能执行"。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--amber-soft);color:var(--amber)">D</span>训练与评测设定</h3>
+        <p>序列信号（teacher forcing）/ 视觉信号（渲染反馈 RL）/ 几何信号（Chamfer、有效性）；评测从形状级走向参数级。</p>
+        <div class="mot"><b>最新：</b>Pointer-CAD v2 提出 Vertex / Edge / Face Accuracy 三级参数精度指标 + RMR@3 可修复模型率，且不做归一化。</div>
+      </div>
+    </div>
+    <figure>
+      <img src="assets/chart_timeline.png" alt="CAD 生成研究热度逐年分布">
+      <figcaption>图 1 · CAD 生成代表性论文数量逐年分布（2019–2026），2025–2026 呈爆发式增长</figcaption>
+    </figure>
+  </div>
+</section>
+<section id="repr">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div>
+        <h2>设定 A · 数据表示：CAD 的"语言"之争</h2>
+        <div class="sub">Command Sequence vs Code vs B-Rep vs Pointer</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>表示范式</th><th>具体形式</th><th>优势</th><th>局限</th><th>代表工作</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>命令序列</td>
+            <td>草图（线/弧/圆）+ 拉伸 + 布尔，离散命令 + 连续参数</td>
+            <td>token 短、推理快、结构清晰、易自回归</td>
+            <td>无实体选择能力；连续参数量化误差破坏拓扑；难支持倒角/倒圆</td>
+            <td>DeepCAD · SkexGen · Text2CAD · CADFusion · CAD-Llama</td>
+          </tr>
+          <tr>
+            <td>代码 / DSL</td>
+            <td>CadQuery / build123d / Python DSL 脚本</td>
+            <td>参数精度天然高、操作丰富、可执行可验证</td>
+            <td>token 长约 4 倍（平均 424.75）、推理慢（4.72–6.61s）、易结构错误</td>
+            <td>CAD-Coder · LLM4CAD · Zero-to-CAD · CAD-Tokenizer</td>
+          </tr>
+          <tr>
+            <td>B-Rep 直接合成</td>
+            <td>面 / 边 / 顶点 + NURBS 曲面 + 拓扑关系</td>
+            <td>精确、制造就绪、工业标准</td>
+            <td>拓扑不规则稀疏、生成难度大、需保证有效性</td>
+            <td>SolidGen · BrepGen · BrepDiff · DTGBrepGen · AutoBrep · HiFi-BRep</td>
+          </tr>
+          <tr>
+            <td>建模历史树 / CSG 树</td>
+            <td>参数树、构造实体几何树</td>
+            <td>紧凑、可编辑、保留设计过程</td>
+            <td>连续 + 离散混合搜索空间难处理</td>
+            <td>InverseCSG · CADTrans（码树）</td>
+          </tr>
+          <tr>
+            <td>指针增强序列</td>
+            <td>Label / Value / Pointer 三类 token，指针直接引用 B-Rep 面 / 边</td>
+            <td>支持实体选择（倒角/倒圆）、大幅降低量化误差、token 仍短</td>
+            <td>需 B-Rep 编码器 + GNN 特征聚合，架构更复杂</td>
+            <td>Pointer-CAD v1 / v2</td>
+          </tr>
+          <tr>
+            <td>潜码 / 码本</td>
+            <td>VQ-VAE 原语级 token、三级神经码树、正则化离散码本</td>
+            <td>压缩、层次化、缓解长序列</td>
+            <td>存在码本坍缩风险，需正则化策略</td>
+            <td>CAD-Tokenizer · CADTrans · 层次化离散扩散</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <figure>
+      <img src="assets/chart_repr.png" alt="CAD 生成数据表示范式分布">
+      <figcaption>图 2 · 30 篇代表性工作的数据表示范式分布：命令序列与 B-Rep 是两大主流</figcaption>
+    </figure>
+    <div class="callout">
+      <b>表示之争的本质：</b>命令序列赢在效率、B-Rep 赢在精确、代码赢在表达力。
+      最新的 <strong>Pointer-CAD</strong> 用"指针"机制把 B-Rep 的几何信息注入命令序列，试图同时拿下三者——
+      0.5B 模型在命令准确率、几何保真度、拓扑一致性上超越 7B 的 CADmium。
+    </div>
+  </div>
+</section>
+<section id="cond">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">04</div>
+      <div>
+        <h2>设定 B · 输入条件：从无条件到多模态统一</h2>
+        <div class="sub">Conditioning signals across the literature</div>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">∞</span>无条件生成</h3>
+        <p>从随机噪声生成 CAD 模型，用于学习形状分布、数据增强。</p>
+        <div style="margin-top:12px">
+          <span class="tag t-blue">DeepCAD</span><span class="tag t-blue">SkexGen</span>
+          <span class="tag t-blue">CADTrans</span><span class="tag t-blue">BrepGen</span>
+          <span class="tag t-blue">BrepDiff</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">T</span>文本 → CAD</h3>
+        <p>自然语言是最自然的设计意图接口，也是当前最热的方向。</p>
+        <div style="margin-top:12px">
+          <span class="tag t-cyan">Text2CAD</span><span class="tag t-cyan">CADFusion</span>
+          <span class="tag t-cyan">CAD-Llama</span><span class="tag t-cyan">CADmium</span>
+          <span class="tag t-cyan">ReCAD</span><span class="tag t-cyan">Pointer-CAD</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">I</span>图像 → CAD</h3>
+        <p>逆向工程场景：从单视图 / 多视图 / 无约束图像恢复参数化模型。</p>
+        <div style="margin-top:12px">
+          <span class="tag t-violet">CADCrafter</span><span class="tag t-violet">CADDreamer</span>
+          <span class="tag t-violet">GenCAD</span><span class="tag t-violet">Zero-to-CAD</span>
+          <span class="tag t-violet">cadrille</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--green-soft);color:var(--green)">P</span>点云 → CAD</h3>
+        <p>从 3D 扫描数据重建 CAD 构建序列，工业逆向工程刚需。</p>
+        <div style="margin-top:12px">
+          <span class="tag t-green">DeepCAD pc2cad</span><span class="tag t-green">Draw Step by Step</span>
+          <span class="tag t-green">cadrille</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">M</span>多模态统一</h3>
+        <p>文本 / 图像 / 点云统一到一个框架，贴近真实设计输入。</p>
+        <div style="margin-top:12px">
+          <span class="tag t-rose">CAD-MLLM</span><span class="tag t-rose">VisCAD</span>
+          <span class="tag t-rose">cadrille</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--amber-soft);color:var(--amber)">E</span>工程图 / UI 序列</h3>
+        <p>从工程制图（含隐藏线灰化 HLG 视图）生成 STEP/B-Rep；或预测 CAD 软件的 UI 操作序列。</p>
+        <div style="margin-top:12px">
+          <span class="tag t-amber">ECCV 2026 CAD Challenge</span><span class="tag t-amber">VideoCADFormer</span>
+        </div>
+      </div>
+    </div>
+    <figure>
+      <img src="assets/chart_matrix.png" alt="生成范式与输入条件交叉分布">
+      <figcaption>图 3 · 生成范式 × 输入条件交叉分布：LLM+RL 与文本条件组合最密集</figcaption>
+    </figure>
+  </div>
+</section>
+<section id="paradigm">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">05</div>
+      <div>
+        <h2>设定 C · 生成范式：五条技术路线</h2>
+        <div class="sub">Autoregressive · Diffusion · LLM+RL · SSM · Program Synthesis</div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">①</span>自回归 Transformer</h3>
+        <p>
+          把 CAD 命令序列当作语言，用 Transformer 逐 token 预测下一个操作。
+          典型架构是"编码器 + 解码器"两段式：编码器把序列压成 latent，解码器自回归还原。
+        </p>
+        <div class="mot"><b>代表：</b>DeepCAD（ICCV 2021）、SkexGen、CAD-Llama（CVPR 2025）、CADTrans、SolidGen、AutoBrep、Pointer-CAD。<br><b>动机：</b>序列结构清晰、训练稳定，是最早跑通的范式。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">②</span>扩散模型</h3>
+        <p>
+          用去噪扩散过程生成 CAD 表示。B-Rep 方向尤其流行，因为可以设计结构化潜空间来保证拓扑有效性。
+        </p>
+        <div class="mot"><b>代表：</b>BrepGen（多阶段：面→边→顶点）、BrepDiff（单阶段 + 掩码 UV 网格）、DTGBrepGen、GenCAD（潜扩散）、Draw Step by Step。<br><b>动机：</b>扩散擅长建模复杂分布；单阶段比多阶段更易编辑。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">③</span>LLM 微调 + 强化学习</h3>
+        <p>
+          先 SFT 建立基础生成能力，再用 RL 对齐"渲染效果"或"几何精度"。
+          奖励可来自视觉偏好、Chamfer 距离、代码可执行性。
+        </p>
+        <div class="mot"><b>代表：</b>CADFusion（序列学习 ↔ 视觉反馈交替）、CAD-Coder（GRPO + 几何/格式奖励）、ReCAD、ToolCAD、cadrille（在线 RL）、ICML 2026（SFT→RL）。<br><b>动机：</b>仅序列监督忽略全局外观，渲染又是多对一映射。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--green-soft);color:var(--green)">④</span>状态空间模型</h3>
+        <p>
+          用 Mamba 等 SSM 架构替代注意力，以线性复杂度处理超长 CAD 命令序列。
+        </p>
+        <div class="mot"><b>代表：</b>Mamba-CAD（AAAI 2025）。<br><b>动机：</b>复杂工业模型的命令序列极长，Transformer 注意力成本过高。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--amber-soft);color:var(--amber)">⑤</span>程序综合 / Agent 工具调用</h3>
+        <p>
+          把 CAD 生成视为程序合成问题：用约束求解（SAT）逆向恢复 CSG 树；
+          或让 LLM Agent 调用 CAD 工具链，形成"规划—执行—反思"闭环。
+        </p>
+        <div class="mot"><b>代表：</b>InverseCSG（SAT 程序综合）、ToolCAD、Zero-to-CAD（agentic 合成百万级数据）、text-to-cad（开源 Agent 技能库，15K stars）。<br><b>动机：</b>几何内核可执行可验证，天然适合"生成—验证—修正"循环。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">⑥</span>多阶段 vs 单阶段</h3>
+        <p>
+          B-Rep 生成的两条路线：多阶段逐元素生成（面→边→顶点）保证拓扑有效，但级联依赖僵硬；
+          单阶段一次性生成，速度快 3–21 倍且支持编辑。
+        </p>
+        <div class="mot"><b>代表：</b>BrepGen（多阶段）vs BrepDiff（单阶段）。<br><b>动机：</b>多阶段早期决策被后期固化，难以灵活编辑与解释。</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="train">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">06</div>
+      <div>
+        <h2>设定 D · 训练信号与评测基准</h2>
+        <div class="sub">Supervision signals · Datasets · Metrics</div>
+      </div>
+    </div>
+    <h3 style="font-family:var(--display);font-size:19px;font-weight:700;margin:8px 0 16px">训练信号：三种监督来源</h3>
+    <div class="grid g3">
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--blue-soft);color:var(--blue)">S</span>序列信号</h3>
+        <p>用 ground-truth 参数序列做 teacher forcing。提供序列结构与参数操作的直接监督，但只强调局部 token 连续性，难捕捉全局外观。</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--rose-soft);color:var(--rose)">V</span>视觉信号</h3>
+        <p>把生成的序列渲染出来，用视觉偏好做 RL 奖励。弥补"渲染多对一"问题，让模型学到"看起来对不对"。</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--green-soft);color:var(--green)">G</span>几何信号</h3>
+        <p>Chamfer Distance、有效性、拓扑约束、代码可执行性。直接对齐"能不能用"，但 CAD 内核不可微，需通过 RL 或后处理施加。</p>
+      </div>
+    </div>
+    <h3 style="font-family:var(--display);font-size:19px;font-weight:700;margin:36px 0 16px">代表性数据集</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>数据集</th><th>规模 / 特点</th><th>主要用途</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>SketchGraphs</td><td>1500 万真实 2D 草图，几何约束图表示</td><td>草图生成、自动约束、草图补全</td></tr>
+          <tr><td>ABC</td><td>百万级 B-Rep 与网格模型</td><td>B-Rep 生成、几何深度学习基准</td></tr>
+          <tr><td>Fusion 360 Gallery</td><td>8,625 个草图-拉伸序列，附 Fusion 360 Gym 执行环境</td><td>程序化 CAD 重建</td></tr>
+          <tr><td>DeepCAD</td><td>约 17.8 万模型，命令序列（草图+拉伸）</td><td>命令序列生成的事实基准</td></tr>
+          <tr><td>WHUCAD / CADParser</td><td>引入制造零件、完整设计历史、旋转/圆角/倒角等复杂操作</td><td>提升工业复杂度</td></tr>
+          <tr><td>Text2CAD</td><td>为 CAD 模型加入多层次文本描述</td><td>文本到 CAD 生成</td></tr>
+          <tr><td>CAD-MLLM</td><td>整合文本、图像、点云与命令序列</td><td>多模态 CAD 生成</td></tr>
+          <tr><td>OmniCAD / Recap-OmniCAD+</td><td>57.5 万模型，含倒角 / 倒圆等工业级操作</td><td>工业级操作生成</td></tr>
+          <tr><td>OmniCAD-Plan / Plan+</td><td>20.2 万 / 20.9 万有效模型，计划级监督</td><td>Plan-Then-Construct 范式</td></tr>
+          <tr><td>HPSketch</td><td>基于历史的参数化草图数据集，含抛物线/双曲线/旋转/倒角/倒圆与约束、选择机制</td><td>高级工程草图建模</td></tr>
+          <tr><td>OpenCAD / Seek-CAD</td><td>开放基准与自精炼数据集</td><td>生成与理解评测</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 style="font-family:var(--display);font-size:19px;font-weight:700;margin:36px 0 16px">评测指标：从形状级走向参数级</h3>
+    <div class="grid g2">
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--blue-soft);color:var(--blue)">◐</span>形状级指标</h3>
+        <p><code>Chamfer Distance (CD)</code> <code>IoU</code> <code>COV</code> <code>MMD</code> <code>JSD</code> <code>R coverage</code> <code>D JSD</code></p>
+        <div class="mot"><b>问题：</b>通常在归一化后计算，对毫米级数值偏差不敏感，会掩盖尺寸误差。</div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">◐</span>命令级指标</h3>
+        <p><code>F1</code>（命令 / 参数准确率）<code>SegE</code>（分割误差，衡量拓扑正确性）</p>
+        <div class="mot"><b>用途：</b>衡量生成序列与真值序列的操作级一致性。</div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--rose-soft);color:var(--rose)">◐</span>拓扑有效性指标</h3>
+        <p><code>IR</code>（无效率）<code>SIR</code>（自交率）<code>DangEL</code>（悬边长度）<code>FluxEE</code>（密封质量）<code>valid_ratio</code></p>
+        <div class="mot"><b>用途：</b>判断生成结果能否成为合法实体，是工业可用的硬门槛。</div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--amber-soft);color:var(--amber)">◐</span>B-Rep 结构指标</h3>
+        <p><code>Surface F1</code> <code>Edge F1</code> <code>Vertex F1</code> <code>Topology F1</code></p>
+        <div class="mot"><b>用途：</b>ECCV 2026 CAD Challenge 采用，用 OCCT 内核网格化 + 点云采样 + 匈牙利匹配评分。</div>
+      </div>
+      <div class="card" style="grid-column:1/-1">
+        <h3 style="font-size:15.5px"><span class="ico" style="background:var(--violet-soft);color:var(--violet)">★</span>参数级指标（2026 新增，标志性演进）</h3>
+        <p>
+          <code>Vertex Accuracy</code>：预测顶点与 GT 最近点欧氏距离在容差内才算匹配。<br>
+          <code>Edge Accuracy</code>：不仅端点定位正确，底层几何参数（圆弧圆心与半径、圆法向等）也须在容差内对齐。<br>
+          <code>Face Accuracy</code>：所有边界边被正确识别，且原始体类型（平面/圆柱/圆锥/球/圆环）与 GT 一致。<br>
+          <code>RMR@3</code>：错误面不超过 3 个的模型占比，衡量真实 CAD 工作流中的可用性。
+        </p>
+        <div class="mot"><b>关键设定：</b>容差为 GT 包围盒最小边长的千分之一，且<strong>所有模型在原始位置与尺度下评测、不做归一化</strong>——迫使模型真正理解文本指令中的度量尺度。</div>
+      </div>
+    </div>
+    <figure>
+      <img src="assets/chart_radar.png" alt="评测维度演进雷达图">
+      <figcaption>图 4 · 评测维度演进：从形状相似度为主，转向参数精度与 B-Rep 结构并重</figcaption>
+    </figure>
+  </div>
+</section>
+<section id="papers">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">07</div>
+      <div>
+        <h2>代表性论文卡片：方法 + Motivation</h2>
+        <div class="sub">30 works, method and motivation in one card each</div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">01</span>DeepCAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-blue">ICCV 2021</span><span class="tag t-blue">命令序列</span><span class="tag t-blue">自回归</span></div>
+        <p><b>方法：</b>Transformer 自编码器 + 自回归生成。命令集 {Line, Arc, Circle, EOS, SOL, Ext}，每个命令由离散类型与连续参数组成，参数经量化后嵌入。</p>
+        <div class="mot"><b>Motivation：</b>把 CAD 建模当作一种语言——生成可编辑的参数化序列，而非只能看的 mesh。这是该方向的奠基工作。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">02</span>SketchGraphs</h3>
+        <div style="margin-bottom:10px"><span class="tag t-blue">ACM TOG 2022</span><span class="tag t-blue">约束图</span><span class="tag t-blue">数据集</span></div>
+        <p><b>方法：</b>1500 万真实 2D 草图，表示为几何约束图（节点=图元，边=约束），附开源数据处理管线。</p>
+        <div class="mot"><b>Motivation：</b>2D 草图是 3D 参数化建模的基础，但缺乏真实手绘数据；自动约束与草图补全可显著提升设计效率。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--amber-soft);color:var(--amber)">03</span>InverseCSG</h3>
+        <div style="margin-bottom:10px"><span class="tag t-amber">SIGGRAPH 2019</span><span class="tag t-amber">CSG 树</span><span class="tag t-amber">程序综合</span></div>
+        <p><b>方法：</b>把 mesh 逆向为 CSG 树，形式化为程序综合问题。先用 RANSAC + 图割做鲁棒基元检测（解连续搜索），再用 SAT 求解器 Sketch 解纯离散搜索。</p>
+        <div class="mot"><b>Motivation：</b>大量遗留模型已丢失原始设计过程，只剩网格或扫描数据；恢复紧凑的 CSG 表示才能重新编辑与制造。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">04</span>SkexGen</h3>
+        <div style="margin-bottom:10px"><span class="tag t-blue">2022</span><span class="tag t-blue">命令序列</span><span class="tag t-blue">解耦编码</span></div>
+        <p><b>方法：</b>解耦编码器分别编码拓扑、几何与构造信息，再自回归生成草图-拉伸序列。</p>
+        <div class="mot"><b>Motivation：</b>CAD 序列中拓扑、几何、构造三类信息纠缠，解耦后能提升生成的多样性、合理性与可控性。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">05</span>SolidGen</h3>
+        <div style="margin-bottom:10px"><span class="tag t-violet">TMLR 2023</span><span class="tag t-violet">B-Rep</span><span class="tag t-violet">自回归</span></div>
+        <p><b>方法：</b>自回归直接合成 B-Rep 结构，逐元素生成顶点、边、面。</p>
+        <div class="mot"><b>Motivation：</b>绕过命令序列这一中间层，直接生成制造就绪的 B-Rep 表示。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">06</span>CAD-MLLM</h3>
+        <div style="margin-bottom:10px"><span class="tag t-cyan">2024</span><span class="tag t-cyan">多模态</span><span class="tag t-cyan">LLM 对齐</span></div>
+        <p><b>方法：</b>用 LLM 对齐文本 / 图像 / 点云等多模态特征与 CAD 命令序列的向量化表示，实现多模态条件生成。</p>
+        <div class="mot"><b>Motivation：</b>真实设计输入本就是多模态的；这是首个统一多模态条件的 CAD 生成系统。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">07</span>Text2CAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-cyan">NeurIPS 2024</span><span class="tag t-cyan">文本→CAD</span></div>
+        <p><b>方法：</b>Transformer 框架 + 多层次文本标注（从粗略到精细描述），把自然语言映射为参数化 CAD 命令序列。</p>
+        <div class="mot"><b>Motivation：</b>自然语言是最自然的设计意图表达方式；让非专家也能通过描述生成 CAD 模型。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">08</span>BrepGen</h3>
+        <div style="margin-bottom:10px"><span class="tag t-violet">SIGGRAPH / TOG 2024</span><span class="tag t-violet">B-Rep</span><span class="tag t-violet">扩散·多阶段</span></div>
+        <p><b>方法：</b>扩散模型 + 结构化潜几何，多阶段依次生成面、边、顶点。</p>
+        <div class="mot"><b>Motivation：</b>B-Rep 拓扑高度不规则稀疏，分阶段生成可保证拓扑有效性与结构合理性。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">09</span>CADFusion</h3>
+        <div style="margin-bottom:10px"><span class="tag t-rose">2025</span><span class="tag t-rose">LLM</span><span class="tag t-rose">视觉反馈 RL</span></div>
+        <p><b>方法：</b>以 LLM 为骨干，交替进行序列学习（SL）与视觉反馈（VF）两个训练阶段：SL 用真值序列保证逻辑连贯，VF 奖励渲染后视觉更优的序列。</p>
+        <div class="mot"><b>Motivation：</b>CAD 天然多模态（参数序列 + 渲染外观），且渲染是"多对一"映射——只用序列监督会忽略全局外观，且过度偏向训练集中出现过的序列。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">10</span>GenCAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-violet">2024 / 2025</span><span class="tag t-violet">图像→CAD</span><span class="tag t-violet">潜扩散</span></div>
+        <p><b>方法：</b>四步——① 自回归 Transformer 学 CAD 命令序列 latent；② 对比学习对齐 CAD latent 与图像 latent；③ 条件潜扩散按图像 latent 生成 CAD latent；④ 预训练 decoder 解码回参数化序列，交给几何内核生成实体。</p>
+        <div class="mot"><b>Motivation：</b>让 AI 生成"建模过程链"而非表面形状——生成的是 line / arc / extrude 等操作及参数，改孔径、改倒角都能联动。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">11</span>CADCrafter</h3>
+        <div style="margin-bottom:10px"><span class="tag t-violet">2025</span><span class="tag t-violet">无约束图像→CAD</span></div>
+        <p><b>方法：</b>三阶段训练。阶段 1 用 Transformer 自编码器编码 CAD 命令序列（{SOL, L, A, R} + 拉伸 E）；阶段 2 用几何条件编码器提取深度图与表面法线（DINO 预训练）；阶段 3 对齐生成。</p>
+        <div class="mot"><b>Motivation：</b>逆向工程依赖昂贵 3D 传感器；图像到 3D 生成表面粗糙、无编辑性；真实图像-CAD 对稀缺、单视图信息不完整、CAD 编译器不可微。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">12</span>CAD-Llama</h3>
+        <div style="margin-bottom:10px"><span class="tag t-cyan">CVPR 2025</span><span class="tag t-cyan">LLM</span><span class="tag t-cyan">SEM 格式</span></div>
+        <p><b>方法：</b>利用 LLM 生成参数化 3D CAD 模型，采用 Sketch-and-Extrude Modeling（SEM）格式表示 CAD 对象。</p>
+        <div class="mot"><b>Motivation：</b>把 LLM 的语言能力直接迁移到参数化 CAD 生成，复用预训练知识。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--green-soft);color:var(--green)">13</span>Mamba-CAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-green">AAAI 2025</span><span class="tag t-green">状态空间模型</span></div>
+        <p><b>方法：</b>用状态空间模型（Mamba）做 3D CAD 生成建模，替代注意力机制。</p>
+        <div class="mot"><b>Motivation：</b>CAD 命令序列长，Transformer 注意力复杂度高；SSM 以线性复杂度建模长程依赖。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">14</span>BrepDiff</h3>
+        <div style="margin-bottom:10px"><span class="tag t-violet">SIGGRAPH 2025</span><span class="tag t-violet">单阶段扩散</span></div>
+        <p><b>方法：</b>单阶段扩散直接生成 B-Rep。核心是"带掩码的 UV 网格表示"（面参数域离散为 N×N 网格 + 可见性掩码）+ 异步噪声调度（坐标 [0,1000]，掩码 [0,500]）+ 纯几何后处理恢复实体。</p>
+        <div class="mot"><b>Motivation：</b>多阶段流程级联依赖僵硬，早期决策被后期固化，难以灵活编辑与解释；单阶段让所有面共同优化，支持补全、合并、插值等编辑操作，且速度快 3–21 倍。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--amber-soft);color:var(--amber)">15</span>CADTrans</h3>
+        <div style="margin-bottom:10px"><span class="tag t-amber">2025</span><span class="tag t-amber">码树</span><span class="tag t-amber">正则化码本</span></div>
+        <p><b>方法：</b>把模型分解为实体、轮廓、环三种原语，用向量量化对抗网络训练三个正则化离散码本，构建自上而下的码树，再用 Transformer 自回归生成。</p>
+        <div class="mot"><b>Motivation：</b>VQ 方法存在码本坍缩问题；正则化策略让更多信息通过码本瓶颈，学到更丰富的数据表示，同时支持用户编辑与可控生成。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">16</span>CAD-Tokenizer</h3>
+        <div style="margin-bottom:10px"><span class="tag t-cyan">2025</span><span class="tag t-cyan">模态专属 token</span></div>
+        <p><b>方法：</b>用序列化 VQ-VAE 做原语级池化，把草图-拉伸对压缩为多个离散 token；训练 adapter 对齐预训练词表与骨干嵌入；引入有限状态自动机（FSA）约束解码保证语法合法。</p>
+        <div class="mot"><b>Motivation：</b>标准 LLM tokenizer 会把 CAD 序列切成自然语言词片（如 "[extru] [-sion]"），打散操作与数值参数，导致注意力层关注标点而非有意义的原语，无法建模几何结构依赖。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">17</span>cadrille</h3>
+        <div style="margin-bottom:10px"><span class="tag t-rose">2025</span><span class="tag t-rose">VLM</span><span class="tag t-rose">在线 RL</span></div>
+        <p><b>方法：</b>多模态 CAD 重建模型，同时处理点云、图像、文本三种输入。两阶段：大规模程序化生成数据上 SFT，再做在线 RL。</p>
+        <div class="mot"><b>Motivation：</b>借鉴 LLM 训练范式；单模态方法各有短板，统一三模态可提升鲁棒性。SFT 模型在 DeepCAD 基准上同时超越三种单模态方法。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">18</span>Pointer-CAD v1</h3>
+        <div style="margin-bottom:10px"><span class="tag t-rose">CVPR 2026</span><span class="tag t-rose">指针序列</span></div>
+        <p><b>方法：</b>三类 token——Label（操作语义）、Value（数值参数）、Pointer（直接引用 B-Rep 面/边）。B-Rep 编码为无向面邻接图，GNN 聚合特征；Qwen2.5 + LoRA 微调，双预测头（token 分类 + 128 维指针嵌入余弦匹配）。多步自回归，每步以文本 + 前序 B-Rep 为条件。</p>
+        <div class="mot"><b>Motivation：</b>命令序列法无法做实体选择（倒角/倒圆需要选边选面），且连续参数量化误差破坏拓扑；代码法 token 长（平均 424.75）、推理慢（4.72–6.61s）。指针机制让 0.5B 模型超越 7B 的 CADmium。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">19</span>Pointer-CAD v2</h3>
+        <div style="margin-bottom:10px"><span class="tag t-rose">ECCV 2026</span><span class="tag t-rose">Plan-Then-Construct</span></div>
+        <p><b>方法：</b>先让模型输出结构化设计计划（Plan），再据此构造 CAD。基于 Qwen3 标注 OmniCAD-Plan（20.2 万）/ Plan+（20.9 万）计划级监督数据。提出三级几何精度指标（Vertex / Edge / Face Accuracy）+ RMR@3。</p>
+        <div class="mot"><b>Motivation：</b>现有方法与评测协议只强调视觉相似度，忽视精确几何参数与度量尺度。2-bit 量化下 0.7cm 只能被"四舍五入"成 0.67cm，工业上足以让零件报废；而 CD / IoU 归一化后对此不敏感。7B 模型 RMR@3 达 95.23%。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">20</span>ReCAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-rose">AAAI 2026</span><span class="tag t-rose">RL + VLM</span></div>
+        <p><b>方法：</b>用视觉语言模型 + 强化学习增强参数化 CAD 模型生成。</p>
+        <div class="mot"><b>Motivation：</b>纯监督学习难以保证几何准确性，RL 可对齐最终几何质量。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">21</span>Seek-CAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-rose">ICLR 2026</span><span class="tag t-rose">自精炼</span></div>
+        <p><b>方法：</b>自精炼生成建模，通过 DeepSeek 做局部推理修正生成结果。</p>
+        <div class="mot"><b>Motivation：</b>一次性生成难以保证质量，自精炼让模型迭代改进自身输出。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">22</span>LLM 程序生成 + B-Rep Grounding</h3>
+        <div style="margin-bottom:10px"><span class="tag t-cyan">ICML 2026 Spotlight</span><span class="tag t-cyan">代码 + 原语</span></div>
+        <p><b>方法：</b>LLM 生成可执行 CadQuery 脚本，并引入"基于文本的查询机制"——LLM 用自然语言指定几何选择，由 B-Rep grounding transformer 定位到目标原语。SFT 建立基础能力，RL 提升泛化。</p>
+        <div class="mot"><b>Motivation：</b>参数化建模与 B-Rep 在现代特征化 CAD 系统中本质交织（高级参数操作需显式选择 B-Rep 原语，B-Rep 又由参数操作导出），但现有方法分为两个割裂的阵营，这一范式鸿沟限制了复杂工业产品设计的 AI 化。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--violet-soft);color:var(--violet)">23</span>HiFi-BRep</h3>
+        <div style="margin-bottom:10px"><span class="tag t-violet">2026</span><span class="tag t-violet">高保真 B-Rep</span></div>
+        <p><b>方法：</b>面向工业级零件图纸的高保真 B-Rep 生成，在 DeepCAD 与 ABC 两个公认基准上评测。</p>
+        <div class="mot"><b>Motivation：</b>让 AI 画出"真正能用"的工业零件图纸，而非仅视觉合理的形状。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--green-soft);color:var(--green)">24</span>Zero-to-CAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-green">2026</span><span class="tag t-green">Agentic 合成</span></div>
+        <p><b>方法：</b>无真实数据条件下，用 agentic 合成引擎在百万级规模生成可解释 CAD 程序；ViT-LLaMA 架构从多视图图像端到端生成可运行 CAD 代码。全流程开源（合成引擎、评估工具链、100K 数据集、微调代码与 checkpoint）。</p>
+        <div class="mot"><b>Motivation：</b>AI for CAD 长期受困于数据——现有构造历史数据规模小（&lt;10k）、覆盖操作单一、不可执行、缺乏几何验证。在 OpenCAD 基准上超越 GPT-5.2 及 DeepCAD、SketchGen 等 SOTA。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--cyan-soft);color:var(--cyan)">25</span>VisCAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-cyan">2026</span><span class="tag t-cyan">基础模型套件</span></div>
+        <p><b>方法：</b>多模态工业 CAD 智能基础模型套件，把 CAD 生成表述为"多模态程序生成"——给定语言或视觉证据表达的意图，模型产出 CAD DSL 程序。聚合 BenchCAD、CADBench、P3D-Bench 等基准。</p>
+        <div class="mot"><b>Motivation：</b>CAD 本质是把用户设计意图映射为广义参数化 CAD 程序；现有方法仍是"零件中心"的（一个实体、单一监督来源），需要统一的基础模型视角。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--amber-soft);color:var(--amber)">26</span>CAD-Coder</h3>
+        <div style="margin-bottom:10px"><span class="tag t-amber">2025</span><span class="tag t-amber">CadQuery</span><span class="tag t-amber">GRPO</span></div>
+        <p><b>方法：</b>把文本到 CAD 重构为生成 CadQuery Python 脚本。两阶段：SFT 建立基础，再用 GRPO 强化学习，奖励 = 几何奖励（执行代码算 Chamfer Distance）+ 格式奖励（语法合法性与执行成功率）。</p>
+        <div class="mot"><b>Motivation：</b>CadQuery 天然支持高精度参数与丰富操作；但仅 SFT 无法保证几何准确性，对需多步空间推理的复杂模型表现不足。Mean CD 6.54（Text2CAD 为 29.29，降低约 78%），代码无效率仅 1.45%。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">27</span>FlexCAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-blue">2025</span><span class="tag t-blue">可控生成</span></div>
+        <p><b>方法：</b>通过微调 LLM 实现统一、通用的可控 CAD 生成。</p>
+        <div class="mot"><b>Motivation：</b>现有可控 CAD 生成方法可控性有限（仅覆盖部分构建层级），且不同控制类型需多个模型支持，效率低。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">28</span>HPSketch</h3>
+        <div style="margin-bottom:10px"><span class="tag t-blue">CAD 2025</span><span class="tag t-blue">数据集</span></div>
+        <p><b>方法：</b>基于历史的参数化草图数据集。创新地用命令序列结构表示草图，把图元、操作、约束融为一体；包含抛物线、双曲线、旋转、倒角、倒圆等高级工程命令，并设计命名规则让网络学会"选择"草图图元。</p>
+        <div class="mot"><b>Motivation：</b>① 现有草图数据集只有线/弧/圆等基础图元，重建质量远逊于工业软件；② 缺乏选择机制，无法支持倒角、倒圆、旋转等高级操作。这两点让现有数据集远离真实工业设计流程。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--green-soft);color:var(--green)">29</span>VideoCADFormer</h3>
+        <div style="margin-bottom:10px"><span class="tag t-green">2025</span><span class="tag t-green">UI 动作序列</span></div>
+        <p><b>方法：</b>多模态特征融合 + 时序 Transformer 解码器。输入为目标 CAD 图像、过去 k 帧 UI 图像、历史动作序列、时序嵌入；双预测头输出命令类型（MoveTo/PressKey/Scroll/Type/Click）与参数。用双向 Chamfer 距离（阈值 CD &lt; 0.02）判定成功。</p>
+        <div class="mot"><b>Motivation：</b>把人类专家的 CAD 操作经验转化为可执行模型——不仅预测单步动作，还能处理长时序依赖，生成连贯完整的建模流程。</div>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--green-soft);color:var(--green)">30</span>ToolCAD</h3>
+        <div style="margin-bottom:10px"><span class="tag t-green">2025</span><span class="tag t-green">工具调用 + RL</span></div>
+        <p><b>方法：</b>探索工具调用型 LLM 在 Text-to-CAD 中的应用，用强化学习优化工具使用策略。</p>
+        <div class="mot"><b>Motivation：</b>让 LLM 通过调用外部 CAD 工具扩展自身能力边界，而非仅靠参数记忆。</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="motivation">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">08</div>
+      <div>
+        <h2>Motivation 归纳：十条主线</h2>
+        <div class="sub">Why the field does what it does</div>
+      </div>
+    </div>
+    <div class="mot-list">
+      <div class="mot-item"><div class="n" style="background:var(--blue)">1</div><div class="txt"><b>可编辑性。</b>mesh 与点云丢失了设计意图与建模历史，改个孔径都得重做；只有参数化序列 / 程序才能保留"可修改"这一 CAD 的灵魂。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--cyan)">2</div><div class="txt"><b>精确性。</b>制造与仿真需要 NURBS 级别的精确几何，网格太粗糙。这直接催生了 B-Rep 直接合成与代码生成两条路线。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--violet)">3</div><div class="txt"><b>拓扑有效性。</b>生成的模型必须无自交、水密、非流形合法，否则无法成为实体。多阶段生成、几何后处理、约束解码都是为此服务。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--rose)">4</div><div class="txt"><b>模态鸿沟。</b>图像表达"外观"，CAD 表达"离散操作 + 连续参数"，两者表示差异巨大。多模态对齐与几何条件编码器（深度图、表面法线）是主要应对手段。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--amber)">5</div><div class="txt"><b>数据稀缺。</b>真实图像-CAD 配对数据极少，构造历史数据规模普遍小于 10k 且不可执行。合成数据、程序化生成、agentic 合成成为破局方向。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--green)">6</div><div class="txt"><b>监督信号不足。</b>只用序列监督会忽略全局外观，而且渲染是"多对一"的——多个合法序列渲染出同一结果，模型会过度偏向训练集中出现过的那些。视觉反馈 RL 因此被引入。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--blue)">7</div><div class="txt"><b>表达能力受限。</b>早期方法只支持草图 + 拉伸，无法表达倒角、倒圆、旋转等工业常用操作。扩展操作词表与实体选择能力（指针机制）是关键突破。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--cyan)">8</div><div class="txt"><b>效率。</b>代码生成 token 长约 4 倍、推理慢 4.7–6.61 秒；命令序列 token 短、推理快。指针机制试图在保持短序列的同时获得代码的表达力。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--violet)">9</div><div class="txt"><b>量化误差。</b>命令序列必须把连续参数离散化到有限词表，2-bit 量化下 0.7cm 只能变成 0.67cm。指针直接吸附 B-Rep 几何元素，从根本上降低量化误差。</div></div>
+      <div class="mot-item"><div class="n" style="background:var(--rose)">10</div><div class="txt"><b>长程依赖。</b>复杂工业模型的命令序列极长，注意力成本高、易漂移。层次化码树、状态空间模型、计划级监督（先规划再构造）都是应对方案。</div></div>
+    </div>
+  </div>
+</section>
+<section id="trend">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <div class="sec-num">09</div>
+      <div>
+        <h2>趋势与挑战</h2>
+        <div class="sub">Where the field is heading</div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <h3><span class="ico" style="background:var(--blue-soft);color:var(--blue)">↗</span>四大趋势</h3>
+        <p>
+          <b>① 从外观到设计。</b>从"生成一个看起来像的形状"转向"生成可编辑、可参数化、可约束、可制造的设计"。<br>
+          <b>② 从单模态到多模态。</b>文本、图像、点云统一到一个框架（CAD-MLLM、VisCAD、cadrille）。<br>
+          <b>③ 从 SFT 到 SFT + RL。</b>用视觉反馈、几何奖励、代码可执行性做强化学习对齐。<br>
+          <b>④ 从单模型到 Agent 工具链。</b>LLM 调用 CAD 内核形成"规划—执行—反思"闭环（Zero-to-CAD、text-to-cad）。
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="ico" style="background:var(--rose-soft);color:var(--rose)">⚠</span>六大挑战</h3>
+        <p>
+          <b>① 几何约束与参数化编辑</b>：许多方法只生成最终几何，缺少可求解的内部约束系统。<br>
+          <b>② 拓扑正确性</b>：非流形拓扑仍易出错，后处理偶尔失败。<br>
+          <b>③ 设计意图保持</b>：生成结果是否真正理解用户意图。<br>
+          <b>④ 长序列与复杂操作</b>：真实工业建模历史仍稀缺。<br>
+          <b>⑤ 评测协议工业化</b>：从形状相似度走向参数级精度（Pointer-CAD v2 已开先河）。<br>
+          <b>⑥ 多轮交互</b>：真实设计是迭代过程，现有方法多为一次性生成。
+        </p>
+      </div>
+    </div>
+    <div class="callout rose" style="margin-top:26px">
+      <b>工业落地信号：</b>
+      Autodesk 于 2025 年 10 月正式发布 <strong>Neural CAD</strong>，声称可自动化 80–90% 的常规设计任务，训练数据来自专业 CAD 几何体（互联网上买不到，构成真实数据护城河）；
+      CATIA 2025 推出<strong>草图生成式约束</strong>功能，用图神经网络自动生成符合行业规范的约束组合；
+      ECCV 2026 设立官方 CAD Challenge，要求参赛方输出标准 STEP 格式 B-Rep，用 OCCT 内核从 Surface / Edge / Vertex / Topology 四个维度评分。
+      这标志着该方向正从论文走向产线。
+    </div>
+    <div class="callout" style="margin-top:18px">
+      <b>一句话总结：</b>CAD 生成的竞争，本质是"表示"的竞争——谁能在<strong>效率（短序列）、精度（高保真参数）、表达力（丰富工业操作）</strong>三者间找到最优解，谁就能率先跨过工业可用的门槛。
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <p>CAD Generation 论文调研报告 · 数据来源：arXiv / ACM / IEEE / 公开学术平台 · 整理时间 2026-09</p>
+    <p>Generated by <a href="https://www.aipyaipy.com" target="_blank" rel="noopener">AiPy</a> · 本地数据处理，不上传任何信息</p>
+  </div>
+</footer>
+<script>
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){
+    for(var i=0;i<els.length;i++){els[i].classList.add('on');}
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target); }
+    });
+  }, {threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+  for(var j=0;j<els.length;j++){io.observe(els[j]);}
+})();
+</script>
+</body>
+</html>
