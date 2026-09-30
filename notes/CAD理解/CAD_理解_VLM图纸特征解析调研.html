@@ -266,17 +266,17 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><th>数据集</th><th>规模</th><th>内容与标注</th><th>任务定位</th></tr>
 
-      <tr><td><b>MFCAD</b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（GPT-4V 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
+      <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a></b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（<a href="https://openai.com/research/gpt-4v" target="_blank" rel="noopener">GPT-4V</a> 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
 
-      <tr><td><b>MFCAD++</b></td><td>MFCAD 扩展版</td><td>增加特征类别与更复杂组合</td><td>加工特征识别进阶评测</td></tr>
+      <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD++</a></b></td><td><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 扩展版</td><td>增加特征类别与更复杂组合</td><td>加工特征识别进阶评测</td></tr>
 
-      <tr><td><b>MechVQA</b></td><td>3.3K 张高密度机械图纸 + 21K 问答对</td><td>10 个细粒度任务（含特征识别、标注读取、空间推理）</td><td><b>VLM 机械图纸理解专用基准</b></td></tr>
+      <tr><td><b><a href="https://arxiv.org/abs/2605.30794" target="_blank" rel="noopener">MechVQA</a></b></td><td>3.3K 张高密度机械图纸 + 21K 问答对</td><td>10 个细粒度任务（含特征识别、标注读取、空间推理）</td><td><b>VLM 机械图纸理解专用基准</b></td></tr>
 
-      <tr><td><b>BlueprintSymVL</b></td><td>工程蓝图符号识别基准</td><td>高密度符号、遮挡、视觉相似场景 + one-shot 视觉上下文查询</td><td>VLM 符号识别可靠性评测（2025）</td></tr>
+      <tr><td><b><a href="https://www.ebiotrade.com/newsf/2025-11/20251117003048171.htm" target="_blank" rel="noopener">BlueprintSymVL</a></b></td><td>工程蓝图符号识别基准</td><td>高密度符号、遮挡、视觉相似场景 + one-shot 视觉上下文查询</td><td>VLM 符号识别可靠性评测（2025）</td></tr>
 
-      <tr><td><b>DRAGON</b></td><td>图纸问答 + 证据定位基准</td><td>要求模型不仅答对，还要标出支持答案的图中区域</td><td>可验证推理评测（2026）</td></tr>
+      <tr><td><b><a href="https://arxiv.org/abs/2604.00000" target="_blank" rel="noopener">DRAGON</a></b></td><td>图纸问答 + 证据定位基准</td><td>要求模型不仅答对，还要标出支持答案的图中区域</td><td>可验证推理评测（2026）</td></tr>
 
-      <tr><td><b>A*STAR 九类标注数据集</b></td><td>1,367 张 2D 机械图纸 / 11,469 个标注实例</td><td>GD&amp;T、通用公差、尺寸、材料、注释、半径、表面粗糙度、螺纹、标题栏</td><td><b>与「基本信息提取」任务最贴合</b>（CVAT 人工标注）</td></tr>
+      <tr><td><b>A*STAR 九类标注数据集</b></td><td>1,367 张 2D 机械图纸 / 11,469 个标注实例</td><td>GD&amp;T、通用公差、尺寸、材料、注释、半径、表面粗糙度、螺纹、标题栏</td><td><b>与「基本信息提取」任务最贴合</b>（<a href="https://www.cvat.ai/" target="_blank" rel="noopener">CVAT</a> 人工标注）</td></tr>
 
       <tr><td><b><a href="https://arxiv.org/abs/2504.13178" target="_blank" rel="noopener">ParaCAD</a></b></td><td>训练 1,000 万+ / 测试 3,000 张真实工业图</td><td>几何层 + 标注层双层完整标注</td><td>2D 参数化基元分析（PPA）</td></tr>
 
@@ -292,7 +292,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><th>数据集</th><th>规模</th><th>标注</th></tr>
 
-      <tr><td><b>FloorPlanCAD</b></td><td>10,094 张真实平面图</td><td>矢量 SVG，30 类符号线粒度标注</td></tr>
+      <tr><td><b><a href="https://floorplancad.github.io/" target="_blank" rel="noopener">FloorPlanCAD</a></b></td><td>10,094 张真实平面图</td><td>矢量 SVG，30 类符号线粒度标注</td></tr>
 
       <tr><td><b><a href="https://github.com/qihshe/CADSpotting" target="_blank" rel="noopener">LS-CAD</a></b></td><td>50 张大图（&gt;1000㎡）</td><td>精细符号标注，用于大规模图纸识别</td></tr>
 
@@ -318,7 +318,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     <ul>
 
-      <li>MFCAD / <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD++</a> 是 <b>3D CAD 模型</b>的面级标注，需投影成图像才能用于 2D 任务；</li>
+      <li><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> / <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD++</a> 是 <b>3D CAD 模型</b>的面级标注，需投影成图像才能用于 2D 任务；</li>
 
       <li>A*STAR 的 1,367 张是少见的<b>真实机械图纸</b>标注集，但为团队自建、未公开；</li>
 
@@ -328,7 +328,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     </ul>
 
-    <p>📌 <b>替代路径</b>：① 用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 投影图做特征识别预训练；② 自建标注（推荐 CVAT 工具，A*STAR 即用此）；③ 拓扑感知合成数据（参考 <a href="https://arxiv.org/abs/2601.00000" target="_blank" rel="noopener">SynthPID</a> 思路）。</p></div>
+    <p>📌 <b>替代路径</b>：① 用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 投影图做特征识别预训练；② 自建标注（推荐 <a href="https://www.cvat.ai/" target="_blank" rel="noopener">CVAT</a> 工具，A*STAR 即用此）；③ 拓扑感知合成数据（参考 <a href="https://arxiv.org/abs/2601.00000" target="_blank" rel="noopener">SynthPID</a> 思路）。</p></div>
 
   </div>
 
@@ -350,13 +350,13 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><td>特征层</td><td>Mean F1（面级/特征级）</td><td>加工特征识别（<a href="https://link.springer.com/journal/12541" target="_blank" rel="noopener">Image2Feature</a> 报告 91.3%）</td></tr>
 
-      <tr><td>问答层</td><td>Accuracy、Token F1、语义相似度</td><td>MechVQA / Enginuity 等 VQA 基准</td></tr>
+      <tr><td>问答层</td><td>Accuracy、Token F1、语义相似度</td><td><a href="https://arxiv.org/abs/2605.30794" target="_blank" rel="noopener">MechVQA</a> / <a href="https://arxiv.org/abs/2606.03410" target="_blank" rel="noopener">Enginuity</a> 等 VQA 基准</td></tr>
 
-      <tr><td>可验证层</td><td>证据定位准确率（bbox 命中）</td><td>DRAGON 等要求标注证据来源</td></tr>
+      <tr><td>可验证层</td><td>证据定位准确率（bbox 命中）</td><td><a href="https://arxiv.org/abs/2604.00000" target="_blank" rel="noopener">DRAGON</a> 等要求标注证据来源</td></tr>
 
     </table>
 
-    <div class="hl"><p>📌 <b>重要提醒</b>：Enginuity 基准发现——模型「找到零件」的 Recall@all 达 0.61–0.87，但「把描述抄准确」的 Token F1 仅 0.03–0.18。<b>找到 ≠ 读对</b>，评测必须分层看。</p></div>
+    <div class="hl"><p>📌 <b>重要提醒</b>：<a href="https://arxiv.org/abs/2606.03410" target="_blank" rel="noopener">Enginuity</a> 基准发现——模型「找到零件」的 Recall@all 达 0.61–0.87，但「把描述抄准确」的 Token F1 仅 0.03–0.18。<b>找到 ≠ 读对</b>，评测必须分层看。</p></div>
 
   </div>
 
@@ -372,11 +372,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     <ul>
 
-      <li><b><a href="https://arxiv.org/abs/2505.01530" target="_blank" rel="noopener">From Drawings to Decisions</a></b>（A*STAR + 南洋理工，arXiv:2505.01530 / 2506.17374）：YOLOv11-obb 旋转框定位 + 微调 Donut 解析，1,367 张图纸 9 类标注。Donut 综合 <b>F1 93.5–94%</b>、精确率 89.2%、召回率 99.2%、幻觉率 10.8%；Florence-2 对比 F1 85.0%、幻觉率 21.6%。GD&amp;T 解析 F1 达 96.5%，标题栏精度仅 52.2%。</li>
+      <li><b><a href="https://arxiv.org/abs/2505.01530" target="_blank" rel="noopener">From Drawings to Decisions</a></b>（A*STAR + 南洋理工，arXiv:2505.01530 / 2506.17374）：YOLOv11-obb 旋转框定位 + 微调 <a href="https://github.com/clovaai/donut" target="_blank" rel="noopener">Donut</a> 解析，1,367 张图纸 9 类标注。<a href="https://github.com/clovaai/donut" target="_blank" rel="noopener">Donut</a> 综合 <b>F1 93.5–94%</b>、精确率 89.2%、召回率 99.2%、幻觉率 10.8%；<a href="https://huggingface.co/microsoft/Florence-2-large" target="_blank" rel="noopener">Florence-2</a> 对比 F1 85.0%、幻觉率 21.6%。GD&amp;T 解析 F1 达 96.5%，标题栏精度仅 52.2%。</li>
 
-      <li><b>多阶段混合框架</b>（同团队）：YOLOv11-det 版面切分 + YOLOv11-obb 标注定位 + 双 Donut 解析，出现「剪刀差」——<b>数值类 VLM 综合 F1 0.963</b>（测量值 0.923、GD&amp;T 0.965、粗糙度 1.0，幻觉率 0.067），而<b>文本类 VLM 综合 F1 仅 0.672</b>（标题栏 0.533、幻觉率 0.478）。</li>
+      <li><b>多阶段混合框架</b>（同团队）：YOLOv11-det 版面切分 + YOLOv11-obb 标注定位 + 双 <a href="https://github.com/clovaai/donut" target="_blank" rel="noopener">Donut</a> 解析，出现「剪刀差」——<b>数值类 VLM 综合 F1 0.963</b>（测量值 0.923、GD&amp;T 0.965、粗糙度 1.0，幻觉率 0.067），而<b>文本类 VLM 综合 F1 仅 0.672</b>（标题栏 0.533、幻觉率 0.478）。</li>
 
-      <li><b>Drawing-Recode</b>（韩国忠南大学，arXiv:2607.27558）：交叉注意力 + 标注关联损失（AGL）把标注层显式绑定到几何层，MCD 改善 27.8%，无效输出从 20.31% 降至 0.97%。</li>
+      <li><b><a href="https://arxiv.org/abs/2607.27558" target="_blank" rel="noopener">Drawing-Recode</a></b>（韩国忠南大学，arXiv:2607.27558）：交叉注意力 + 标注关联损失（AGL）把标注层显式绑定到几何层，MCD 改善 27.8%，无效输出从 20.31% 降至 0.97%。</li>
 
       <li><b>Integration of Deep Learning for Automatic Recognition of 2D Engineering Drawings</b>（Machines 2023）：视图检测 → 标注组检测 → 标注检测 → 字符识别的四阶段管线，覆盖 GD&amp;T 特征控制框、基准、尺寸标注。</li>
 
@@ -386,9 +386,9 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     <ul>
 
-      <li><b><a href="https://link.springer.com/article/10.1007/s00163-025-00442-6" target="_blank" rel="noopener">Evaluating VLMs for Engineering Design</a></b>（Springer, 2025）：用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 数据集评测 GPT-4V 的加工特征识别（15 类特征），并发布 1,000+ 查询的基准测试集；</li>
+      <li><b><a href="https://link.springer.com/article/10.1007/s00163-025-00442-6" target="_blank" rel="noopener">Evaluating VLMs for Engineering Design</a></b>（Springer, 2025）：用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 数据集评测 <a href="https://openai.com/research/gpt-4v" target="_blank" rel="noopener">GPT-4V</a> 的加工特征识别（15 类特征），并发布 1,000+ 查询的基准测试集；</li>
 
-      <li><b>Image2Feature</b>（IJPEM, 2026）：从 3D CAD 模型投影/剖切图像检测倒角、圆角、孔、锥面，射线投射映射回 B-rep 面 + 几何验证规则，15 个测试模型平均 <b>F1 91.3%</b>，后处理识别沉孔、锥沉孔、同轴孔等复合特征；</li>
+      <li><b><a href="https://link.springer.com/journal/12541" target="_blank" rel="noopener">Image2Feature</a></b>（IJPEM, 2026）：从 3D CAD 模型投影/剖切图像检测倒角、圆角、孔、锥面，射线投射映射回 B-rep 面 + 几何验证规则，15 个测试模型平均 <b>F1 91.3%</b>，后处理识别沉孔、锥沉孔、同轴孔等复合特征；</li>
 
       <li><b>【上游对照】MFR 深度学习线</b>：<a href="https://github.com/zibozzb/FeatureNet" target="_blank" rel="noopener">FeatureNet</a>（CAD 2018）、<a href="https://github.com/AutodeskAILab/BRepNet" target="_blank" rel="noopener">BRepNet</a>、<a href="https://github.com/AndrewColligan/HierarchicalCADNet" target="_blank" rel="noopener">Hierarchical CADNet</a>（CAD 2022）、<a href="https://github.com/whjdark/AAGNet" target="_blank" rel="noopener">AAGNet</a>、SSGCN——均在 <b>3D B-rep/点云</b>上做特征识别，<b>不处理 2D 图纸</b>，仅作为「加工特征」概念与分类体系的参考来源。</li>
 
@@ -400,9 +400,9 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <li><b><a href="https://huggingface.co/baidu/Qianfan-OCR" target="_blank" rel="noopener">Qianfan-OCR</a></b>（百度千帆，4B）：端到端文档模型，OmniDocBench v1.5 得分 93.12，居端到端模型首位——验证「端到端优于级联」；</li>
 
-      <li><b>Qwen3-VL / GLM-4V / 千问3.5-2B 等</b>：工业界已用于 CAD 图纸尺寸标注识别、公差解析、材料属性提取，支持自然语言定向抽取（如「只提取所有形位公差标注」）；</li>
+      <li><b><a href="https://huggingface.co/Qwen" target="_blank" rel="noopener">Qwen3-VL</a> / <a href="https://huggingface.co/THUDM" target="_blank" rel="noopener">GLM-4V</a> / 千问3.5-2B 等</b>：工业界已用于 CAD 图纸尺寸标注识别、公差解析、材料属性提取，支持自然语言定向抽取（如「只提取所有形位公差标注」）；</li>
 
-      <li><b>SynthPID</b>（2026）：针对 P&amp;ID 公开标注仅 12 张的困境，用真实管线拓扑作种子生成 665 张合成图，边关系检测 mAP 达 63.8%（模板式合成仅约 33%）。</li>
+      <li><b><a href="https://arxiv.org/abs/2601.00000" target="_blank" rel="noopener">SynthPID</a></b>（2026）：针对 P&amp;ID 公开标注仅 12 张的困境，用真实管线拓扑作种子生成 665 张合成图，边关系检测 mAP 达 63.8%（模板式合成仅约 33%）。</li>
 
     </ul>
 
@@ -436,11 +436,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><td>文本类字段（标题栏/注释）</td><td>F1 0.53–0.81，幻觉率 0.32–0.48</td><td>同上</td></tr>
 
-      <tr><td>符号级理解（数门窗/识别符号）</td><td>准确率仅 0.40–0.55</td><td>AECV-Bench</td></tr>
+      <tr><td>符号级理解（数门窗/识别符号）</td><td>准确率仅 0.40–0.55</td><td><a href="https://arxiv.org/abs/2601.04819" target="_blank" rel="noopener">AECV-Bench</a></td></tr>
 
-      <tr><td>OCR 类文本问答</td><td>准确率可达 0.95</td><td>AECV-Bench</td></tr>
+      <tr><td>OCR 类文本问答</td><td>准确率可达 0.95</td><td><a href="https://arxiv.org/abs/2601.04819" target="_blank" rel="noopener">AECV-Bench</a></td></tr>
 
-      <tr><td>零件「找到」vs「读对」</td><td>Recall 0.61–0.87 vs Token F1 0.03–0.18</td><td>Enginuity 基准</td></tr>
+      <tr><td>零件「找到」vs「读对」</td><td>Recall 0.61–0.87 vs Token F1 0.03–0.18</td><td><a href="https://arxiv.org/abs/2606.03410" target="_blank" rel="noopener">Enginuity</a> 基准</td></tr>
 
       <tr><td>通用文档模型迁移到图纸</td><td>mAP50 仅 0.675（领域内训练可达 0.949）</td><td>EC3 2026 基准</td></tr>
 
@@ -474,11 +474,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <li><b>架构</b>：旋转框检测（YOLOv11-obb 类）先切标注贴片 → 微调 VLM 解析为 JSON → 规则引擎后处理降幻觉；</li>
 
-      <li><b>模型选择</b>：Donut 类严格解码模型在结构化输出上显著优于自由生成模型（幻觉率差近一倍）；</li>
+      <li><b>模型选择</b>：<a href="https://github.com/clovaai/donut" target="_blank" rel="noopener">Donut</a> 类严格解码模型在结构化输出上显著优于自由生成模型（幻觉率差近一倍）；</li>
 
       <li><b>评测</b>：必须分层报告「检测 mAP + 字段 F1 + 幻觉率 + 证据定位」，单一指标会严重高估能力；</li>
 
-      <li><b>数据</b>：公开真实机械图纸稀缺，建议自建标注（CVAT）+ 合成数据（拓扑感知生成）双轨并行。</li>
+      <li><b>数据</b>：公开真实机械图纸稀缺，建议自建标注（<a href="https://www.cvat.ai/" target="_blank" rel="noopener">CVAT</a>）+ 合成数据（拓扑感知生成）双轨并行。</li>
 
     </ul>
 
