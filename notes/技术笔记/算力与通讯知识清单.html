@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>算力与通讯知识清单 · 训练与推理的性能底层逻辑</title>
+<style>
+:root{--bg:#0b0f14;--bg2:#111823;--card:#151d29;--card2:#1a2432;--line:#243044;--txt:#dbe4f0;--txt2:#8fa3bf;--acc:#4ea8ff;--acc2:#7c5cff;--grn:#3ddc97;--amb:#ffb454;--red:#ff6b6b;--cyan:#38d9d9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);line-height:1.75;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px 90px}
+.hero{padding:64px 0 48px;border-bottom:1px solid var(--line);background:radial-gradient(800px 360px at 10% -10%,rgba(78,168,255,.16),transparent 60%),radial-gradient(600px 300px at 90% 0%,rgba(124,92,255,.14),transparent 60%)}
+.ht{display:inline-block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(78,168,255,.35);padding:5px 13px;border-radius:999px;margin-bottom:20px;background:rgba(78,168,255,.07)}
+h1{font-size:clamp(28px,4.4vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;background:linear-gradient(100deg,#fff 8%,#9dc7ff 55%,#b6a4ff 96%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lead{font-size:16px;color:var(--txt2);max-width:780px}
+.toc{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.toc a{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--txt2);background:var(--card)}
+.toc a:hover{border-color:var(--acc);color:var(--acc);text-decoration:none}
+section{padding-top:56px}
+.sh{display:flex;align-items:baseline;gap:13px;margin-bottom:22px;flex-wrap:wrap}
+.sn{font-size:12px;font-weight:700;color:var(--acc);border:1px solid rgba(78,168,255,.3);border-radius:6px;padding:3px 9px}
+.sh h2{font-size:24px;font-weight:750}
+.sh .ss{font-size:13px;color:var(--txt2)}
+h3{font-size:17.5px;font-weight:700;color:#fff;margin:26px 0 10px}
+p{font-size:14.5px;color:#b9c8dd;margin-bottom:12px}
+p b,li b{color:#e8f0fb}
+.ts{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:16px 0 22px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+th{text-align:left;padding:12px 14px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt2);background:var(--card2);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid rgba(36,48,68,.6);vertical-align:top}
+tr:last-child td{border-bottom:none}tr:hover{background:rgba(78,168,255,.045)}
+td code,.hl{color:var(--cyan);font-weight:600}
+code{background:rgba(78,168,255,.1);color:#9dc7ff;padding:1px 6px;border-radius:4px;font-size:12.5px;font-family:ui-monospace,Consolas,monospace}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:18px 0}
+.box{background:linear-gradient(168deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.box h4{font-size:15.5px;color:#fff;margin-bottom:9px;font-weight:700}
+.box p{font-size:13.5px;margin:0;color:#a8b8ce}
+.box .tg{font-size:11px;color:var(--cyan);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;display:block}
+.note{background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.25);border-radius:12px;padding:16px 20px;font-size:13.5px;color:#d8c9a8;margin:18px 0}
+.note b{color:var(--amb)}
+.warn{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.3);border-radius:12px;padding:16px 20px;font-size:13.5px;color:#e8b8b8;margin:18px 0}
+.warn b{color:var(--red)}
+.good{background:rgba(61,220,151,.07);border:1px solid rgba(61,220,151,.3);border-radius:12px;padding:16px 20px;font-size:13.5px;color:#b8e0cc;margin:18px 0}
+.good b{color:var(--grn)}
+ul,ol{margin:0 0 14px 22px}
+li{font-size:14px;color:#b9c8dd;margin-bottom:7px}
+.formula{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 20px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px;color:#9dc7ff;margin:14px 0;overflow-x:auto}
+footer{margin-top:60px;padding-top:26px;border-top:1px solid var(--line);font-size:13px;color:var(--txt2);text-align:center}
+.bh{display:inline-block;margin-bottom:22px;font-size:13.5px;color:var(--txt2);border:1px solid var(--line);border-radius:8px;padding:7px 15px}
+.bh:hover{border-color:var(--acc);color:var(--acc);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="bh" href="../../index.html">← 返回知识库首页</a>
+<header class="hero">
+<span class="ht">Compute & Communication · Knowledge Checklist</span>
+<h1>算力与通讯知识清单</h1>
+<p class="lead">训练与推理的性能底层逻辑：算力、通讯带宽、延迟三大要素，单机多卡与多机通讯的差异，五大并行策略的通讯模式，以及它们对训练与推理各产生什么影响。</p>
+<nav class="toc">
+<a href="#s1">① 核心概念</a><a href="#s2">② 硬件互联参数</a><a href="#s3">③ 单机多卡通讯</a><a href="#s4">④ 多机通讯</a><a href="#s5">⑤ 并行策略通讯模式</a><a href="#s6">⑥ 对训练的影响</a><a href="#s7">⑦ 对推理的影响</a><a href="#s8">⑧ 速查表与调优清单</a>
+</nav>
+</header>
+<section id="s1">
+<div class="sh"><span class="sn">01</span><h2>核心概念</h2><span class="ss">Foundation concepts</span></div>
+<h3>算力（Compute）</h3>
+<p><b>定义</b>：硬件每秒能完成的浮点运算次数，单位 <code>FLOPS</code>（每秒浮点运算数）。常用量级：<code>TFLOPS</code>（10¹²）、<code>PFLOPS</code>（10¹⁵）。</p>
+<div class="ts"><table>
+<thead><tr><th>指标</th><th>含义</th><th>典型值（参考）</th></tr></thead>
+<tbody>
+<tr><td>FP32 算力</td><td>单精度浮点，科学计算/精确仿真</td><td>A100 ~19.5 TFLOPS</td></tr>
+<tr><td>TF32/FP16/BF16</td><td>半精度/混合精度，深度学习主力</td><td>A100 ~312 TFLOPS（FP16 + Tensor Core）</td></tr>
+<tr><td>FP8</td><td>8-bit 浮点，新一代训练/推理</td><td>H100 ~1979 TFLOPS（FP8）</td></tr>
+<tr><td>INT8</td><td>8-bit 整数，量化推理</td><td>约为 FP16 的 2 倍</td></tr>
+</tbody></table></div>
+<h3>通讯带宽（Bandwidth）与延迟（Latency）</h3>
+<p><b>带宽</b>：单位时间能传输的数据量（GB/s），决定「搬数据多快」；<b>延迟</b>：一次通讯的启动开销（μs 级），决定「叫一次人要多久」。小消息看延迟，大块数据看带宽——这是理解一切通讯优化的起点。</p>
+<h3>计算强度与瓶颈判定（Roofline 模型）</h3>
+<div class="formula">算术强度 Arith. Intensity = 计算量 FLOPs / 访存量 Bytes（单位：FLOP/Byte）</div>
+<div class="grid">
+<div class="box"><span class="tg">Compute-bound</span><h4>算力瓶颈</h4><p>算术强度高于机器「平衡点」（峰值算力 ÷ 带宽）。典型：大矩阵乘（GEMM）、CNN 卷积。提升算力（更多卡、更高精度加速）有效。</p></div>
+<div class="box"><span class="tg">Memory-bound</span><h4>带宽瓶颈</h4><p>算术强度低，大部分时间在搬数据。典型：LLM 解码（逐 token 生成）、softmax、归一化层。此时堆算力无效，<b>提升显存带宽/减少数据搬运</b>才有效。</p></div>
+</div>
+<div class="note"><b>关键认知：</b>LLM 推理的 decode 阶段几乎总是<b>带宽瓶颈</b>（每生成一个 token 要把全部参数读一遍），这就是为什么推理速度常以「显存带宽 ÷ 模型大小」估算，而不是算力。训练阶段整体偏算力瓶颈，但梯度同步、优化器步骤仍大量受通讯/带宽制约。</div>
+</section>
+<section id="s2">
+<div class="sh"><span class="sn">02</span><h2>硬件互联参数速查</h2><span class="ss">Interconnect reference</span></div>
+<div class="ts"><table>
+<thead><tr><th>互联类型</th><th>范围</th><th>典型带宽（单向）</th><th>典型延迟</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td class="hl">NVLink</td><td>机内卡↔卡</td><td>A100 600 GB/s / H100 900 GB/s（总双向）</td><td>~1-2 μs</td><td>NVIDIA 私有高速互联，卡间 P2P 首选</td></tr>
+<tr><td class="hl">NVSwitch</td><td>机内全互联</td><td>全拓扑任意两卡近 NVLink 速率</td><td>~2 μs</td><td>交换芯片，让 8 卡任意互访不抢道</td></tr>
+<tr><td>PCIe Gen4 x16</td><td>机内卡↔CPU/卡</td><td>~32 GB/s</td><td>~5-10 μs</td><td>无 NVLink 时的卡间通道，P2P 慢且常绕 CPU</td></tr>
+<tr><td>PCIe Gen5 x16</td><td>同上</td><td>~64 GB/s</td><td>~3-8 μs</td><td>新一代平台</td></tr>
+<tr><td class="hl">InfiniBand HDR/NDR</td><td>机↔机</td><td>400 / 800 Gbps（~50/100 GB/s）</td><td>~1-2 μs（交换）</td><td>HPC/大模型集群标配，RDMA 零拷贝</td></tr>
+<tr><td>RoCEv2</td><td>机↔机</td><td>同以太网速率</td><td>略高于 IB</td><td>以太网承载 RDMA，成本更低</td></tr>
+<tr><td>普通以太网</td><td>机↔机</td><td>1-25 GB/s</td><td>~50-100 μs+</td><td>不适合梯度同步，仅存取数据/模型文件</td></tr>
+</tbody></table></div>
+<div class="note"><b>直观对比：</b>机内 NVLink（~450 GB/s 单向）比跨机 IB（~50 GB/s）快约 <b>9 倍</b>，比 PCIe 快约 <b>14 倍</b>。这直接决定了「哪些并行策略放机内、哪些放机间」的部署法则。</div>
+</section>
+<section id="s3">
+<div class="sh"><span class="sn">03</span><h2>单机多卡通讯</h2><span class="ss">Intra-node communication</span></div>
+<h3>通讯原语（NCCL 实现）</h3>
+<div class="ts"><table>
+<thead><tr><th>原语</th><th>行为</th><th>数据量（每卡）</th><th>典型用途</th></tr></thead>
+<tbody>
+<tr><td class="hl">Broadcast</td><td>一张卡发给所有卡</td><td>全量</td><td>广播参数初始化</td></tr>
+<tr><td class="hl">AllReduce</td><td>所有卡的数求和/平均，结果人人都有</td><td>~2× 数据量（Ring）</td><td><b>数据并行梯度同步</b></td></tr>
+<tr><td class="hl">AllGather</td><td>每人一份碎片，拼成完整数据人人都有</td><td>~(N-1)/N × 全量</td><td>ZeRO/FSDP 前向拉参数</td></tr>
+<tr><td class="hl">ReduceScatter</td><td>求和后按碎片分发</td><td>~(N-1)/N × 全量</td><td>ZeRO/FSDP 梯度归约</td></tr>
+<tr><td class="hl">P2P（Send/Recv）</td><td>点对点直传</td><td>指定块</td><td>流水线并行的激活传递</td></tr>
+</tbody></table></div>
+<h3>Ring AllReduce 的关键性质</h3>
+<div class="formula">通讯时间 ≈ 2(N-1)/N × 数据量 / 带宽（N = 卡数）</div>
+<ul>
+<li><b>带宽最优</b>：每卡只需收发约 2(N-1)/N × 数据量，与卡数近似无关（卡多时趋近 2× 数据量）。</li>
+<li><b>延迟敏感</b>：分 2(N-1) 步，步数随卡数线性增长——小消息场景下延迟占主导。</li>
+<li>这就是「梯度分桶（bucketing）」的原因：把小梯度攒成大桶，用满带宽、摊薄延迟。</li>
+</ul>
+<h3>单机多卡的关键事实</h3>
+<div class="good"><b>好消息：</b>机内有 NVLink/NVSwitch 时，AllReduce 通讯开销通常能被计算掩盖（重叠），数据并行扩展效率高（8 卡常达 90%+）。</div>
+<div class="warn"><b>坏消息：</b>若无 NVLink、走 PCIe P2P，卡间带宽骤降至 ~1/14，梯度同步可能占训练时间 30% 以上；若 P2P 被禁用还会绕行 CPU 内存（穿透），雪上加霜。</div>
+</section>
+<section id="s4">
+<div class="sh"><span class="sn">04</span><h2>多机通讯</h2><span class="ss">Inter-node communication</span></div>
+<h3>与机内的三大差异</h3>
+<div class="grid">
+<div class="box"><span class="tg">差异一</span><h4>带宽低一个量级</h4><p>机内 NVLink ~450 GB/s vs 跨机 IB ~50 GB/s。同样的 AllReduce，跨机慢约 9 倍，通讯更难被计算掩盖。</p></div>
+<div class="box"><span class="tg">差异二</span><h4>延迟与抖动</h4><p>跨机多经过网卡、交换机，延迟更高且有网络抖动；同步式训练中「最慢的机器」决定整体节奏（木桶效应）。</p></div>
+<div class="box"><span class="tg">差异三</span><h4>故障率</h4><p>长训任务中网卡/链路故障概率显著上升，需要容错：梯度压缩容忍、备份节点、快速 checkpoint 恢复。</p></div>
+</div>
+<h3>多机通讯的核心优化手段</h3>
+<ul>
+<li><b>分层归约（Hierarchical AllReduce）</b>：先机内 NVLink 归约，再跨机一次归约，最后机内广播——把跨机流量压到最低。</li>
+<li><b>梯度压缩</b>：FP16/BF16 梯度、量化（如 8-bit）+ 误差补偿，减少跨机字节数。</li>
+<li><b>通讯-计算重叠</b>：梯度分桶、反向传播边算边发，把通讯藏进计算时间里。</li>
+<li><b>梯度累积</b>：本地累积多步再同步一次，用「牺牲等效 batch 精细度」换通讯次数。</li>
+<li><b>Overlap + 异步</b>：本地 SGD/异步 SGD 减少等待，但引入梯度陈旧（staleness），收敛需调参。</li>
+</ul>
+<div class="note"><b>部署法则：</b>通讯频繁的并行维度（张量并行）放<b>机内</b>；通讯稀疏的维度（流水线、数据并行）放<b>机间</b>。这就是大模型训练「3D 并行」的排布铁律。</div>
+</section>
+<section id="s5">
+<div class="sh"><span class="sn">05</span><h2>并行策略的通讯模式</h2><span class="ss">Parallelism & communication patterns</span></div>
+<div class="ts"><table>
+<thead><tr><th>策略</th><th>切什么</th><th>通讯内容</th><th>通讯频率</th><th>通讯量</th><th>适合位置</th></tr></thead>
+<tbody>
+<tr><td class="hl">DP 数据并行</td><td>数据</td><td>梯度（AllReduce）</td><td>每步 1 次（反向末）</td><td>大（全量梯度）</td><td>机间可接受（可重叠）</td></tr>
+<tr><td class="hl">ZeRO-1/2/3 / FSDP</td><td>优化器状态/梯度/参数</td><td>AllGather + ReduceScatter</td><td>每层前后向</td><td>中（分片摊薄）</td><td>机内为主，机内+IB 亦可</td></tr>
+<tr><td class="hl">TP 张量并行</td><td>单层权重矩阵</td><td>每层前后向各 2 次 AllReduce</td><td><b>极频繁</b>（每层）</td><td>大（激活全量）</td><td><b>必须机内</b>（NVLink）</td></tr>
+<tr><td class="hl">PP 流水线并行</td><td>按层切阶段</td><td>阶段边界激活（P2P）</td><td>稀疏（阶段边界）</td><td>小（仅激活）</td><td>机间友好</td></tr>
+<tr><td class="hl">SP 序列并行</td><td>序列维度</td><td>AllGather/ReduceScatter（注意力区）</td><td>每层注意力处</td><td>中</td><td>常与 TP 同域（机内）</td></tr>
+<tr><td class="hl">EP 专家并行</td><td>MoE 专家</td><td>All-to-All（token 分发/回收）</td><td>每 MoE 层 2 次</td><td>大且不均</td><td>机内优先，IB 需高带宽</td></tr>
+</tbody></table></div>
+<h3>组合拳：3D / 5D 并行</h3>
+<p>大模型训练的标准排布：<b>TP + SP 放机内</b>（NVLink 域）→ <b>PP 跨机</b>（IB，通讯稀疏）→ <b>DP/ZeRO 最外层</b>（跨机，可重叠）。以 GPT-3 175B 级别训练为例，典型配置为 8 卡机内 TP×8 或 TP×4+PP，跨机 DP 数十至上百路。</p>
+<div class="warn"><b>TP 跨机的代价：</b>TP 每层要 2 次 AllReduce（前向 + 反向），跨机做会让每层都等网络——实测跨机 TP 可让训练速度掉 50% 以上。这就是为什么 TP 几乎从不跨机。</div>
+</section>
+<section id="s6">
+<div class="sh"><span class="sn">06</span><h2>对训练的影响</h2><span class="ss">Impact on training</span></div>
+<h3>扩展效率（Scaling Efficiency）</h3>
+<div class="formula">理想加速比 = 卡数 N；实际加速比 = N × 扩展效率</div>
+<ul>
+<li><b>通讯占比</b>：通讯时间 / 总时间。机内 NVLink + 大 batch 下通常 &lt;10%；跨机 + 小 batch 可达 30-50%。</li>
+<li><b>木桶效应</b>：同步训练中任一卡慢/网络抖动，全体等待。长训中「掉队者（straggler）」是吞吐杀手。</li>
+<li><b>显存-通讯权衡</b>：ZeRO-3/FSDP 省显存但增加 AllGather 通讯（每层前后向都要拉参数）；offload 到 CPU 省更多显存但 PCIe 带宽成为新瓶颈。</li>
+</ul>
+<h3>常见现象与根因</h3>
+<div class="ts"><table>
+<thead><tr><th>现象</th><th>根因</th><th>对策</th></tr></thead>
+<tbody>
+<tr><td>加卡后速度不成比例</td><td>梯度同步通讯占比上升 / batch 太小</td><td>增大 batch、梯度累积、分层归约</td></tr>
+<tr><td>多机比多卡慢得多</td><td>跨机带宽低 + TP 误放机间</td><td>重排并行维度：TP 机内、PP 机间</td></tr>
+<tr><td>GPU 利用率忽高忽低</td><td>数据加载 IO 瓶颈 / 掉队卡</td><td>预取、DALI/GDS、排查慢节点</td></tr>
+<tr><td>ZeRO-3 反而变慢</td><td>参数 AllGather 通讯增加</td><td>换 ZeRO-2、参数分桶调大、机内 NVLink</td></tr>
+<tr><td>MFU 上不去（&lt;40%）</td><td>小算子多、通讯碎片化、非 GEMM 占比高</td><td>算子融合、flash attention、更大矩阵</td></tr>
+</tbody></table></div>
+<div class="note"><b>经验法则：</b>大模型训练 MFU（模型算力利用率）健康区间约 <b>35%–55%</b>。低于 30% 通常意味着通讯/IO/小算子出了问题，先查通讯再查数据管道。</div>
+</section>
+<section id="s7">
+<div class="sh"><span class="sn">07</span><h2>对推理的影响</h2><span class="ss">Impact on inference</span></div>
+<h3>两个阶段的瓶颈完全不同</h3>
+<div class="grid">
+<div class="box"><span class="tg">Prefill 阶段</span><h4>算力瓶颈（compute-bound）</h4><p>整段 prompt 一次性并行计算，矩阵乘大、算术强度高。堆算力（多卡 TP）直接提速，通讯可被计算掩盖。</p></div>
+<div class="box"><span class="tg">Decode 阶段</span><h4>带宽瓶颈（memory-bound）</h4><p>逐 token 生成，每步都要读全部参数 + KV Cache，算术强度 ≈ 1-2 FLOP/Byte。速度 ≈ 显存带宽 ÷ (参数量 + KV Cache)。</p></div>
+</div>
+<h3>多卡推理的权衡</h3>
+<ul>
+<li><b>TP（张量并行）</b>：把参数切到多卡 → 每卡读取量变小 → decode 提速近似线性；但每层要 2 次 AllReduce，<b>通讯延迟直接加进每个 token 的生成时间</b>。机内 NVLink 下收益显著；跨机则延迟反噬收益。</li>
+<li><b>PP（流水线并行）</b>：通讯少，但 decode 阶段流水线「气泡」明显（各阶段轮流空闲），单请求延迟变差，<b>只适合提吞吐（大 batch）</b>。</li>
+<li><b>KV Cache 是隐形杀手</b>：长上下文时 KV Cache 可达数十 GB，既挤占显存（限制 batch）又拖慢 decode（访存量暴涨）。对策：PagedAttention、GQA/MQA、KV 量化。</li>
+<li><b>吞吐 vs 延迟</b>：增大 batch 提升吞吐（算力利用率变高），但单请求延迟上升。在线服务常做「连续批处理（continuous batching）」动态平衡。</li>
+</ul>
+<div class="good"><b>实用估算：</b>decode 速度（token/s）≈ 显存带宽 ÷（模型参数字节数 + KV Cache 字节数）。例：70B 模型 FP16（140 GB）在 3.35 TB/s 的 H100 上单卡放不下；TP=2 后每卡 ~70 GB + KV，理论 ~40 token/s 量级——这就是「推理吃带宽、训练吃算力」的直观体现。</div>
+<div class="note"><b>通讯对推理的影响一句话：</b>训练时通讯藏在步与步之间，可以重叠；<b>推理 decode 时通讯直接串在每 token 的关键路径上</b>——每层 AllReduce 的延迟（哪怕只有几十 μs）乘以层数，就是每个 token 的固定开销。这是「推理 TP 不宜跨机」的根本原因。</div>
+</section>
+<section id="s8">
+<div class="sh"><span class="sn">08</span><h2>速查表与调优清单</h2><span class="ss">Cheat sheet</span></div>
+<h3>单位与指标速查</h3>
+<div class="ts"><table>
+<thead><tr><th>术语</th><th>全称/含义</th><th>速记</th></tr></thead>
+<tbody>
+<tr><td>FLOPS</td><td>每秒浮点运算数</td><td>算力；TFLOPS=10¹²，PFLOPS=10¹⁵</td></tr>
+<tr><td>MFU</td><td>Model FLOPs Utilization</td><td>实际有效算力 ÷ 峰值算力；训练健康区 35-55%</td></tr>
+<tr><td>Arith. Intensity</td><td>算术强度</td><td>FLOPs/Bytes；判定算力瓶颈 vs 带宽瓶颈</td></tr>
+<tr><td>AllReduce</td><td>全归约</td><td>DP 梯度同步原语；Ring 实现带宽最优</td></tr>
+<tr><td>All-to-All</td><td>全员交换</td><td>EP（MoE）核心原语；流量大且不均</td></tr>
+<tr><td>NCCL</td><td>NVIDIA 集合通讯库</td><td>GPU 通讯原语的工业标准实现</td></tr>
+<tr><td>RDMA</td><td>远程直接内存访问</td><td>跨机零拷贝；IB/RoCE 的基础</td></tr>
+<tr><td>Bubble</td><td>流水线气泡</td><td>PP 中阶段空闲时间；(p-1)/(m+p-1) 近似</td></tr>
+<tr><td>Staleness</td><td>梯度陈旧度</td><td>异步训练用旧梯度更新的偏差</td></tr>
+</tbody></table></div>
+<h3>调优检查清单</h3>
+<ol>
+<li><b>先测瓶颈</b>：nvidia-smi 看 SM 利用率与显存带宽；Nsight/PyTorch Profiler 看通讯占比——是算力、带宽、通讯还是 IO 瓶颈，对症下药。</li>
+<li><b>通讯占比 &gt;20%</b>：增大 batch / 梯度累积 / 分层归约 / 梯度压缩 / 检查并行维度排布。</li>
+<li><b>TP 是否跨机了</b>：跨机 TP 是性能事故，立即重排为「TP 机内 + PP 机间」。</li>
+<li><b>推理慢</b>：先判断 prefill 还是 decode 慢；decode 慢优先查 KV Cache 大小与显存带宽利用率，再考虑 TP/量化。</li>
+<li><b>多机不稳</b>：检查网卡拓扑（ibstat/nvidia-smi topo）、RDMA 配置、是否有掉队节点。</li>
+<li><b>省显存还是省通讯</b>：ZeRO-2 → ZeRO-3 → offload 是「显存换通讯/带宽」的阶梯，按需逐级启用。</li>
+</ol>
+<div class="good"><b>一句话总结：</b>训练是「算力 + 可隐藏的通讯」，推理是「带宽 + 串行路径上的通讯」。理解每个操作是算力瓶颈还是带宽瓶颈、通讯在关键路径上还是可以重叠，就掌握了 90% 的性能调优判断力。</div>
+</section>
+<footer>算力与通讯知识清单 · 训练与推理的性能底层逻辑 · 整理时间 2026-09 · Generated by AiPy</footer>
+</div>
+</body>
+</html>
