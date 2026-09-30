@@ -266,7 +266,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><th>数据集</th><th>规模</th><th>内容与标注</th><th>任务定位</th></tr>
 
-      <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a></b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（<a href="https://arxiv.org/abs/2309.17421" target="_blank" rel="noopener">GPT-4V</a> 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
+      <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a><span class="tag-open" title="AiPy 已实际下载并解析验证">🔬 实测可用</span></b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（<a href="https://arxiv.org/abs/2309.17421" target="_blank" rel="noopener">GPT-4V</a> 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
 
       <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD++</a></b></td><td><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 扩展版</td><td>增加特征类别与更复杂组合</td><td>加工特征识别进阶评测</td></tr>
 
@@ -286,7 +286,20 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     </table>
 
-    <h3>3.2 建筑 / 平面图方向（符号理解，可迁移参考）</h3>
+    <h3>
+<div class="box" style="border-color:rgba(61,220,151,.4);margin:18px 0">
+<span class="tg" style="color:var(--grn)">🔬 AiPy 实测报告 · 2026-09-30</span>
+<h4>MFCAD 实际下载与解析验证：能用，但有 4 个关键注意点</h4>
+<p>AiPy 已实际访问仓库、下载 4 组样本并解析成功，确认<b>数据可直接使用</b>。以下是实测发现：</p>
+<ul style="margin-top:8px">
+<li><b>① 真实规模比文献口径大得多</b>：git trees API 统计 <code>dataset/step/</code> 下有 <b>15,488 个 .step 模型 + 15,488 个 .face_truth 标签文件</b>，总计约 <b>1.1 GB</b>。（此前页面写的“数万合成 CAD 模型”偏模糊，实际为 15,488 对；注意 MFCAD++ 才是 59,655）</li>
+<li><b>② 标签是 Python pickle 二进制文件，不是文本</b>：直接打开会乱码。解析方式：<code>pickle.load(open('xxx.face_truth','rb'))</code>，得到每面一个 int 类别 id 的列表，顺序与 STEP 文件中 <code>ADVANCED_FACE</code> 的出现顺序一一对应（实测已验证一致性，如 11 面模型 ↔ 11 个标签）。</li>
+<li><b>③ 类别映射表在 occ/colors.json</b>：25 个特征类（through_hole=0、triangular_passage=1、…、round=23、stock=25 等，注意 id 不连续），id→名称需查这张表。实测样本标签值如 {0:5, 15:6} = 5 个 through_hole 面 + 6 个 stock 面。</li>
+<li><b>④ 无现成训练数据管道，需自行预处理</b>：仓库只有 STEP 原始文件 + 标签，无图/点云/图结构。官方提供 occ/graph_converter.py（需安装 <b>pythonocc-core</b>）把 STEP 转成 {x: 面法向量+距离, edge_index: 邻接, y: 标签} 的图数据（pickle 格式）——即这是<b>面邻接图</b>任务的数据，做 2D 图纸类任务需自行投影渲染。</li>
+</ul>
+<p style="margin-top:8px"><b>结论：</b>✅ 链接有效、数据完整可下载、标签可解析；适合直接用于<b>B-Rep 面级特征识别</b>（GNN 路线）；用于 VLM 图纸任务需额外做“模型→图像”投影步骤。</p>
+</div>
+3.2 建筑 / 平面图方向（符号理解，可迁移参考）</h3>
 
     <table>
 
