@@ -174,7 +174,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     <p>🔄 <b>可迁移参考</b>：第 3.2 节建筑平面图数据集（符号理解方法论可借鉴）、第 3.3 节 CAD 原生几何数据（特征结构理解的上游对照）。</p>
 
-    <p>⚠️ <b>局限性</b>：① 本领域公开真实数据稀缺，多数论文自建数据集，跨论文数值不可直接横向比较；② 部分 2025–2026 年新工作（<a href="https://arxiv.org/abs/2505.14646" target="_blank" rel="noopener">MechVQA</a>、<a href="https://www.ebiotrade.com/newsf/2025-11/20251117003048171.htm" target="_blank" rel="noopener">BlueprintSymVL</a>、<a href="https://arxiv.org/abs/2604.00000" target="_blank" rel="noopener">DRAGON</a> 等）仍在快速迭代，规模与结论可能更新；③ 本文所有数值均标注来源，但实验设置差异未逐一展开。</p></div>
+    <p>⚠️ <b>局限性</b>：① 本领域公开真实数据稀缺，多数论文自建数据集，跨论文数值不可直接横向比较；② 部分 2025–2026 年新工作（<a href="https://arxiv.org/abs/2505.14646" target="_blank" rel="noopener">MechVQA</a>、<a href="https://www.ebiotrade.com/newsf/2025-11/20251117003048171.htm" target="_blank" rel="noopener">BlueprintSymVL</a>、<a href="https://page.sm.cn/blm/video-page-710/video?h=www.bilibili.com&id=26_3c92af0f6d1a379ea81510ef14d5a502" target="_blank" rel="noopener">DRAGON</a> 等）仍在快速迭代，规模与结论可能更新；③ 本文所有数值均标注来源，但实验设置差异未逐一展开。</p></div>
 
   </div>
 
@@ -248,7 +248,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
 }</pre>
 
-    <div class="ok"><p>✅ <b>关键设计</b>：每条信息都带 <code>bbox</code>（证据位置）——这是工程可复核性的前提，也是 <a href="https://arxiv.org/abs/2604.00000" target="_blank" rel="noopener">DRAGON</a> 等新基准的核心要求。</p></div>
+    <div class="ok"><p>✅ <b>关键设计</b>：每条信息都带 <code>bbox</code>（证据位置）——这是工程可复核性的前提，也是 <a href="https://page.sm.cn/blm/video-page-710/video?h=www.bilibili.com&id=26_3c92af0f6d1a379ea81510ef14d5a502" target="_blank" rel="noopener">DRAGON</a> 等新基准的核心要求。</p></div>
 
   </div>
 
@@ -266,7 +266,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><th>数据集</th><th>规模</th><th>内容与标注</th><th>任务定位</th></tr>
 
-      <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a></b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（<a href="https://openai.com/research/gpt-4v" target="_blank" rel="noopener">GPT-4V</a> 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
+      <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a></b>（Cao et al. 2020）</td><td>数万合成 CAD 模型</td><td>每个面标注 15 类加工特征（矩形通槽、三角通槽、矩形盲槽、型腔、倒角、台阶等）</td><td>⚠️ <b>注意：这是 3D 模型的面级标注，不是 2D 图纸</b>。但在 VLM 评测中常被投影成图像使用（<a href="https://arxiv.org/abs/2309.17421" target="_blank" rel="noopener">GPT-4V</a> 评测即如此），故列为「可投影为图纸的替代基准」</td></tr>
 
       <tr><td><b><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD++</a></b></td><td><a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 扩展版</td><td>增加特征类别与更复杂组合</td><td>加工特征识别进阶评测</td></tr>
 
@@ -274,7 +274,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><td><b><a href="https://www.ebiotrade.com/newsf/2025-11/20251117003048171.htm" target="_blank" rel="noopener">BlueprintSymVL</a></b></td><td>工程蓝图符号识别基准</td><td>高密度符号、遮挡、视觉相似场景 + one-shot 视觉上下文查询</td><td>VLM 符号识别可靠性评测（2025）</td></tr>
 
-      <tr><td><b><a href="https://arxiv.org/abs/2604.00000" target="_blank" rel="noopener">DRAGON</a></b></td><td>图纸问答 + 证据定位基准</td><td>要求模型不仅答对，还要标出支持答案的图中区域</td><td>可验证推理评测（2026）</td></tr>
+      <tr><td><b><a href="https://page.sm.cn/blm/video-page-710/video?h=www.bilibili.com&id=26_3c92af0f6d1a379ea81510ef14d5a502" target="_blank" rel="noopener">DRAGON</a></b></td><td>图纸问答 + 证据定位基准</td><td>要求模型不仅答对，还要标出支持答案的图中区域</td><td>可验证推理评测（2026）</td></tr>
 
       <tr><td><b>A*STAR 九类标注数据集</b></td><td>1,367 张 2D 机械图纸 / 11,469 个标注实例</td><td>GD&amp;T、通用公差、尺寸、材料、注释、半径、表面粗糙度、螺纹、标题栏</td><td><b>与「基本信息提取」任务最贴合</b>（<a href="https://www.cvat.ai/" target="_blank" rel="noopener">CVAT</a> 人工标注）</td></tr>
 
@@ -294,7 +294,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><td><b><a href="https://floorplancad.github.io/" target="_blank" rel="noopener">FloorPlanCAD</a></b></td><td>10,094 张真实平面图</td><td>矢量 SVG，30 类符号线粒度标注</td></tr>
 
-      <tr><td><b><a href="https://github.com/qihshe/CADSpotting" target="_blank" rel="noopener">LS-CAD</a></b></td><td>50 张大图（&gt;1000㎡）</td><td>精细符号标注，用于大规模图纸识别</td></tr>
+      <tr><td><b><a href="https://m.blog.csdn.net/qihshe/article/details/148867065" target="_blank" rel="noopener">LS-CAD</a></b></td><td>50 张大图（&gt;1000㎡）</td><td>精细符号标注，用于大规模图纸识别</td></tr>
 
       <tr><td><b><a href="https://github.com/CubiCasa/CubiCasa5k" target="_blank" rel="noopener">CubiCasa5K</a></b></td><td>5,000 张楼盘平面图</td><td>SVG 多边形，80+ 类别</td></tr>
 
@@ -328,7 +328,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     </ul>
 
-    <p>📌 <b>替代路径</b>：① 用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 投影图做特征识别预训练；② 自建标注（推荐 <a href="https://www.cvat.ai/" target="_blank" rel="noopener">CVAT</a> 工具，A*STAR 即用此）；③ 拓扑感知合成数据（参考 <a href="https://arxiv.org/abs/2601.00000" target="_blank" rel="noopener">SynthPID</a> 思路）。</p></div>
+    <p>📌 <b>替代路径</b>：① 用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 投影图做特征识别预训练；② 自建标注（推荐 <a href="https://www.cvat.ai/" target="_blank" rel="noopener">CVAT</a> 工具，A*STAR 即用此）；③ 拓扑感知合成数据（参考 <a href="https://m.sohu.com/a/1033577577_122155911" target="_blank" rel="noopener">SynthPID</a> 思路）。</p></div>
 
   </div>
 
@@ -352,7 +352,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <tr><td>问答层</td><td>Accuracy、Token F1、语义相似度</td><td><a href="https://arxiv.org/abs/2605.30794" target="_blank" rel="noopener">MechVQA</a> / <a href="https://arxiv.org/abs/2606.03410" target="_blank" rel="noopener">Enginuity</a> 等 VQA 基准</td></tr>
 
-      <tr><td>可验证层</td><td>证据定位准确率（bbox 命中）</td><td><a href="https://arxiv.org/abs/2604.00000" target="_blank" rel="noopener">DRAGON</a> 等要求标注证据来源</td></tr>
+      <tr><td>可验证层</td><td>证据定位准确率（bbox 命中）</td><td><a href="https://page.sm.cn/blm/video-page-710/video?h=www.bilibili.com&id=26_3c92af0f6d1a379ea81510ef14d5a502" target="_blank" rel="noopener">DRAGON</a> 等要求标注证据来源</td></tr>
 
     </table>
 
@@ -386,11 +386,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
     <ul>
 
-      <li><b><a href="https://link.springer.com/article/10.1007/s00163-025-00442-6" target="_blank" rel="noopener">Evaluating VLMs for Engineering Design</a></b>（Springer, 2025）：用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 数据集评测 <a href="https://openai.com/research/gpt-4v" target="_blank" rel="noopener">GPT-4V</a> 的加工特征识别（15 类特征），并发布 1,000+ 查询的基准测试集；</li>
+      <li><b><a href="https://link.springer.com/article/10.1007/s00163-025-00442-6" target="_blank" rel="noopener">Evaluating VLMs for Engineering Design</a></b>（Springer, 2025）：用 <a href="https://github.com/hducg/MFCAD" target="_blank" rel="noopener">MFCAD</a> 数据集评测 <a href="https://arxiv.org/abs/2309.17421" target="_blank" rel="noopener">GPT-4V</a> 的加工特征识别（15 类特征），并发布 1,000+ 查询的基准测试集；</li>
 
       <li><b><a href="https://link.springer.com/journal/12541" target="_blank" rel="noopener">Image2Feature</a></b>（IJPEM, 2026）：从 3D CAD 模型投影/剖切图像检测倒角、圆角、孔、锥面，射线投射映射回 B-rep 面 + 几何验证规则，15 个测试模型平均 <b>F1 91.3%</b>，后处理识别沉孔、锥沉孔、同轴孔等复合特征；</li>
 
-      <li><b>【上游对照】MFR 深度学习线</b>：<a href="https://github.com/zibozzb/FeatureNet" target="_blank" rel="noopener">FeatureNet</a>（CAD 2018）、<a href="https://github.com/AutodeskAILab/BRepNet" target="_blank" rel="noopener">BRepNet</a>、<a href="https://github.com/AndrewColligan/HierarchicalCADNet" target="_blank" rel="noopener">Hierarchical CADNet</a>（CAD 2022）、<a href="https://github.com/whjdark/AAGNet" target="_blank" rel="noopener">AAGNet</a>、SSGCN——均在 <b>3D B-rep/点云</b>上做特征识别，<b>不处理 2D 图纸</b>，仅作为「加工特征」概念与分类体系的参考来源。</li>
+      <li><b>【上游对照】MFR 深度学习线</b>：<a href="https://github.com/zibozzb/FeatureNet" target="_blank" rel="noopener">FeatureNet</a>（CAD 2018）、<a href="https://github.com/AutodeskAILab/BRepNet" target="_blank" rel="noopener">BRepNet</a>、<a href="https://arxiv.org/abs/2202.04307" target="_blank" rel="noopener">Hierarchical CADNet</a>（CAD 2022）、<a href="https://github.com/whjdark/AAGNet" target="_blank" rel="noopener">AAGNet</a>、SSGCN——均在 <b>3D B-rep/点云</b>上做特征识别，<b>不处理 2D 图纸</b>，仅作为「加工特征」概念与分类体系的参考来源。</li>
 
     </ul>
 
@@ -402,7 +402,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 
       <li><b><a href="https://huggingface.co/Qwen" target="_blank" rel="noopener">Qwen3-VL</a> / <a href="https://huggingface.co/THUDM" target="_blank" rel="noopener">GLM-4V</a> / 千问3.5-2B 等</b>：工业界已用于 CAD 图纸尺寸标注识别、公差解析、材料属性提取，支持自然语言定向抽取（如「只提取所有形位公差标注」）；</li>
 
-      <li><b><a href="https://arxiv.org/abs/2601.00000" target="_blank" rel="noopener">SynthPID</a></b>（2026）：针对 P&amp;ID 公开标注仅 12 张的困境，用真实管线拓扑作种子生成 665 张合成图，边关系检测 mAP 达 63.8%（模板式合成仅约 33%）。</li>
+      <li><b><a href="https://m.sohu.com/a/1033577577_122155911" target="_blank" rel="noopener">SynthPID</a></b>（2026）：针对 P&amp;ID 公开标注仅 12 张的困境，用真实管线拓扑作种子生成 665 张合成图，边关系检测 mAP 达 63.8%（模板式合成仅约 33%）。</li>
 
     </ul>
 
