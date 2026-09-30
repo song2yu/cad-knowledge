@@ -139,6 +139,35 @@ footer{margin-top:60px;padding-top:26px;border-top:1px solid var(--line);font-si
 <li><b>Overlap + 异步</b>：本地 SGD/异步 SGD 减少等待，但引入梯度陈旧（staleness），收敛需调参。</li>
 </ul>
 <div class="note"><b>部署法则：</b>通讯频繁的并行维度（张量并行）放<b>机内</b>；通讯稀疏的维度（流水线、数据并行）放<b>机间</b>。这就是大模型训练「3D 并行」的排布铁律。</div>
+
+<h3>❓ 深入问答：机间通讯靠什么？瓶颈是带宽吗？</h3>
+<div class="box" style="border-color:rgba(56,217,217,.4)">
+<span class="tg">Q1</span><h4>机间通讯靠什么实现？</h4>
+<p>靠 <b>网络互联</b>，分三个层次：</p>
+<ul style="margin-top:8px">
+<li><b>物理链路</b>：网卡（NIC/HCA）+ 交换机 + 光模块/铜缆。主流两种协议栈——<b>InfiniBand（IB）</b>（专用网络，HPC/大模型集群标配）与 <b>RoCEv2</b>（在以太网上承载 RDMA，成本更低）。</li>
+<li><b>传输机制</b>：核心是 <b>RDMA</b>（远程直接内存访问）——GPU/NIC 直接读写对端内存，<b>绕过 CPU 和操作系统内核</b>，实现零拷贝、低延迟、低 CPU 占用。没有 RDMA 的普通 TCP 通讯，延迟高一个量级且 CPU 被打满。</li>
+<li><b>集合通讯库</b>：上层由 <b>NCCL</b>（NVIDIA）或 <b>Gloo/MPI</b> 把 AllReduce/AllGather 等原语映射到 IB/RoCE 链路上，并自动做「机内 NVLink 归约 → 跨机 IB 归约 → 机内广播」的分层优化。</li>
+</ul>
+</div>
+<div class="box" style="border-color:rgba(255,180,84,.4);margin-top:14px">
+<span class="tg">Q2</span><h4>瓶颈是带宽吗？—— 分场景，不能一概而论</h4>
+<p><b>大消息场景（如全量梯度 AllReduce）：瓶颈就是带宽。</b>数据量大到延迟可忽略，耗时 ≈ 数据量 ÷ 跨机带宽。此时提升带宽（IB HDR→NDR、多网卡聚合、梯度压缩）直接见效。</p>
+<p style="margin-top:10px"><b>小消息场景（如 TP 每层 AllReduce、MoE 的 All-to-All 小包）：瓶颈是延迟，不是带宽。</b>消息小到带宽根本跑不满，耗时由「每次通讯的固定启动开销 × 通讯次数」决定。此时加带宽几乎无效，要靠<b>减少通讯次数</b>（算子融合、增大 batch、梯度累积）或<b>降低单次延迟</b>（RDMA、拓扑优化）。</p>
+</div>
+<div class="ts"><table>
+<thead><tr><th>场景</th><th>主导瓶颈</th><th>判定依据</th><th>有效对策</th></tr></thead>
+<tbody>
+<tr><td>数据并行梯度 AllReduce（大模型）</td><td class="hl">带宽</td><td>消息大（GB 级），延迟占比可忽略</td><td>IB 升级、梯度压缩、分层归约、通讯重叠</td></tr>
+<tr><td>张量并行每层 AllReduce</td><td class="hl">延迟</td><td>消息小（KB-MB 级），每层都发</td><td>放机内 NVLink、算子融合、减少层数通讯</td></tr>
+<tr><td>MoE 专家 All-to-All</td><td class="hl">带宽 + 负载不均</td><td>流量大且分布倾斜，热点链路拥塞</td><td>专家负载均衡、EP 放机内、自适应路由</td></tr>
+<tr><td>流水线并行激活传递</td><td class="hl">延迟（+ 气泡）</td><td>P2P 小消息，且受流水线气泡影响</td><td>增大 micro-batch、交错调度、减少阶段数</td></tr>
+<tr><td>ZeRO-3 参数 AllGather</td><td class="hl">带宽</td><td>每层前后向都要拉全量参数</td><td>降级 ZeRO-2、参数分桶调大、机内优先</td></tr>
+</tbody></table></div>
+<div class="warn"><b>一句话结论：</b>机间通讯靠 <b>RDMA over InfiniBand / RoCE</b> 实现；瓶颈<b>大消息看带宽、小消息看延迟</b>。更准确地说，真实瓶颈往往是<b>「带宽 × 延迟 × 通讯次数」三者中最短板的那一个</b>——所以优化前必须先判断消息大小与通讯频率，否则容易优化错方向。</div>
+<div class="note"><b>补充：还有两个常被忽略的机间瓶颈</b><br>
+① <b>网络拓扑与拥塞</b>：Fat-Tree / Dragonfly 拓扑下，多对多通讯可能撞上同一上行链路，实际带宽远低于理论值；自适应路由（SHARP、Adaptive Routing）可缓解。<br>
+② <b>掉队者（straggler）与抖动</b>：同步训练中，任一节点网络抖动或算力偏慢，全体等待。此时瓶颈既不是带宽也不是延迟，而是<b>最慢节点的响应时间</b>。</div>
 </section>
 <section id="s5">
 <div class="sh"><span class="sn">05</span><h2>并行策略的通讯模式</h2><span class="ss">Parallelism & communication patterns</span></div>
