@@ -293,8 +293,8 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--sub);fon
 <p>AiPy 已实际访问仓库、下载 4 组样本并解析成功，确认<b>数据可直接使用</b>。以下是实测发现：</p>
 <ul style="margin-top:8px">
 <li><b>① 真实规模比文献口径大得多</b>：git trees API 统计 <code>dataset/step/</code> 下有 <b>15,488 个 .step 模型 + 15,488 个 .face_truth 标签文件</b>，总计约 <b>1.1 GB</b>。（此前页面写的“数万合成 CAD 模型”偏模糊，实际为 15,488 对；注意 MFCAD++ 才是 59,655）</li>
-<li><b>② 标签是 Python pickle 二进制文件，不是文本</b>：直接打开会乱码。解析方式：<code>pickle.load(open('xxx.face_truth','rb'))</code>，得到每面一个 int 类别 id 的列表，顺序与 STEP 文件中 <code>ADVANCED_FACE</code> 的出现顺序一一对应（实测已验证一致性，如 11 面模型 ↔ 11 个标签）。</li>
-<li><b>③ 类别映射表在 occ/colors.json</b>：25 个特征类（through_hole=0、triangular_passage=1、…、round=23、stock=25 等，注意 id 不连续），id→名称需查这张表。实测样本标签值如 {0:5, 15:6} = 5 个 through_hole 面 + 6 个 stock 面。</li>
+<li><b>② 标签是 Python pickle 二进制文件，不是文本</b>：直接打开会乱码。解析方式：<code>pickle.load(open('xxx.face_truth','rb'))</code>，得到每面一个 int 类别 id（0-15）的列表，id 对应 occ/dataset_visualizer.py 中 <code>FEAT_NAMES</code> 列表的索引；顺序与 STEP 文件中 <code>ADVANCED_FACE</code> 的出现顺序一一对应（实测已验证一致性，如 11 面模型 ↔ 11 个标签）。</li>
+<li><b>③ 权威类别映射在 occ/dataset_visualizer.py 的 FEAT_NAMES</b>（16 类，face_truth 的 id 即列表索引）：0=rectangular_through_slot、3=triangular_passage、10=rectangular_blind_slot、14=chamfer、<b>15=stock</b> 等。⚠️ 注意 occ/colors.json 只是渲染颜色索引表，<b>不是</b>标签 id 映射。实测样本 {0:5, 15:6} = 5 个矩形通槽面 + 6 个毛坯面，与 STEP 几何（全平面、无圆柱面）完全吻合。</li>
 <li><b>④ 无现成训练数据管道，需自行预处理</b>：仓库只有 STEP 原始文件 + 标签，无图/点云/图结构。官方提供 occ/graph_converter.py（需安装 <b>pythonocc-core</b>）把 STEP 转成 {x: 面法向量+距离, edge_index: 邻接, y: 标签} 的图数据（pickle 格式）——即这是<b>面邻接图</b>任务的数据，做 2D 图纸类任务需自行投影渲染。</li>
 </ul>
 <p style="margin-top:8px"><b>结论：</b>✅ 链接有效、数据完整可下载、标签可解析；适合直接用于<b>B-Rep 面级特征识别</b>（GNN 路线）；用于 VLM 图纸任务需额外做“模型→图像”投影步骤。</p>
