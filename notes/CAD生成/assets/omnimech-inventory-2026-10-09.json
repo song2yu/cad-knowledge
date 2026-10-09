@@ -1,0 +1,1910 @@
+﻿{
+    "verified_at":  "2026-10-09T11:31:41.7126186Z",
+    "project_url":  "https://omnimech.dev/",
+    "samples_url":  "https://omnimech.dev/res/omnimech_samples.zip",
+    "code_url":  "https://omnimech.dev/res/omnimech_code.zip",
+    "sample_case_count":  10,
+    "case_ids":  [
+                     "1",
+                     "10",
+                     "2",
+                     "3",
+                     "4",
+                     "5",
+                     "6",
+                     "7",
+                     "8",
+                     "9"
+                 ],
+    "sample_zip_bytes":  48998017,
+    "entries":  [
+                    {
+                        "path":  "sample_data/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_01.png",
+                        "bytes":  107173
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_02.png",
+                        "bytes":  106414
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_03.png",
+                        "bytes":  106951
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_04.png",
+                        "bytes":  106884
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_05.png",
+                        "bytes":  110396
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_06.png",
+                        "bytes":  106030
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_07.png",
+                        "bytes":  104810
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_08.png",
+                        "bytes":  102117
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_09.png",
+                        "bytes":  79151
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_10.png",
+                        "bytes":  85699
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_11.png",
+                        "bytes":  37944
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_12.png",
+                        "bytes":  76184
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_13.png",
+                        "bytes":  81581
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_14.png",
+                        "bytes":  37946
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_15.png",
+                        "bytes":  78330
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_16.png",
+                        "bytes":  84809
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_17.png",
+                        "bytes":  36936
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_18.png",
+                        "bytes":  75604
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_19.png",
+                        "bytes":  76466
+                    },
+                    {
+                        "path":  "sample_data/1/20_view_plain_brep/1_view_20.png",
+                        "bytes":  38081
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_01.png",
+                        "bytes":  106827
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_02.png",
+                        "bytes":  106251
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_03.png",
+                        "bytes":  106851
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_04.png",
+                        "bytes":  106922
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_05.png",
+                        "bytes":  110397
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_06.png",
+                        "bytes":  106001
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_07.png",
+                        "bytes":  104811
+                    },
+                    {
+                        "path":  "sample_data/1/8_view_plain_brep/1_view_08.png",
+                        "bytes":  102162
+                    },
+                    {
+                        "path":  "sample_data/1/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/brep/1_brep.step",
+                        "bytes":  81941
+                    },
+                    {
+                        "path":  "sample_data/1/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/drawings/1_drawing.pdf",
+                        "bytes":  128455
+                    },
+                    {
+                        "path":  "sample_data/1/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/drawing_bitmap/1_drawing_bitmap.png",
+                        "bytes":  241810
+                    },
+                    {
+                        "path":  "sample_data/1/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/mesh/1_mesh.stl",
+                        "bytes":  53484
+                    },
+                    {
+                        "path":  "sample_data/1/metadata.json",
+                        "bytes":  4736
+                    },
+                    {
+                        "path":  "sample_data/1/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/raw/1_drawing.slddrw",
+                        "bytes":  1244672
+                    },
+                    {
+                        "path":  "sample_data/1/raw/1_parametric.sldprt",
+                        "bytes":  270336
+                    },
+                    {
+                        "path":  "sample_data/1/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/single_view_plain_brep/1_single_view.png",
+                        "bytes":  80520
+                    },
+                    {
+                        "path":  "sample_data/1/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/1/video_brep/1_video.mp4",
+                        "bytes":  2611425
+                    },
+                    {
+                        "path":  "sample_data/10/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_01.png",
+                        "bytes":  51685
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_02.png",
+                        "bytes":  60619
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_03.png",
+                        "bytes":  50421
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_04.png",
+                        "bytes":  63247
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_05.png",
+                        "bytes":  47980
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_06.png",
+                        "bytes":  62119
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_07.png",
+                        "bytes":  49021
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_08.png",
+                        "bytes":  60422
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_09.png",
+                        "bytes":  16802
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_10.png",
+                        "bytes":  8094
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_11.png",
+                        "bytes":  15603
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_12.png",
+                        "bytes":  17282
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_13.png",
+                        "bytes":  8133
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_14.png",
+                        "bytes":  14594
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_15.png",
+                        "bytes":  16567
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_16.png",
+                        "bytes":  8075
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_17.png",
+                        "bytes":  15465
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_18.png",
+                        "bytes":  17066
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_19.png",
+                        "bytes":  8044
+                    },
+                    {
+                        "path":  "sample_data/10/20_view_plain_brep/10_view_20.png",
+                        "bytes":  14549
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_01.png",
+                        "bytes":  51685
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_02.png",
+                        "bytes":  60619
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_03.png",
+                        "bytes":  50421
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_04.png",
+                        "bytes":  63247
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_05.png",
+                        "bytes":  47980
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_06.png",
+                        "bytes":  62119
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_07.png",
+                        "bytes":  49021
+                    },
+                    {
+                        "path":  "sample_data/10/8_view_plain_brep/10_view_08.png",
+                        "bytes":  60422
+                    },
+                    {
+                        "path":  "sample_data/10/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/brep/10_brep.step",
+                        "bytes":  110025
+                    },
+                    {
+                        "path":  "sample_data/10/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/drawings/10_drawing.pdf",
+                        "bytes":  369486
+                    },
+                    {
+                        "path":  "sample_data/10/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/drawing_bitmap/10_drawing_bitmap.png",
+                        "bytes":  225255
+                    },
+                    {
+                        "path":  "sample_data/10/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/mesh/10_mesh.stl",
+                        "bytes":  44384
+                    },
+                    {
+                        "path":  "sample_data/10/metadata.json",
+                        "bytes":  4822
+                    },
+                    {
+                        "path":  "sample_data/10/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/raw/10_drawing.slddrw",
+                        "bytes":  943104
+                    },
+                    {
+                        "path":  "sample_data/10/raw/10_parametric.sldprt",
+                        "bytes":  349696
+                    },
+                    {
+                        "path":  "sample_data/10/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/single_view_plain_brep/10_single_view.png",
+                        "bytes":  23515
+                    },
+                    {
+                        "path":  "sample_data/10/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/10/video_brep/10_video.mp4",
+                        "bytes":  2382732
+                    },
+                    {
+                        "path":  "sample_data/2/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_01.png",
+                        "bytes":  77729
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_02.png",
+                        "bytes":  80826
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_03.png",
+                        "bytes":  86537
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_04.png",
+                        "bytes":  85998
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_05.png",
+                        "bytes":  77753
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_06.png",
+                        "bytes":  80986
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_07.png",
+                        "bytes":  87383
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_08.png",
+                        "bytes":  86664
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_09.png",
+                        "bytes":  29390
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_10.png",
+                        "bytes":  8146
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_11.png",
+                        "bytes":  20962
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_12.png",
+                        "bytes":  33153
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_13.png",
+                        "bytes":  14153
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_14.png",
+                        "bytes":  17903
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_15.png",
+                        "bytes":  31836
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_16.png",
+                        "bytes":  8253
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_17.png",
+                        "bytes":  20248
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_18.png",
+                        "bytes":  34142
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_19.png",
+                        "bytes":  13920
+                    },
+                    {
+                        "path":  "sample_data/2/20_view_plain_brep/2_view_20.png",
+                        "bytes":  18209
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_01.png",
+                        "bytes":  85868
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_02.png",
+                        "bytes":  89395
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_03.png",
+                        "bytes":  96346
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_04.png",
+                        "bytes":  94139
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_05.png",
+                        "bytes":  85762
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_06.png",
+                        "bytes":  89539
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_07.png",
+                        "bytes":  97167
+                    },
+                    {
+                        "path":  "sample_data/2/8_view_plain_brep/2_view_08.png",
+                        "bytes":  95840
+                    },
+                    {
+                        "path":  "sample_data/2/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/brep/2_brep.step",
+                        "bytes":  240227
+                    },
+                    {
+                        "path":  "sample_data/2/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/drawings/2_drawing.pdf",
+                        "bytes":  256511
+                    },
+                    {
+                        "path":  "sample_data/2/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/drawing_bitmap/2_drawing_bitmap.png",
+                        "bytes":  238071
+                    },
+                    {
+                        "path":  "sample_data/2/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/mesh/2_mesh.stl",
+                        "bytes":  141484
+                    },
+                    {
+                        "path":  "sample_data/2/metadata.json",
+                        "bytes":  4744
+                    },
+                    {
+                        "path":  "sample_data/2/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/raw/2_drawing.slddrw",
+                        "bytes":  1108992
+                    },
+                    {
+                        "path":  "sample_data/2/raw/2_parametric.sldprt",
+                        "bytes":  646144
+                    },
+                    {
+                        "path":  "sample_data/2/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/single_view_plain_brep/2_single_view.png",
+                        "bytes":  39627
+                    },
+                    {
+                        "path":  "sample_data/2/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/2/video_brep/2_video.mp4",
+                        "bytes":  2601359
+                    },
+                    {
+                        "path":  "sample_data/3/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_01.png",
+                        "bytes":  54983
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_02.png",
+                        "bytes":  61934
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_03.png",
+                        "bytes":  55816
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_04.png",
+                        "bytes":  61502
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_05.png",
+                        "bytes":  59151
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_06.png",
+                        "bytes":  64740
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_07.png",
+                        "bytes":  60027
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_08.png",
+                        "bytes":  64383
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_09.png",
+                        "bytes":  24408
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_10.png",
+                        "bytes":  23668
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_11.png",
+                        "bytes":  10996
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_12.png",
+                        "bytes":  29434
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_13.png",
+                        "bytes":  24673
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_14.png",
+                        "bytes":  10862
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_15.png",
+                        "bytes":  24982
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_16.png",
+                        "bytes":  26574
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_17.png",
+                        "bytes":  21775
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_18.png",
+                        "bytes":  29398
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_19.png",
+                        "bytes":  25238
+                    },
+                    {
+                        "path":  "sample_data/3/20_view_plain_brep/3_view_20.png",
+                        "bytes":  21789
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_01.png",
+                        "bytes":  54973
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_02.png",
+                        "bytes":  61942
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_03.png",
+                        "bytes":  55835
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_04.png",
+                        "bytes":  61513
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_05.png",
+                        "bytes":  59185
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_06.png",
+                        "bytes":  64740
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_07.png",
+                        "bytes":  60054
+                    },
+                    {
+                        "path":  "sample_data/3/8_view_plain_brep/3_view_08.png",
+                        "bytes":  64383
+                    },
+                    {
+                        "path":  "sample_data/3/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/brep/3_brep.step",
+                        "bytes":  87173
+                    },
+                    {
+                        "path":  "sample_data/3/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/drawings/3_drawing.pdf",
+                        "bytes":  78483
+                    },
+                    {
+                        "path":  "sample_data/3/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/drawing_bitmap/3_drawing_bitmap.png",
+                        "bytes":  171443
+                    },
+                    {
+                        "path":  "sample_data/3/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/mesh/3_mesh.stl",
+                        "bytes":  54484
+                    },
+                    {
+                        "path":  "sample_data/3/metadata.json",
+                        "bytes":  4726
+                    },
+                    {
+                        "path":  "sample_data/3/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/raw/3_drawing.slddrw",
+                        "bytes":  522752
+                    },
+                    {
+                        "path":  "sample_data/3/raw/3_parametric.sldprt",
+                        "bytes":  345088
+                    },
+                    {
+                        "path":  "sample_data/3/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/single_view_plain_brep/3_single_view.png",
+                        "bytes":  43171
+                    },
+                    {
+                        "path":  "sample_data/3/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/3/video_brep/3_video.mp4",
+                        "bytes":  2422600
+                    },
+                    {
+                        "path":  "sample_data/4/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_01.png",
+                        "bytes":  135425
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_02.png",
+                        "bytes":  133623
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_03.png",
+                        "bytes":  133831
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_04.png",
+                        "bytes":  133282
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_05.png",
+                        "bytes":  154257
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_06.png",
+                        "bytes":  158195
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_07.png",
+                        "bytes":  161000
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_08.png",
+                        "bytes":  156174
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_09.png",
+                        "bytes":  80635
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_10.png",
+                        "bytes":  106149
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_11.png",
+                        "bytes":  135613
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_12.png",
+                        "bytes":  80896
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_13.png",
+                        "bytes":  110140
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_14.png",
+                        "bytes":  127759
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_15.png",
+                        "bytes":  80084
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_16.png",
+                        "bytes":  123032
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_17.png",
+                        "bytes":  168444
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_18.png",
+                        "bytes":  78902
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_19.png",
+                        "bytes":  121084
+                    },
+                    {
+                        "path":  "sample_data/4/20_view_plain_brep/4_view_20.png",
+                        "bytes":  159430
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_01.png",
+                        "bytes":  135930
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_02.png",
+                        "bytes":  134298
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_03.png",
+                        "bytes":  134546
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_04.png",
+                        "bytes":  133722
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_05.png",
+                        "bytes":  154841
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_06.png",
+                        "bytes":  158298
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_07.png",
+                        "bytes":  161502
+                    },
+                    {
+                        "path":  "sample_data/4/8_view_plain_brep/4_view_08.png",
+                        "bytes":  156975
+                    },
+                    {
+                        "path":  "sample_data/4/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/brep/4_brep.step",
+                        "bytes":  901926
+                    },
+                    {
+                        "path":  "sample_data/4/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/drawings/4_drawing.pdf",
+                        "bytes":  134782
+                    },
+                    {
+                        "path":  "sample_data/4/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/drawing_bitmap/4_drawing_bitmap.png",
+                        "bytes":  357673
+                    },
+                    {
+                        "path":  "sample_data/4/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/mesh/4_mesh.stl",
+                        "bytes":  276684
+                    },
+                    {
+                        "path":  "sample_data/4/metadata.json",
+                        "bytes":  4745
+                    },
+                    {
+                        "path":  "sample_data/4/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/raw/4_drawing.slddrw",
+                        "bytes":  232402
+                    },
+                    {
+                        "path":  "sample_data/4/raw/4_parametric.sldprt",
+                        "bytes":  489950
+                    },
+                    {
+                        "path":  "sample_data/4/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/single_view_plain_brep/4_single_view.png",
+                        "bytes":  135497
+                    },
+                    {
+                        "path":  "sample_data/4/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/4/video_brep/4_video.mp4",
+                        "bytes":  3070158
+                    },
+                    {
+                        "path":  "sample_data/5/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_01.png",
+                        "bytes":  56864
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_02.png",
+                        "bytes":  63552
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_03.png",
+                        "bytes":  57210
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_04.png",
+                        "bytes":  63793
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_05.png",
+                        "bytes":  60495
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_06.png",
+                        "bytes":  63510
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_07.png",
+                        "bytes":  62948
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_08.png",
+                        "bytes":  62490
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_09.png",
+                        "bytes":  11111
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_10.png",
+                        "bytes":  10791
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_11.png",
+                        "bytes":  12441
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_12.png",
+                        "bytes":  20078
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_13.png",
+                        "bytes":  10771
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_14.png",
+                        "bytes":  14025
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_15.png",
+                        "bytes":  12852
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_16.png",
+                        "bytes":  14802
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_17.png",
+                        "bytes":  18268
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_18.png",
+                        "bytes":  20661
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_19.png",
+                        "bytes":  14318
+                    },
+                    {
+                        "path":  "sample_data/5/20_view_plain_brep/5_view_20.png",
+                        "bytes":  15905
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_01.png",
+                        "bytes":  56882
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_02.png",
+                        "bytes":  63567
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_03.png",
+                        "bytes":  57230
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_04.png",
+                        "bytes":  63776
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_05.png",
+                        "bytes":  60511
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_06.png",
+                        "bytes":  63501
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_07.png",
+                        "bytes":  62961
+                    },
+                    {
+                        "path":  "sample_data/5/8_view_plain_brep/5_view_08.png",
+                        "bytes":  62481
+                    },
+                    {
+                        "path":  "sample_data/5/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/brep/5_brep.step",
+                        "bytes":  94896
+                    },
+                    {
+                        "path":  "sample_data/5/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/drawings/5_drawing.pdf",
+                        "bytes":  275330
+                    },
+                    {
+                        "path":  "sample_data/5/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/drawing_bitmap/5_drawing_bitmap.png",
+                        "bytes":  241314
+                    },
+                    {
+                        "path":  "sample_data/5/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/mesh/5_mesh.stl",
+                        "bytes":  45184
+                    },
+                    {
+                        "path":  "sample_data/5/metadata.json",
+                        "bytes":  4738
+                    },
+                    {
+                        "path":  "sample_data/5/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/raw/5_drawing.slddrw",
+                        "bytes":  1119232
+                    },
+                    {
+                        "path":  "sample_data/5/raw/5_parametric.sldprt",
+                        "bytes":  274432
+                    },
+                    {
+                        "path":  "sample_data/5/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/single_view_plain_brep/5_single_view.png",
+                        "bytes":  29166
+                    },
+                    {
+                        "path":  "sample_data/5/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/5/video_brep/5_video.mp4",
+                        "bytes":  2251925
+                    },
+                    {
+                        "path":  "sample_data/6/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_01.png",
+                        "bytes":  135663
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_02.png",
+                        "bytes":  132761
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_03.png",
+                        "bytes":  164229
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_04.png",
+                        "bytes":  160576
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_05.png",
+                        "bytes":  140737
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_06.png",
+                        "bytes":  137773
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_07.png",
+                        "bytes":  158661
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_08.png",
+                        "bytes":  157185
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_09.png",
+                        "bytes":  124250
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_10.png",
+                        "bytes":  146587
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_11.png",
+                        "bytes":  62227
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_12.png",
+                        "bytes":  130025
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_13.png",
+                        "bytes":  199979
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_14.png",
+                        "bytes":  62210
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_15.png",
+                        "bytes":  136674
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_16.png",
+                        "bytes":  153173
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_17.png",
+                        "bytes":  62615
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_18.png",
+                        "bytes":  140365
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_19.png",
+                        "bytes":  199379
+                    },
+                    {
+                        "path":  "sample_data/6/20_view_plain_brep/6_view_20.png",
+                        "bytes":  63813
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_01.png",
+                        "bytes":  138428
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_02.png",
+                        "bytes":  135609
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_03.png",
+                        "bytes":  167714
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_04.png",
+                        "bytes":  164275
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_05.png",
+                        "bytes":  143734
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_06.png",
+                        "bytes":  140666
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_07.png",
+                        "bytes":  161998
+                    },
+                    {
+                        "path":  "sample_data/6/8_view_plain_brep/6_view_08.png",
+                        "bytes":  160279
+                    },
+                    {
+                        "path":  "sample_data/6/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/brep/6_brep.step",
+                        "bytes":  124272
+                    },
+                    {
+                        "path":  "sample_data/6/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/drawings/6_drawing.pdf",
+                        "bytes":  212454
+                    },
+                    {
+                        "path":  "sample_data/6/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/drawing_bitmap/6_drawing_bitmap.png",
+                        "bytes":  325895
+                    },
+                    {
+                        "path":  "sample_data/6/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/mesh/6_mesh.stl",
+                        "bytes":  180484
+                    },
+                    {
+                        "path":  "sample_data/6/metadata.json",
+                        "bytes":  4743
+                    },
+                    {
+                        "path":  "sample_data/6/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/raw/6_drawing.slddrw",
+                        "bytes":  1114112
+                    },
+                    {
+                        "path":  "sample_data/6/raw/6_parametric.sldprt",
+                        "bytes":  266752
+                    },
+                    {
+                        "path":  "sample_data/6/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/single_view_plain_brep/6_single_view.png",
+                        "bytes":  143970
+                    },
+                    {
+                        "path":  "sample_data/6/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/6/video_brep/6_video.mp4",
+                        "bytes":  3228957
+                    },
+                    {
+                        "path":  "sample_data/7/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_01.png",
+                        "bytes":  42384
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_02.png",
+                        "bytes":  43086
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_03.png",
+                        "bytes":  48009
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_04.png",
+                        "bytes":  50426
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_05.png",
+                        "bytes":  51476
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_06.png",
+                        "bytes":  52364
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_07.png",
+                        "bytes":  59160
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_08.png",
+                        "bytes":  61359
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_09.png",
+                        "bytes":  9375
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_10.png",
+                        "bytes":  7758
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_11.png",
+                        "bytes":  9346
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_12.png",
+                        "bytes":  9700
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_13.png",
+                        "bytes":  13815
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_14.png",
+                        "bytes":  9197
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_15.png",
+                        "bytes":  14530
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_16.png",
+                        "bytes":  12111
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_17.png",
+                        "bytes":  18947
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_18.png",
+                        "bytes":  15881
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_19.png",
+                        "bytes":  20283
+                    },
+                    {
+                        "path":  "sample_data/7/20_view_plain_brep/7_view_20.png",
+                        "bytes":  15619
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_01.png",
+                        "bytes":  42381
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_02.png",
+                        "bytes":  43086
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_03.png",
+                        "bytes":  48010
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_04.png",
+                        "bytes":  50426
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_05.png",
+                        "bytes":  51455
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_06.png",
+                        "bytes":  52364
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_07.png",
+                        "bytes":  59151
+                    },
+                    {
+                        "path":  "sample_data/7/8_view_plain_brep/7_view_08.png",
+                        "bytes":  61359
+                    },
+                    {
+                        "path":  "sample_data/7/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/brep/7_brep.step",
+                        "bytes":  57075
+                    },
+                    {
+                        "path":  "sample_data/7/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/drawings/7_drawing.pdf",
+                        "bytes":  179802
+                    },
+                    {
+                        "path":  "sample_data/7/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/drawing_bitmap/7_drawing_bitmap.png",
+                        "bytes":  190849
+                    },
+                    {
+                        "path":  "sample_data/7/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/mesh/7_mesh.stl",
+                        "bytes":  12184
+                    },
+                    {
+                        "path":  "sample_data/7/metadata.json",
+                        "bytes":  4737
+                    },
+                    {
+                        "path":  "sample_data/7/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/raw/7_drawing.slddrw",
+                        "bytes":  1022976
+                    },
+                    {
+                        "path":  "sample_data/7/raw/7_parametric.sldprt",
+                        "bytes":  244736
+                    },
+                    {
+                        "path":  "sample_data/7/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/single_view_plain_brep/7_single_view.png",
+                        "bytes":  27813
+                    },
+                    {
+                        "path":  "sample_data/7/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/7/video_brep/7_video.mp4",
+                        "bytes":  2157662
+                    },
+                    {
+                        "path":  "sample_data/8/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_01.png",
+                        "bytes":  85049
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_02.png",
+                        "bytes":  110820
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_03.png",
+                        "bytes":  83637
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_04.png",
+                        "bytes":  108408
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_05.png",
+                        "bytes":  86176
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_06.png",
+                        "bytes":  108601
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_07.png",
+                        "bytes":  84688
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_08.png",
+                        "bytes":  110193
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_09.png",
+                        "bytes":  81638
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_10.png",
+                        "bytes":  7495
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_11.png",
+                        "bytes":  46566
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_12.png",
+                        "bytes":  116903
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_13.png",
+                        "bytes":  7533
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_14.png",
+                        "bytes":  55165
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_15.png",
+                        "bytes":  77630
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_16.png",
+                        "bytes":  7523
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_17.png",
+                        "bytes":  47824
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_18.png",
+                        "bytes":  112932
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_19.png",
+                        "bytes":  7527
+                    },
+                    {
+                        "path":  "sample_data/8/20_view_plain_brep/8_view_20.png",
+                        "bytes":  55049
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_01.png",
+                        "bytes":  88437
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_02.png",
+                        "bytes":  116006
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_03.png",
+                        "bytes":  86859
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_04.png",
+                        "bytes":  113729
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_05.png",
+                        "bytes":  89331
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_06.png",
+                        "bytes":  114174
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_07.png",
+                        "bytes":  88340
+                    },
+                    {
+                        "path":  "sample_data/8/8_view_plain_brep/8_view_08.png",
+                        "bytes":  115816
+                    },
+                    {
+                        "path":  "sample_data/8/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/brep/8_brep.step",
+                        "bytes":  97775
+                    },
+                    {
+                        "path":  "sample_data/8/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/drawings/8_drawing.pdf",
+                        "bytes":  66747
+                    },
+                    {
+                        "path":  "sample_data/8/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/drawing_bitmap/8_drawing_bitmap.png",
+                        "bytes":  130517
+                    },
+                    {
+                        "path":  "sample_data/8/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/mesh/8_mesh.stl",
+                        "bytes":  107284
+                    },
+                    {
+                        "path":  "sample_data/8/metadata.json",
+                        "bytes":  4741
+                    },
+                    {
+                        "path":  "sample_data/8/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/raw/8_drawing.slddrw",
+                        "bytes":  404480
+                    },
+                    {
+                        "path":  "sample_data/8/raw/8_parametric.sldprt",
+                        "bytes":  32551
+                    },
+                    {
+                        "path":  "sample_data/8/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/single_view_plain_brep/8_single_view.png",
+                        "bytes":  56581
+                    },
+                    {
+                        "path":  "sample_data/8/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/8/video_brep/8_video.mp4",
+                        "bytes":  2454019
+                    },
+                    {
+                        "path":  "sample_data/9/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_01.png",
+                        "bytes":  45150
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_02.png",
+                        "bytes":  45361
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_03.png",
+                        "bytes":  55474
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_04.png",
+                        "bytes":  56480
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_05.png",
+                        "bytes":  48202
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_06.png",
+                        "bytes":  49482
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_07.png",
+                        "bytes":  58601
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_08.png",
+                        "bytes":  57586
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_09.png",
+                        "bytes":  24334
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_10.png",
+                        "bytes":  35731
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_11.png",
+                        "bytes":  14727
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_12.png",
+                        "bytes":  24703
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_13.png",
+                        "bytes":  38677
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_14.png",
+                        "bytes":  14554
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_15.png",
+                        "bytes":  20000
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_16.png",
+                        "bytes":  42247
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_17.png",
+                        "bytes":  20921
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_18.png",
+                        "bytes":  20543
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_19.png",
+                        "bytes":  39310
+                    },
+                    {
+                        "path":  "sample_data/9/20_view_plain_brep/9_view_20.png",
+                        "bytes":  20688
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_01.png",
+                        "bytes":  46728
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_02.png",
+                        "bytes":  46957
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_03.png",
+                        "bytes":  57170
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_04.png",
+                        "bytes":  57973
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_05.png",
+                        "bytes":  49123
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_06.png",
+                        "bytes":  50410
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_07.png",
+                        "bytes":  60189
+                    },
+                    {
+                        "path":  "sample_data/9/8_view_plain_brep/9_view_08.png",
+                        "bytes":  59300
+                    },
+                    {
+                        "path":  "sample_data/9/brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/brep/9_brep.step",
+                        "bytes":  231722
+                    },
+                    {
+                        "path":  "sample_data/9/drawings/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/drawings/9_drawing.pdf",
+                        "bytes":  362219
+                    },
+                    {
+                        "path":  "sample_data/9/drawing_bitmap/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/drawing_bitmap/9_drawing_bitmap.png",
+                        "bytes":  195760
+                    },
+                    {
+                        "path":  "sample_data/9/mesh/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/mesh/9_mesh.stl",
+                        "bytes":  134484
+                    },
+                    {
+                        "path":  "sample_data/9/metadata.json",
+                        "bytes":  4741
+                    },
+                    {
+                        "path":  "sample_data/9/raw/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/raw/9_drawing.slddrw",
+                        "bytes":  749568
+                    },
+                    {
+                        "path":  "sample_data/9/raw/9_parametric.sldprt",
+                        "bytes":  181760
+                    },
+                    {
+                        "path":  "sample_data/9/single_view_plain_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/single_view_plain_brep/9_single_view.png",
+                        "bytes":  38136
+                    },
+                    {
+                        "path":  "sample_data/9/video_brep/",
+                        "bytes":  0
+                    },
+                    {
+                        "path":  "sample_data/9/video_brep/9_video.mp4",
+                        "bytes":  2339117
+                    },
+                    {
+                        "path":  "sample_data/manifest.json",
+                        "bytes":  1103
+                    }
+                ]
+}

@@ -1,0 +1,10 @@
+﻿/* Scoped styles: preserve the article's existing design. */
+.kb-navigation{position:relative;z-index:1000;display:flex!important;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 20px!important;padding:12px 16px!important;background:#f5f8fc!important;color:#24344a!important;border:1px solid #d6e0ee!important;border-radius:10px!important;font:14px/1.6 system-ui,"Microsoft YaHei",sans-serif!important;box-sizing:border-box}
+.kb-navigation a{color:#245cb5!important;text-decoration:none!important;padding:3px 7px!important;border-radius:5px;white-space:nowrap}
+.kb-navigation a:hover{background:#e0eaff!important;text-decoration:underline!important}
+.kb-navigation [hidden]{display:none!important}
+.kb-navigation .kb-current{flex:1;min-width:120px;font-size:13px!important;color:#52637b!important}
+.kb-navigation .kb-jump-label{display:flex!important;align-items:center;gap:8px;font:inherit!important}
+.kb-navigation .kb-jump{width:230px!important;max-width:60vw!important;padding:5px!important;background:white!important;color:#24344a!important;border:1px solid #bccce0!important;border-radius:5px!important;font:13px system-ui,"Microsoft YaHei",sans-serif!important}
+@media(max-width:650px){.kb-navigation .kb-current{flex-basis:70%}.kb-navigation .kb-jump-label{width:100%}.kb-navigation .kb-jump{max-width:85vw!important;width:100%!important}}
+@media print{.kb-navigation{display:none!important}}

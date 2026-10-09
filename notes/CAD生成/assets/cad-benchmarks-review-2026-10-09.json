@@ -1,0 +1,127 @@
+{
+  "verified_at": "2026-10-09T11:40:03.967Z",
+  "method": "核查作者官方仓库/项目页、HF/ModelScope 元数据和文件列表；OmniMech ZIP 已实际下载；其他大数据包未全量下载；未运行评测",
+  "items": [
+    {
+      "name": "CADGenBench",
+      "anchor": "CADGenBench",
+      "state": "部分开放：输入公开，真值私有",
+      "license": "公开输入：ODC-BY；代码：Apache-2.0；私有真值未公开",
+      "extent": "公开任务输入及描述；ground_truth.step 与评测夹具在私有 cadgenbench-data-gt。不能下载完整图纸—真值配对训练集。",
+      "evidence": "官方 README 明确标注 private ground truth；HF API 返回公开输入文件及 odc-by。",
+      "url": "https://huggingface.co/datasets/HuggingAI4Engineering/cadgenbench-data",
+      "url2": "https://github.com/huggingface/cadgenbench",
+      "level": "partial"
+    },
+    {
+      "name": "CADExpert / CME-CAD",
+      "anchor": "CADExpert",
+      "state": "数据已公开；声明 Apache-2.0",
+      "license": "数据卡：Apache License 2.0",
+      "extent": "ModelScope 已提供 data.jsonl（120,663,416 字节）与 image.zip（400,030,000 字节）。未下载大文件、未逐条核对论文 17,299 样本或全部划分。",
+      "evidence": "数据卡、平台 API 与文件树均返回成功，确认两个 LFS 数据文件，已归档 API 结果。",
+      "url": "https://modelscope.cn/datasets/zhuofanChen/CADExpert",
+      "url2": "https://modelscope.cn/api/v1/datasets/zhuofanChen/CADExpert/repo/tree?Revision=master&Root=",
+      "level": "open"
+    },
+    {
+      "name": "CAD-VGDrawing / Drawing2CAD",
+      "anchor": "CAD-VGDrawing",
+      "state": "公开数据入口已确认；数据许可未确认",
+      "license": "代码仓库：MIT；未发现明确覆盖数据的许可说明",
+      "extent": "作者 README 链接 Google Drive；公开目录可看到 cad_vec.zip、svg_raw.zip、svg_vec.zip。未下载全部压缩包、未核对样本总数和完整性。",
+      "evidence": "官方 README 与 Google Drive 文件目录；代码仓库 MIT 不能自动当作数据许可证。",
+      "url": "https://drive.google.com/drive/folders/1t9uO2iFh1eVDXRCKUEonKPBu8WGYA8wU",
+      "url2": "https://github.com/lllssc/Drawing2CAD",
+      "level": "uncertain"
+    },
+    {
+      "name": "OmniMech",
+      "anchor": "OmniMech",
+      "state": "仅 10 个样例；未找到全量公开下载",
+      "license": "样例和补充代码 ZIP 未发现 LICENSE；数据许可未确认",
+      "extent": "论文报告 251K；官网按钮是 Dataset Samples。实际下载归档：10 个案例，不是 251K 全量，也不是论文完整实验子集。",
+      "evidence": "官网 ZIP 已下载，472 个归档条目、10 个 metadata.json；代码 README 明确写 ten sanitized sample cases。",
+      "url": "https://omnimech.dev/",
+      "url2": "https://omnimech.dev/res/omnimech_samples.zip",
+      "level": "partial"
+    },
+    {
+      "name": "RealCADBench",
+      "anchor": "RealCADBench",
+      "state": "V1.0 数据与 STL 真值公开；CC BY 4.0",
+      "license": "数据：CC BY 4.0",
+      "extent": "HF V1.0 数据卡总计 12,704 项，工程图 236 项；原始输入、STL、映射 JSON 和 Parquet 可列出。论文数字 12,632 与当前版本不同。未下载全量逐项验证。",
+      "evidence": "HF 数据卡明确样本表、目录、许可证；API 显示 gated=false 并列出真值 STL 文件。",
+      "url": "https://huggingface.co/datasets/RealCADBench/RealCADBench-V1.0",
+      "url2": "https://huggingface.co/api/datasets/RealCADBench/RealCADBench-V1.0",
+      "level": "open"
+    },
+    {
+      "name": "Parametric CAD Bench V3",
+      "anchor": "Parametric-CAD-Bench-V3",
+      "state": "未确认可独立下载完整 V3 数据",
+      "license": "本次未确认 V3 数据许可证",
+      "extent": "官网发布说明称提供公开 Harbor 工作流与公开任务说明；不能据此认定完整 V3 数据和全部真值已开放。",
+      "evidence": "官网存在任务表与复现说明；本次对所指向 gnucleus/harbor-cad-bench 的 GitHub API 检查返回 404，网页访问异常。属于下载核验未通过，不等同确定永久闭源。",
+      "url": "https://www.gnucleus.ai/cad-bench/news/cad-bench-v3",
+      "url2": "https://www.gnucleus.ai/cad-bench",
+      "level": "uncertain"
+    },
+    {
+      "name": "CadBench / CADBench",
+      "anchor": null,
+      "state": "数据文件公开；数据许可未声明",
+      "license": "当前 HF 数据卡未列 license，不能推断商业使用许可",
+      "extent": "HF DeCoDELab/CADBench：6 个 split、每组 3,000，总计 18,000；包含 STEP/STL/图像等 Parquet。下载大小数据卡约 80.2 GB，未下载全量。",
+      "evidence": "HF API gated=false；文件树列出 Parquet；数据卡显示 features 和 split 数量，但没有 license 字段。",
+      "url": "https://huggingface.co/datasets/DeCoDELab/CADBench",
+      "url2": "https://huggingface.co/datasets/DeCoDELab/CADBench/blob/main/README.md",
+      "level": "uncertain"
+    },
+    {
+      "name": "BenchCAD",
+      "anchor": null,
+      "state": "数据已公开；CC BY 4.0",
+      "license": "数据：CC BY 4.0；代码：MIT",
+      "extent": "code_gen 17,900，edit-bench 748，QA 2,400；公开 Parquet 与代码入口。不是工程图输入任务。未下载全量核对条目。",
+      "evidence": "作者 README 明确区分代码 MIT 与数据 CC BY 4.0；HF API 数据卡许可证与文件目录相符。",
+      "url": "https://huggingface.co/datasets/BenchCAD/BenchCAD",
+      "url2": "https://github.com/BenchCAD/BenchCAD-main",
+      "level": "open"
+    },
+    {
+      "name": "ParaCAD / PHT-CAD",
+      "anchor": null,
+      "state": "数据与生成材料公开；Apache-2.0",
+      "license": "ModelScope 数据卡：Apache License 2.0",
+      "extent": "原 ParaCAD-Dataset 数据卡指向新 ParaCAD_dataset；新库可见训练 JSON 压缩包、验证 JSON 压缩包、SG、white_dim 和生成 / 渲染脚本。未逐项核对论文 10.26M 完整图片及 3,000 测试样本。",
+      "evidence": "新旧 ModelScope 数据卡与新库文件树返回成功；有 entity6-16_train_jsons_split.tar.gz、dxfs_val_jsons_split.zip。",
+      "url": "https://modelscope.cn/datasets/yuwenbonnie/ParaCAD_dataset",
+      "url2": "https://github.com/yuwen-chen616/PHT-CAD",
+      "level": "open"
+    },
+    {
+      "name": "CAD2Program",
+      "anchor": null,
+      "state": "未找到作者完整数据下载入口",
+      "license": "项目网站仓库 CC BY-SA 4.0，不代表柜体数据许可证",
+      "extent": "manycore-research/CAD2Program 的默认分支是 gh-pages，README 说明是网站；不能把网站仓库认作训练 / 评测数据或完整实现。",
+      "evidence": "作者项目页和 GitHub 仓库元数据；本次未发现论文 36.8 万柜体模型公开包或明确申请路径。",
+      "url": "https://manycore-research.github.io/CAD2Program",
+      "url2": "https://github.com/manycore-research/CAD2Program",
+      "level": "uncertain"
+    },
+    {
+      "name": "DesignQA",
+      "anchor": null,
+      "state": "问题与图像公开；数据许可未确认",
+      "license": "此次检查未确认明确数据许可证",
+      "extent": "作者 GitHub 的 dataset 目录含 rule_extraction、rule_comprehension、rule_compliance 与 docs；README 描述 CSV、图像与问答。它是工程问答，不是 CAD 生成集。",
+      "evidence": "官方 README 描述文件位置；GitHub dataset 目录接口已确认存在；仓库 license 元数据为空。",
+      "url": "https://github.com/anniedoris/design_qa/tree/main/dataset",
+      "url2": "https://github.com/anniedoris/design_qa",
+      "level": "uncertain"
+    }
+  ]
+}
